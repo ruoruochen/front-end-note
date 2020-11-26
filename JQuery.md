@@ -2,13 +2,13 @@
 
 ## 目标
 
-![image-20200622161838038](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200622161838038.png)
+![](img/image-20200622161838038.png)
 
 ### 1、JQuery概述
 
 #### 1-1 JavaScript库
 
-![image-20200622162334632](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200622162334632.png)
+![image-20200622162334632](img/image-20200622162334632.png)
 
 以前学的 ：原生js代码
 
@@ -18,7 +18,7 @@
 
 ##### 常见JavaScript库
 
-![image-20200622162456977](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200622162456977.png)
+![image-20200622162456977](img/image-20200622162456977.png)
 
 
 
@@ -26,7 +26,7 @@
 
 #### 2-1 JQuery的入口函数
 
-![image-20200622163614017](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200622163614017.png)
+![image-20200622163614017](img/image-20200622163614017.png)
 
 ```js
     <script>
@@ -48,11 +48,11 @@
 
 #### 2-2 JQuery的顶级对象$
 
-![image-20200622165303799](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200622165303799.png)
+![image-20200622165303799](img/image-20200622165303799.png)
 
 #### 2-3 JQuery对象和DOM对象
 
-![image-20200622165240976](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200622165240976.png)
+![image-20200622165240976](img/image-20200622165240976.png)
 
 ```js
     <div></div>
@@ -75,7 +75,7 @@
 
 ##### JQuery对象与DOM对象的相互转换
 
-![image-20200622165455752](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200622165455752.png)
+![image-20200622165455752](img/image-20200622165455752.png)
 
 ```js
     <video src="test.mp4" muted="muted"></video>
@@ -98,7 +98,7 @@
 
 ## 目标
 
-![image-20200622170634884](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200622170634884.png)
+![image-20200622170634884](img/image-20200622170634884.png)
 
 
 
@@ -106,19 +106,19 @@
 
 #### 1-1 基础选择器
 
-![image-20200622170953404](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200622170953404.png)
+![image-20200622170953404](img/image-20200622170953404.png)
 
 
 
 #### 1-2 层级选择器
 
-![image-20200622171704714](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200622171704714.png)
+![image-20200622171704714](img/image-20200622171704714.png)
 
 
 
 #### 1-3 隐式迭代 ！imp
 
-![image-20200622172401136](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200622172401136.png)
+![image-20200622172401136](img/image-20200622172401136.png)
 
 ```js
     <div>惊喜不？意外不</div>
@@ -145,7 +145,7 @@
 
 #### 1-4 筛选选择器
 
-![image-20200622173150192](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200622173150192.png)
+![image-20200622173150192](img/image-20200622173150192.png)
 
 ```js
     <ul>
@@ -181,7 +181,7 @@
 
 #### 1-5 筛选方法 ！imp
 
-![image-20200623104321801](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200623104321801.png)
+![image-20200623104321801](img/image-20200623104321801.png)
 
 ```js
     <div class="grafa">
@@ -283,7 +283,7 @@
 
 #### 2-1 操作css方法
 
-![image-20200623142800135](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200623142800135.png)
+![image-20200623142800135](img/image-20200623142800135.png)
 
 ```js
     <style>
@@ -314,7 +314,7 @@
 
 #### 2-2 设置类样式方法
 
-![image-20200623144422830](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200623144422830.png)
+![image-20200623144422830](img/image-20200623144422830.png)
 
 ```js
     <style>
@@ -362,7 +362,7 @@
 
 #### 2-3 类操作与className的区别
 
-![image-20200623152043333](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200623152043333.png)
+![image-20200623152043333](img/image-20200623152043333.png)
 
 
 
@@ -370,9 +370,9 @@
 
 #### 3-1 显示与隐藏效果
 
-![image-20200623152220780](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200623152220780.png)
+![image-20200623152220780](img/image-20200623152220780.png)
 
-![image-20200623153914854](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200623153914854.png)
+![image-20200623153914854](img/image-20200623153914854.png)
 
 **注意：speed中的"slow" "normal"是字符串类型的**
 
@@ -412,7 +412,7 @@
 
 #### 3-3 事件切换
 
-![image-20200623203306956](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200623203306956.png)
+![image-20200623203306956](img/image-20200623203306956.png)
 
 ```html
 新浪下拉菜单.html
@@ -488,7 +488,7 @@
 
 #### 3-4 动画队列及其停止排队方法
 
-![image-20200623204745938](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200623204745938.png)
+![image-20200623204745938](img/image-20200623204745938.png)
 
 ```js
 还是上面的例子：
@@ -551,7 +551,7 @@
 
 #### 3-6 自定义动画animate
 
-![image-20200624084355014](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200624084355014.png)
+![image-20200624084355014](img/image-20200624084355014.png)
 
 
 
@@ -597,7 +597,7 @@
 
 #### 4-1 设置或获取元素固有属性值 prop()
 
-![image-20200624111128593](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200624111128593.png)
+![image-20200624111128593](img/image-20200624111128593.png)
 
 ```js
     <a href="http://www.baidu.com" title="挺好">挺好</a>
@@ -619,7 +619,7 @@
 
 #### 4-2 设置或获取元素的自定义属性值 attr()
 
-![image-20200624111833621](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200624111833621.png)
+![image-20200624111833621](img/image-20200624111833621.png)
 
 ```html
     <div index="1" data-index="3">我是div</div>
@@ -637,7 +637,7 @@
 
 #### 4-3 数据缓存data()
 
-![image-20200624112558114](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200624112558114.png)
+![image-20200624112558114](img/image-20200624112558114.png)
 
 ```html
     <div index="1" data-index="3">我是div</div>
@@ -657,7 +657,7 @@
 
 ### 5 、Jquery内容文本值
 
-![image-20200624120558013](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200624120558013.png)
+![image-20200624120558013](img/image-20200624120558013.png)
 
 ![image-20200624120725470](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200624120725470.png)
 
@@ -694,13 +694,13 @@
 
 适合用于遍历dom对象
 
-![image-20200624172812972](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200624172812972.png)
+![image-20200624172812972](img/image-20200624172812972.png)
 
 ##### $.each()
 
 适合用于遍历数组、对象。
 
-![image-20200624174444004](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200624174444004.png)
+![image-20200624174444004](img/image-20200624174444004.png)
 
 
 
@@ -748,13 +748,13 @@
 
 #### 6-2 创建元素
 
-![image-20200624180726253](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200624180726253.png)
+![image-20200624180726253](img/image-20200624180726253.png)
 
 
 
 #### 6-3 添加元素
 
-![image-20200624181236081](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200624181236081.png)
+![image-20200624180726253](img/image-20200624180726253-1606377013694.png)
 
 ![image-20200624181608236](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200624181608236.png)
 
@@ -762,7 +762,7 @@
 
 #### 6-4 删除元素
 
-![image-20200624182243189](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200624182243189.png)
+![image-20200624182243189](img/image-20200624182243189.png)
 
 ```html
     <ul>
@@ -798,7 +798,7 @@ remove中不带参数!删除的是调用remove的元素。
 
 #### 7-1 jQuery尺寸
 
-![image-20200626190318716](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200626190318716.png)
+![image-20200626190318716](img/image-20200626190318716.png)
 
 
 
@@ -806,7 +806,7 @@ remove中不带参数!删除的是调用remove的元素。
 
 ##### 1、offset()
 
-![image-20200626191529901](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200626191529901.png)
+![image-20200626191529901](img/image-20200626191529901.png)
 
 ```html
     <style>
@@ -850,17 +850,17 @@ remove中不带参数!删除的是调用remove的元素。
 
 ##### 2、position()
 
-##### ![image-20200626192040893](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200626192040893.png)
+##### ![image-20200626192040893](img/image-20200626192040893.png)
 
 
 
 ##### 3、scrollTop()/scrollLeft()
 
-![image-20200626195156089](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200626195156089.png)
+![image-20200626195156089](img/image-20200626195156089.png)
 
 **案例：带动画的返回顶部**
 
-![image-20200626195711943](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200626195711943.png)
+![image-20200626195711943](img/image-20200626195711943.png)
 
 ```html
    <style>
@@ -920,11 +920,11 @@ remove中不带参数!删除的是调用remove的元素。
 
 ## 目标
 
-![image-20200624183716249](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200624183716249.png)
+![image-20200624183716249](img/image-20200624183716249.png)
 
 ### 1、JQuery事件注册
 
-![image-20200624184031512](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200624184031512.png)
+![image-20200624184031512](img/image-20200624184031512.png)
 
 
 
@@ -934,11 +934,11 @@ remove中不带参数!删除的是调用remove的元素。
 
 ##### 语法
 
-![image-20200624184702873](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200624184702873.png)
+![image-20200624184702873](img/image-20200624184702873.png)
 
 ##### 优势
 
-![image-20200624184721519](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200624184721519.png)
+![image-20200624184721519](img/image-20200624184721519.png)
 
 ```html
     <div></div>
@@ -965,7 +965,7 @@ remove中不带参数!删除的是调用remove的元素。
     </script>
 ```
 
-![image-20200624185448631](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200624185448631.png)
+![image-20200624185448631](img/image-20200624185448631.png)
 
 ```html
     <ul>
@@ -1012,7 +1012,7 @@ remove中不带参数!删除的是调用remove的元素。
 
 #### 2-2 事件处理off()解绑事件
 
-![image-20200625115213799](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200625115213799.png)
+![image-20200625115213799](img/image-20200625115213799.png)
 
 ```htm
     <p>我是屁</p>
@@ -1029,7 +1029,7 @@ remove中不带参数!删除的是调用remove的元素。
 
 ### 2-3 自动触发事件 trigger()
 
-![image-20200625120504396](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200625120504396.png)
+![image-20200625120504396](img/image-20200625120504396.png)
 
 ![image-20200625121027898](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200625121027898.png)
 
@@ -1039,7 +1039,7 @@ remove中不带参数!删除的是调用remove的元素。
 
 ### 3、JQuery事件对象
 
-![image-20200625121600758](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200625121600758.png)
+![image-20200625121600758](img/image-20200625121600758.png)
 
 其他方法参考webAPI中的方法。
 
@@ -1049,13 +1049,13 @@ remove中不带参数!删除的是调用remove的元素。
 
 ## 目标
 
-![image-20200625121714303](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200625121714303.png)
+![image-20200625121714303](img/image-20200625121714303.png)
 
 
 
 ### 1、JQuery 对象拷贝
 
-![image-20200625123104075](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200625123104075.png)
+![image-20200625123104075](img/image-20200625123104075.png)
 
 ```htm
     <script>
@@ -1089,13 +1089,13 @@ remove中不带参数!删除的是调用remove的元素。
     </script>
 ```
 
-![image-20200625124740751](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200625124740751.png)
+![image-20200625124740751](img/image-20200625124740751.png)
 
 
 
 ### 2、多库共存
 
-![image-20200625160549808](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200625160549808.png)
+![image-20200625160549808](img/image-20200625160549808.png)
 
 ```html
     <div></div>
@@ -1120,9 +1120,9 @@ remove中不带参数!删除的是调用remove的元素。
 
 ### 3、jQuery插件
 
-![image-20200625162849330](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200625162849330.png)
+![image-20200625162849330](img/image-20200625162849330.png)
 
-经典、常用的jQuery插件：瀑布流、图片懒加载、全屏滚动![image-20200625165856932](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200625165856932.png)
+经典、常用的jQuery插件：瀑布流、图片懒加载、全屏滚动![image-20200625165856932](img/image-20200625165856932.png)
 
 
 
@@ -1130,7 +1130,7 @@ remove中不带参数!删除的是调用remove的元素。
 
 ## 重要案例： todolist
 
-![image-20200626160049847](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200626160049847.png)
+![image-20200626160049847](img/image-20200626160049847.png)
 
 ```js
             var todolist = [
@@ -1157,16 +1157,16 @@ remove中不带参数!删除的是调用remove的元素。
 
 
 
-![image-20200626160247822](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200626160247822.png)
+![image-20200626160247822](img/image-20200626160247822.png)
 
 
 
-![image-20200626164119502](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200626164119502.png)
+![image-20200626164119502](img/image-20200626164119502.png)
 
-![image-20200626165040442](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200626165040442.png)
+![image-20200626165040442](img/image-20200626165040442.png)
 
 [splice()方法的用法](https://www.runoob.com/jsref/jsref-splice.html)
 
-![image-20200626183503666](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200626183503666.png)
+![image-20200626183503666](img/image-20200626183503666.png)
 
-![image-20200626184840715](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200626184840715.png)
+![image-20200626184840715](img/image-20200626184840715.png)
