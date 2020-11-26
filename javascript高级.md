@@ -8,17 +8,17 @@
 
 #### 1-1 面向过程编程POP
 
-![image-20200627144420279](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200627144420279.png)
+![](img/image-20200627144420279.png)
 
 #### 1-2 面向对象编程OOP
 
-![image-20200627144448585](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200627144448585.png)
+![](img/image-20200627144448585.png)
 
 
 
 #### 1-3 面向过程与面向对象的对比
 
-![image-20200627144856310](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200627144856310.png)
+![](img/image-20200627144448585-1606374331973.png)
 
 程序简单：面向过程
 
@@ -30,7 +30,7 @@
 
 #### 2-1 对象
 
-![image-20200627145746217](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200627145746217.png)
+![](img/image-20200627145746217.png)
 
 #### 2-2 类
 
@@ -40,13 +40,13 @@
 
 #### 2-3 创建类
 
-![image-20200627145935877](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200627145935877.png)
+![](img/image-20200627145935877.png)
 
 
 
 #### 2-4 类constructor构造函数
 
-![image-20200627151015080](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200627151015080.png)
+![](img/image-20200627151015080.png)
 
 ​    (1) 通过class 关键字创建类, 类名我们还是习惯性定义首字母大写
 
@@ -62,7 +62,7 @@
 
 #### 2-5 类添加方法
 
-![image-20200627151543797](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200627151543797.png)
+![](img/image-20200627151543797.png)
 
 ```html
  (1) 我们类里面所有的函数不需要写function 
@@ -75,13 +75,13 @@
 
 #### 3-1 继承 extends
 
-![image-20200627151734371](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200627151734371.png)
+![](img/image-20200627151734371.png)
 
 
 
 #### 3-2 super关键字
 
-![image-20200627154022064](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200627154022064.png)
+![](img/image-20200627154022064.png)
 
 ```js
    调用父类构造函数：
@@ -135,7 +135,7 @@
 
 **其他注意事项**
 
-![image-20200627160852363](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200627160852363.png)
+![](img/image-20200627160852363.png)
 
 ```js
   class Star {
@@ -177,13 +177,13 @@
 
 ## 目标
 
-![image-20200629100003157](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200629100003157.png)
+![](img/image-20200629100003157.png)
 
 ### 1、构造函数和原型
 
 #### 1-1 概述
 
-![image-20200629113655411](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200629113655411.png)
+![](img/image-20200629113655411.png)
 
 ```js
 <script>
@@ -217,13 +217,13 @@
 
 #### 1-2 构造函数
 
-![image-20200629114504731](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200629114504731.png)
+![](img/image-20200629114504731.png)
 
 ![image-20200629114952420](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200629114952420.png)
 
 ##### 静态成员和实例成员
 
-![image-20200629115429781](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200629115429781.png)
+![](img/image-20200629115429781.png)
 
 ```js
 <script>
@@ -254,13 +254,13 @@
 
 ### 1-3  构造函数的问题
 
-![image-20200629120247526](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200629120247526.png)
+![](img/image-20200629120247526.png)
 
 
 
 #### 1-4 构造函数原型 prototype
 
-![image-20200630104156351](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200630104156351.png)
+![](img/image-20200630104156351.png)
 
 ```js
     <script>
@@ -286,7 +286,7 @@
 
 #### 1-5 对象原型 __ proto __
 
-![image-20200630104931459](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200630104931459.png)
+![](img/image-20200630104931459.png)
 
 ```js
         function Star(uname, age) {
@@ -308,13 +308,11 @@
 
 
 
-![image-20200630105048717](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200630105048717.png)
-
-
+![](img/image-20200630105048717-1606374484444.png)
 
 #### 1-6 constructor构造函数
 
-![image-20200630111207136](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200630111207136.png)
+![](img/image-20200630111207136.png)
 
 ```js
     <script>
@@ -352,13 +350,13 @@
 
 #### 1-7 构造函数、实例、原型对象三者之间的关系
 
-![image-20200630111502233](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200630111502233.png)
+![](img/image-20200630111502233.png)
 
 
 
 #### 1-8 原型链
 
-![image-20200630112211059](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200630112211059.png)
+![](img/image-20200630112211059.png)
 
 ```js
     <script>
@@ -389,13 +387,13 @@
 
 查找时按照原型链查找
 
-![image-20200630113031757](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200630113031757.png)
+![image-20200630113031757](img/image-20200630113031757.png)
 
 
 
 #### 1-10 扩展内置对象
 
-![image-20200630114115388](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200630114115388.png)
+![image-20200630114115388](img/image-20200630114115388.png)
 
 ```html
     <script>
@@ -424,7 +422,7 @@ ES6之前并没有提供extends继承，可以通过**构造函数+原型对象*
 
 #### 2-1 call()
 
-![image-20200702100417766](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200702100417766.png)
+![image-20200702100417766](img/image-20200702100417766.png)
 
 ```js
     <script>
@@ -449,7 +447,7 @@ ES6之前并没有提供extends继承，可以通过**构造函数+原型对象*
 
 #### 2-2 借用构造函数继承父类型属性
 
-![image-20200702140258733](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200702140258733.png)
+![image-20200702140258733](img/image-20200702140258733.png)
 
 ```js
     <script>
@@ -495,11 +493,11 @@ ES6之前并没有提供extends继承，可以通过**构造函数+原型对象*
 
 #### 3-1 数组方法
 
-![image-20200704163620466](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200704163620466.png)
+![image-20200704163620466](img/image-20200704163620466.png)
 
 ##### 3-1-1 forEach()
 
-![image-20200704163650989](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200704163650989.png)
+![image-20200704163650989](img/image-20200704163650989.png)![image-20200704163620466](img/image-20200704163620466-1606374550655.png)
 
 ```js
     <script>
@@ -519,7 +517,7 @@ ES6之前并没有提供extends继承，可以通过**构造函数+原型对象*
 
 ##### 3-1-2 filter() 筛选数组 返回数组
 
-![image-20200704163759498](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200704163759498.png)
+![image-20200704163759498](img/image-20200704163759498.png)
 
 ```js
     <script>
@@ -538,7 +536,7 @@ ES6之前并没有提供extends继承，可以通过**构造函数+原型对象*
 
 ##### 3-1-3 some() 查找元素是否存在 返回布尔值
 
-![image-20200704164210231](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200704164210231.png)
+![image-20200704164210231](img/image-20200704164210231.png)
 
 
 
@@ -575,7 +573,7 @@ ES6之前并没有提供extends继承，可以通过**构造函数+原型对象*
 
 #### 3-2 字符串方法
 
-![image-20200704195403497](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200704195403497.png)
+![image-20200704195403497](img/image-20200704195403497.png)
 
 trim不会删除字符串之间的空格
 
@@ -594,7 +592,7 @@ trim不会删除字符串之间的空格
 
 ##### 1、Object.keys()
 
-![image-20200704200618966](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200704200618966.png)
+![image-20200704200618966](img/image-20200704200618966.png)
 
 ```js
     <script>
@@ -613,7 +611,7 @@ trim不会删除字符串之间的空格
 
 ##### 2、Object.difineProperty方法
 
-![image-20200704203435770](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200704203435770.png)
+![image-20200704203435770](img/image-20200704203435770.png)
 
 ```js
     <script>
@@ -703,13 +701,13 @@ trim不会删除字符串之间的空格
 
 ## 目标
 
-![image-20200705114013403](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200705114013403.png)
+![image-20200705114013403](img/image-20200705114013403.png)
 
 ### 1、函数的定义和调用
 
 #### 1-1 函数的定义方式
 
-![image-20200705115141760](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200705115141760.png)
+![image-20200705115141760](img/image-20200705115141760.png)
 
 ```js
     <script>
@@ -731,13 +729,13 @@ trim不会删除字符串之间的空格
     </script>
 ```
 
-![image-20200705115410104](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200705115410104.png)
+![image-20200705115410104](img/image-20200705115410104.png)
 
 
 
 #### 1-2 函数的调用方式
 
-![image-20200705120344721](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200705120344721.png)
+![image-20200705120344721](img/image-20200705120344721.png)
 
 
 
@@ -745,7 +743,7 @@ trim不会删除字符串之间的空格
 
 #### 2-1 函数内this的指向
 
-![image-20200707164454728](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200707164454728.png)
+![image-20200707164454728](img/image-20200707164454728.png)
 
 
 
@@ -753,17 +751,17 @@ trim不会删除字符串之间的空格
 
 ##### 1、call方法
 
-![image-20200707164627391](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200707164627391.png)
+![image-20200707164627391](img/image-20200707164627391.png)
 
 
 
 ##### 2、apply方法
 
-![image-20200707165253736](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200707165253736.png)
+![image-20200707165253736](img/image-20200707165253736.png)
 
 ##### 3、bind方法（重点）
 
-![image-20200711180819383](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200711180819383.png)
+![image-20200711180819383](img/image-20200711180819383.png)
 
 有的函数，我们不需要立即调用，但是又想改变这个函数内部的this指向，此时用bind。
 
@@ -775,7 +773,7 @@ trim不会删除字符串之间的空格
 
 #### 2-3 call apply bind总结
 
-![image-20200711183256190](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200711183256190.png)
+![image-20200711183256190](img/image-20200711183256190.png)
 
 
 
@@ -820,7 +818,7 @@ trim不会删除字符串之间的空格
 
 #### 3-2 严格模式的变化
 
-![image-20200711184508445](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200711184508445.png)
+![image-20200711184508445](img/image-20200711184508445.png)
 
 ![image-20200711184834345](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200711184834345.png)
 
@@ -828,13 +826,13 @@ trim不会删除字符串之间的空格
 
 ### 4、高阶函数
 
-![image-20200716094142970](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200716094142970.png)
+![image-20200711184508445](img/image-20200711184508445-1606374635836.png)
 
 
 
 ### 5、闭包
 
-![image-20200716095321319](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200716095321319.png)
+![image-20200716095321319](img/image-20200716095321319.png)
 
 ```js
 <!-- 闭包指有权访问另一个函数作用域中变量的函数 -->
@@ -893,11 +891,11 @@ trim不会删除字符串之间的空格
 
 #### 6-1 什么是递归？
 
-![image-20200716111140968](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200716111140968.png)
+![image-20200716111140968](img/image-20200716111140968.png)
 
 #### 6-2 浅拷贝和深拷贝
 
-![image-20200719171537270](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200719171537270.png)
+![image-20200719171537270](img/image-20200719171537270-1606374657794.png)
 
 ```js
 //浅拷贝：   
@@ -975,7 +973,7 @@ trim不会删除字符串之间的空格
 
 # 正则表达式
 
-![image-20200719173053129](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200719173053129.png)
+![image-20200719173053129](img/image-20200719173053129.png)
 
 ### 1、正则表达式概述
 
@@ -1003,7 +1001,7 @@ trim不会删除字符串之间的空格
 
 #### 2-1 创建正则表达式
 
-![image-20200719174725091](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200719174725091.png)
+![image-20200719174725091](img/image-20200719174725091.png)
 
 ```js
     <script>
@@ -1020,7 +1018,7 @@ trim不会删除字符串之间的空格
 
 #### 2-2 测试正则表达式 test
 
-![image-20200719174811398](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200719174811398.png)
+![image-20200719174811398](img/image-20200719174811398.png)
 
 ```js
         var rg = /123/;
@@ -1034,13 +1032,13 @@ trim不会删除字符串之间的空格
 
 #### 3-1 正则表达式的组成
 
-![image-20200719180205561](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200719180205561.png)
+![image-20200719180205561](img/image-20200719180205561.png)
 
 
 
 #### 3-2 边界符
 
-![image-20200722110422932](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200722110422932.png)
+![image-20200722110422932](img/image-20200722110422932.png)
 
 ```js
 <script>
@@ -1119,7 +1117,7 @@ trim不会删除字符串之间的空格
 
 #### 3-4 量词符
 
-![image-20200723104308562](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200723104308562.png)
+![image-20200723104308562](img/image-20200723104308562.png)
 
 ```量词符
     <script>
@@ -1183,7 +1181,7 @@ trim不会删除字符串之间的空格
 
 #### 3-5 括号总结
 
-![image-20200723112255063](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200723112255063.png)
+![image-20200723112255063](img/image-20200723112255063.png)
 
 ```js
     <script>
@@ -1210,7 +1208,7 @@ trim不会删除字符串之间的空格
 
 #### 3-6 预定义类
 
-![image-20200723114712754](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200723114712754.png)
+![image-20200723114712754](img/image-20200723114712754.png)
 
 
 
@@ -1218,7 +1216,7 @@ trim不会删除字符串之间的空格
 
 #### 4-1 replace替换
 
-![image-20200723123908215](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200723123908215.png)
+![image-20200723123908215](img/image-20200723123908215.png)
 
 
 
