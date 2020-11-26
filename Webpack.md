@@ -626,6 +626,6 @@ npm install --save-dev babel-loader@7 babel-core babel-preset-es2015
 
 3. 修改package.json的scripts脚本
 
-   ![](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20201125091335371.png)
+   ![](Webpack.assets/image-20201125091335371.png)
 
 4. 可以分别执行npm run build、npm run dev
