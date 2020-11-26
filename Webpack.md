@@ -626,6 +626,8 @@ npm install --save-dev babel-loader@7 babel-core babel-preset-es2015
 
 3. 修改package.json的scripts脚本
 
-   ![](Webpack.assets/image-20201125091335371.png)
+   ![image-20201125091335371](img/image-20201125091335371.png)
 
 4. 可以分别执行npm run build、npm run dev
+
+![image-20201126145232875](img/image-20201126145232875.png)
