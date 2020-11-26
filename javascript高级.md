@@ -2,7 +2,7 @@
 
 ## 目标
 
-![image-20200627090426517](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20200627090426517.png)
+![image-20200627090426517](../../note/img/image-20200627090426517-1606374150314.png)
 
 ### 1、面向对象编程介绍
 
