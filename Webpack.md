@@ -80,7 +80,7 @@ npx webpack ./src/main.js ./dist/bundle.js
 
   - npm run build优先使用局部webpack，局部没有才回去全局环境变量找。
 
-    ![image-20201112204746747](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20201112204746747.png)
+    ![image-20201112204746747](img/image-20201112204746747.png)
 
 
 
@@ -102,7 +102,7 @@ npx webpack ./src/main.js ./dist/bundle.js
 1. npm 安装对应的loader。参考：[webpack](https://www.webpackjs.com/loaders/)
 2. 在webpack.config.js中的module下配置
 
-![image-20201112211126951](C:\Users\Asus\AppData\Roaming\Typora\typora-user-images\image-20201112211126951.png)
+![image-20201112211126951](img/image-20201112211126951.png)
 
 
 
@@ -629,5 +629,3 @@ npm install --save-dev babel-loader@7 babel-core babel-preset-es2015
    ![image-20201125091335371](img/image-20201125091335371.png)
 
 4. 可以分别执行npm run build、npm run dev
-
-![image-20201126145232875](img/image-20201126145232875.png)
