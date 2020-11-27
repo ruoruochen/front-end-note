@@ -1,0 +1,2 @@
+2020-11-26 17:17:23 - Starting E:\soft\nodejs\node.exe  --harmony E:\Study\Front-end\笔记\note\node_modules\node-windows\lib\wrapper.js --file E:\Study\Front-end\笔记\note\app.js --scriptoptions= --log "nodejsUploadMarkdownToGithub wrapper" --grow 0.25 --wait 1 --maxrestarts 40 --abortonerror n --stopparentfirst undefined
+2020-11-26 17:17:23 - Started 16304

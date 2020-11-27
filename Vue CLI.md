@@ -22,5 +22,26 @@ package-lock.json 是生成的系统当前安装的库的具体来源和版本�
 
 config/index.js 26 useEslint改成fasle
 
+![image-20201126172611160](img/image-20201126172611160.png)
+
+runtimecompiler
+
+//templater->抽象语法书->render->virtual dom->UI
+
+runtimonly 性能更高 代码量更少
+
+//render->virtual dom->UI
 
 
+
+开发项目使用runtimeonly
+
+
+
+runtime-compiler和runtime-only的区别
+
+
+
+
+
+vue3使用npm run serve进行执行
