@@ -14,7 +14,7 @@ Vue-CLI是Vue.js的脚手架，用于自动生成vue.js+webpack的项目模板�
 
 
 
-### 3、Vue CLI的使用
+### 3、Vue CLI的安装并使用
 
 - 安装Vue脚手架
 
@@ -193,8 +193,6 @@ vue create 项目名
 
 **vue3使用npm run serve运行服务器**
 
-
-
 ```
 //main.js代码
 import Vue from 'vue'
@@ -225,3 +223,4 @@ module.exports = {
 }
 ```
 
+ 

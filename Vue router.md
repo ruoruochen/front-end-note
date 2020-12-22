@@ -167,9 +167,9 @@ routes: [
  ]
 ```
 
-**改变路径模式**
+##### 改变路径模式
 
-改变路径且不产生刷新有两种方法：
+改变路径且不产生刷新有两 种方法：
 
 - URL的hash
 - HTML5的history
@@ -271,13 +271,29 @@ export default {
 
    >在方法中需要this，在模板的mastache中直接$route.params.xxx
 
-### 2.4 路由懒加载
+### 2.4 嵌套路由
 
-#### 2.4.1 不使用懒加载
+需求：/home/news和/home/message访问不同的内容。
+
+即一个路径映射一个组件，访问这两个路径也会分别渲染两个组件。
+
+**实现嵌套路由的步骤**
+
+1. 定义组件。
+
+2. 在routes中配置映射关系。注意是在映射关系中增加属性children，其属性值同样为数组。
+
+   ![image-20201205160918815](img/image-20201205160918815.png)
+
+3. 在Home组件中使用router-link 和router-view
+
+### 2.5 路由懒加载
+
+#### 2.5.1 不使用懒加载
 
 不使用懒加载，最后打包js有3个文件：app.xxx.js、vendor.xxx.js、mainfest.xxx.js。当项目越来越大，app包会越来越大，一次性从服务器请求下来会花费一些时间，导致用户界面白屏，对用户不友好。
 
-#### 2.4.2 使用懒加载
+#### 2.5.2 使用懒加载
 
 懒加载方式：
 
@@ -340,22 +356,6 @@ export default {
 - vendor.xxx.js是第三方框架，例如vue/vue-router/axios等
 - mainfest.xxx.js是为了打包的代码做底层支持的，一般是webpack帮我们做一些事情
 - 其他数字.xxx.js为组件对应的js，每个懒加载的组件对应一个js。
-
-### 2.5 嵌套路由
-
-需求：/home/news和/home/message访问不同的内容。
-
-即一个路径映射一个组件，访问这两个路径也会分别渲染两个组件。
-
-**实现嵌套路由的步骤**
-
-1. 定义组件。
-
-2. 在routes中配置映射关系。注意是在映射关系中增加属性children，其属性值同样为数组。
-
-   ![image-20201205160918815](img/image-20201205160918815.png)
-
-3. 在Home组件中使用router-link 和router-view
 
 ### 2.6 路由传递参数
 
@@ -539,6 +539,16 @@ keep-alive有两个重要属性：
 
 ![image-20201207193211290](img/image-20201207193211290.png)
 
-**TabBar案例**
+### TabBar案例
 
 ![image-20201209092038366](img/image-20201209092038366.png)
+
+#### 路径别名
+
+cli3/cli4查找node_module下的@vue/cli-server/lib/config/base.js
+
+![image-20201209102249641](img/image-20201209102249641.png)
+
+- 通过.set('assets',api.resolve('@/assets'))添加路径别名
+
+- 在script中可以直接使用别名，但在Html中，如src中，需要在别名前加~

@@ -48,3 +48,27 @@ Stacktrace:   在 System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInte
    在 winsw.WrapperService.OnShutdown()
 2020-11-28 19:18:18 - Starting E:\soft\nodejs\node.exe  --harmony E:\Study\Front-end\笔记\note\node_modules\node-windows\lib\wrapper.js --file E:\Study\Front-end\笔记\note\app.js --scriptoptions= --log "nodejsUploadMarkdownToGithub wrapper" --grow 0.25 --wait 1 --maxrestarts 40 --abortonerror n --stopparentfirst undefined
 2020-11-28 19:18:18 - Started 8228
+2020-12-09 16:32:26 - Stopping nodejsuploadmarkdowntogithub.exe
+2020-12-09 16:32:26 - ProcessKill 8228
+2020-12-09 16:32:26 - Shutdown exception
+Message:系统正在关机。
+
+Stacktrace:   在 System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   在 System.Management.ManagementScope.InitializeGuts(Object o)
+   在 System.Management.ManagementScope.Initialize()
+   在 System.Management.ManagementObjectSearcher.Initialize()
+   在 System.Management.ManagementObjectSearcher.Get()
+   在 winsw.WrapperService.GetChildPids(Int32 pid)
+   在 winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   在 winsw.WrapperService.StopIt()
+   在 winsw.WrapperService.OnShutdown()
+2020-12-09 16:32:55 - Starting E:\soft\nodejs\node.exe  --harmony E:\Study\Front-end\笔记\note\node_modules\node-windows\lib\wrapper.js --file E:\Study\Front-end\笔记\note\app.js --scriptoptions= --log "nodejsUploadMarkdownToGithub wrapper" --grow 0.25 --wait 1 --maxrestarts 40 --abortonerror n --stopparentfirst undefined
+2020-12-09 16:32:55 - Started 8008
+2020-12-17 15:11:06 - Starting E:\soft\nodejs\node.exe  --harmony E:\Study\Front-end\笔记\note\node_modules\node-windows\lib\wrapper.js --file E:\Study\Front-end\笔记\note\app.js --scriptoptions= --log "nodejsUploadMarkdownToGithub wrapper" --grow 0.25 --wait 1 --maxrestarts 40 --abortonerror n --stopparentfirst undefined
+2020-12-17 15:11:06 - Started 8160
+2020-12-17 15:28:53 - Starting E:\soft\nodejs\node.exe  --harmony E:\Study\Front-end\笔记\note\node_modules\node-windows\lib\wrapper.js --file E:\Study\Front-end\笔记\note\app.js --scriptoptions= --log "nodejsUploadMarkdownToGithub wrapper" --grow 0.25 --wait 1 --maxrestarts 40 --abortonerror n --stopparentfirst undefined
+2020-12-17 15:28:53 - Started 8008
+2020-12-22 08:11:43 - Starting E:\soft\nodejs\node.exe  --harmony E:\Study\Front-end\笔记\note\node_modules\node-windows\lib\wrapper.js --file E:\Study\Front-end\笔记\note\app.js --scriptoptions= --log "nodejsUploadMarkdownToGithub wrapper" --grow 0.25 --wait 1 --maxrestarts 40 --abortonerror n --stopparentfirst undefined
+2020-12-22 08:11:43 - Started 7724
+2020-12-22 08:13:13 - Starting E:\soft\nodejs\node.exe  --harmony E:\Study\Front-end\笔记\note\node_modules\node-windows\lib\wrapper.js --file E:\Study\Front-end\笔记\note\app.js --scriptoptions= --log "nodejsUploadMarkdownToGithub wrapper" --grow 0.25 --wait 1 --maxrestarts 40 --abortonerror n --stopparentfirst undefined
+2020-12-22 08:13:13 - Started 7780
