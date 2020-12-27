@@ -95,3 +95,44 @@ Actions中处理异步操作。建议使用Mutations修改状态，不建议Vue 
 
 #### 2.3.2 Getters
 
+Getters类似于computed，当需要对数据进行筛选或处理时，使用Getters。
+
+在index.js中定义，在模板中调用：
+
+````
+{{$store.getters.agethanxStu(18)}}
+````
+
+**Getters参数传递**
+
+getters默认是不能传递参数的, 如果希望传递参数, 那么只能让getters本身返回另一个函数。
+
+需求1：返回年龄>x的学生名单
+
+需求2：根据id查询学生。
+
+>题解在：E:\Study\Front-end\vue\LearnVuejs05-Vuex\01-learnvuex 的Index.js和Hello.vue中
+
+#### 2.3.3 Mutation
+
+##### 2.3.3.1 Mutation更新
+
+- vuex的store状态更新的唯一方式：提交Mutation。
+- Mutation主要包括两部分：
+  - 字符串的事件类型**type**
+  - 回调函数，第一个参数为state **handler**
+- 通过Mutation更新：this.$store.commit('xxxmutation名字')
+
+##### 2.3.3.2 Mutation传递参数
+
+- mutation更新数据时携带的参数，成为mutation的载荷（Payload)
+
+  ```
+  this.$store.commit('increment',1);
+  ```
+
+  如果参数为多个，则包装成对象。
+
+##### 2.3.3.3 对象风格的提交方式
+
+使用包含type属性的对象，整个对象都作为载荷传给mutation函数，handler保持不变
