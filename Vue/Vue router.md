@@ -438,6 +438,10 @@ export default {
 
 好的方法：使用导航守卫进行监听并修改。
 
+
+
+需求：用户token被清除，不管在后台的哪个页面，自动跳转至登录页
+
 #### 2.7.1 什么是导航守卫？
 
 - 监听路由的进入和离开
@@ -469,8 +473,9 @@ export default {
 
    - 注意：使用的是to.matched[0].meta。因为嵌套路由拿不到外层meta，必须matched[0]
    - 必须有next()，不然不会跳到下一个路由。
-   - meta为元数据
-
+     - next('路径')强制跳转至某路径
+- meta为元数据
+   
    ```js
    //  src/router/index.js
    router.beforeEach((to, from, next) => {
