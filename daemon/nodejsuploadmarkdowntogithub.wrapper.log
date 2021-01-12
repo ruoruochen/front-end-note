@@ -76,3 +76,5 @@ Stacktrace:   在 System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInte
 2020-12-26 07:55:23 - Started 8172
 2020-12-26 20:26:08 - Starting E:\soft\nodejs\node.exe  --harmony E:\Study\Front-end\笔记\note\node_modules\node-windows\lib\wrapper.js --file E:\Study\Front-end\笔记\note\app.js --scriptoptions= --log "nodejsUploadMarkdownToGithub wrapper" --grow 0.25 --wait 1 --maxrestarts 40 --abortonerror n --stopparentfirst undefined
 2020-12-26 20:26:08 - Started 7820
+2021-01-10 23:31:56 - Starting E:\soft\nodejs\node.exe  --harmony E:\Study\Front-end\笔记\note\node_modules\node-windows\lib\wrapper.js --file E:\Study\Front-end\笔记\note\app.js --scriptoptions= --log "nodejsUploadMarkdownToGithub wrapper" --grow 0.25 --wait 1 --maxrestarts 40 --abortonerror n --stopparentfirst undefined
+2021-01-10 23:31:56 - Started 7472
