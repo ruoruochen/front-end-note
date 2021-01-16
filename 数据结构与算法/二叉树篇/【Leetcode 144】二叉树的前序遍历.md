@@ -33,9 +33,11 @@ var preorderTraversal = function(root , array = []){
 }
 ```
 
+![image-20210116174115082](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210116174115082.png)
+
 #### 非递归实现
 
-初始化一个栈和结果数组，当栈不为空或根节点不为空时，重复下面的步骤：
+初始化一个栈和结果数组，当栈不为空或目标节点不为空时，重复下面的步骤：
 
 1. 目标节点存入结果数组，左孩子入栈  → 直至左孩子为空
 2. 栈顶元素出栈，以栈顶元素为根节点
@@ -59,9 +61,11 @@ var preorderTraversal = function(root){
 }
 ```
 
+![image-20210116174628464](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210116174628464.png)
+
 # 更多资料
 
 整理不易，若对您有帮助，请给个「关注+点赞」，您的支持是我更新的动力 👇
 
-📖数据结构专栏：[剑指 Offer 题解 + JS 代码](https://blog.csdn.net/weixin_43786756/category_10716516.html) 
+📖数据结构博客专栏：[剑指 Offer 题解 + JS 代码](https://blog.csdn.net/weixin_43786756/category_10716516.html) 
 🐱Github笔记 ：[ruoruochen GitHub](https://github.com/ruoruochen/front-end-note)

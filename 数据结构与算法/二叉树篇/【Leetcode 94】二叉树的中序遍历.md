@@ -20,7 +20,7 @@
 
 ## 代码
 
-#### 递归实现
+#### 解法1：递归实现
 
 递归有两种写法，递归函数本身、在闭包中递归。
 
@@ -42,9 +42,9 @@ var inorderTraversal = function(root , array = []){
 
 时间复杂度：O(n)
 
+![image-20210116165332422](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210116165332422.png)
 
-
-#### 非递归实现(迭代方法)
+#### 解法2：非递归实现(迭代方法)
 
 初始化一个栈和结果数组，当栈不为空或目标节点不为空时，重复下面的步骤：
 
@@ -69,6 +69,8 @@ var inorderTraversal = function(root){
     return result;
 }
 ```
+
+![image-20210116170537739](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210116170537739.png)
 
 # 更多资料
 
