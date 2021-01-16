@@ -475,7 +475,7 @@ export default {
    - 必须有next()，不然不会跳到下一个路由。
      - next('路径')强制跳转至某路径
 - meta为元数据
-   
+  
    ```js
    //  src/router/index.js
    router.beforeEach((to, from, next) => {
@@ -552,7 +552,7 @@ keep-alive有两个重要属性：
 
 cli3/cli4查找node_module下的@vue/cli-server/lib/config/base.js
 
-![image-20201209102249641](img/image-20201209102249641.png)
+![image-20201209102249641](../img/image-20201209102249641.png)
 
 - 通过.set('assets',api.resolve('@/assets'))添加路径别名
 
