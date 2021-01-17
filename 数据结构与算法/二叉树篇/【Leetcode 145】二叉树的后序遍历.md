@@ -33,6 +33,8 @@ var postorderTraversal = function(root , array = []){
 }
 ```
 
+![image-20210117115414649](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210117115414649.png)
+
 #### 非递归算法
 
 初始化一个栈、结果数组和记录上次访问节点的变量，当栈不为空或根节点不为空时，重复下面的步骤：
@@ -65,6 +67,8 @@ var postorderTraversal = function (root) {
   return result;
 }
 ```
+
+![image-20210117120650062](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210117120650062.png)
 
 # 更多资料
 
