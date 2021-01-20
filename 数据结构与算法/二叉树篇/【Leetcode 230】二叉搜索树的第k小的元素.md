@@ -4,6 +4,18 @@
 
  给定一棵二叉搜索树，请找出其中的第k小的结点。 例如， （5，3，7，2，4，6，8） 中，按结点数值大小顺序第三小结点的值为4。
 
+**示例 1:**
+
+```
+输入: root = [3,1,4,null,2], k = 1
+   3
+  / \
+ 1   4
+  \
+   2
+输出: 1
+```
+
 ## 思路
 
 二叉搜索树的中序遍历即排序后的节点，本题实际考察二叉树的遍历。
@@ -33,6 +45,8 @@ function orderTraversal(root, arr) {
 }
 ```
 
+![image-20210119114752627](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210119114752627.png)
+
 #### 非递归实现
 
 ```js
@@ -58,6 +72,8 @@ function KthNode(root, k) {
 
 ```
 
+![image-20210119113401949](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210119113401949.png)
+
 #### 其实我们不需要获取所有的result存起来，只要获取第k个result就好了
 
 ```js
@@ -81,6 +97,15 @@ function kNode(node, k) {
   }
 }
 ```
+
+![image-20210119114324363](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210119114324363.png)
+
+
+
+| 写法     | 优点                      | 缺点                 |
+| -------- | ------------------------- | -------------------- |
+| 递归写法 | 简单明了                  | 性能太差，容易栈溢出 |
+| 循环写法 | 性能强 ，理论上不会栈溢出 | 不直观               |
 
 # 更多资料
 

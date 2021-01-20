@@ -5,18 +5,28 @@
 操作给定的二叉树，将其变换为源二叉树的镜像。
 
 ```
-        源二叉树 
-    	    8
-    	   /  \
-    	  6   10
-    	 / \  / \
-    	5  7 9 11
-    	镜像二叉树
-    	    8
-    	   /  \
-    	  10   6
-    	 / \  / \
-    	11 9 7  5
+例如输入：
+
+     4
+   /   \
+  2     7
+ / \   / \
+1   3 6   9
+镜像输出：
+
+     4
+   /   \
+  7     2
+ / \   / \
+9   6 3   1
+
+```
+
+**示例 1：**
+
+```
+输入：root = [4,2,7,1,3,6,9]
+输出：[4,7,2,9,6,3,1]
 ```
 
 ## 思路
@@ -26,16 +36,26 @@
 ### 代码
 
 ```js
-function Mirror(node) {
-  if (node) {
-    const tmp = node.left;
-    node.left = node.right;
-    node.right = temp;
-    Mirror(node.left);
-    Mirror(node.right);
+/* 思路,符合递归的要求，每个子树都要进行节点交换
+ 1.交换左右两个节点
+ 2.对两个节点再进行镜像处理
+ 
+ 递归的功能：交换节点（镜像处理）
+ 递归的出口：节点为空
+ 等价表达式：整棵树的镜像 = 交换左右节点 + 左子树镜像 + 右子树镜像*/
+var mirrorTree = function (root) {
+  if (root) {
+    const tmp = root.left;
+    root.left = root.right;
+    root.right = tmp;
+    mirrorTree(root.left);
+    mirrorTree(root.right);
   }
-}
+  return root;
+};
 ```
+
+![image-20210118235610794](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210118235610794.png)
 
 # 更多资料
 

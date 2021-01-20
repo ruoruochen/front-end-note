@@ -6,6 +6,15 @@
 
 > 平衡二叉树：每个子树的深度之差不超过1
 
+**示例 1：**
+
+![img](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/balance_1.jpg)
+
+```
+输入：root = [3,9,20,null,null,15,7]
+输出：true
+```
+
 ## 思路
 
 - 后续遍历二叉树，在遍历二叉树每个节点前都会遍历其左右子树
@@ -29,9 +38,8 @@ function balanced(node) {
   if (!node) {
     return 0;
   }
-  //判断左子树
+  //计算左右子树树深
   const left = balanced(node.left);
-  //判断右子树
   const right = balanced(node.right);
   //判断是否平衡
   if (left === -1 || right === -1 || Math.abs(left - right) > 1) {
@@ -41,6 +49,8 @@ function balanced(node) {
   return Math.max(left, right) + 1;
 }
 ```
+
+![image-20210119152531319](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210119152531319.png)
 
 # 更多资料
 

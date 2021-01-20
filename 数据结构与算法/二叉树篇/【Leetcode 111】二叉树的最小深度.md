@@ -1,4 +1,4 @@
-### 4.2 二叉树的最小深度
+# 二叉树的最小深度
 
 #### 题目
 
@@ -33,19 +33,31 @@
 #### 代码
 
 ```js
+/* 思路 递归
+1.功能:求最小深度
+2.出口 root空 return 0
+3.等价表达式
+左子树空 return 右子树最小深度+1
+右子树空 return 左子树最小深度+1
+左右子树均不空 return 左子树、右子树最小深度的最小值+1 */
 var minDepth = function (root) {
   if (!root) {
     return 0;
   }
+
   if (!root.left) {
     return minDepth(root.right) + 1;
   }
+
   if (!root.right) {
     return minDepth(root.left) + 1;
   }
+
   return Math.min(minDepth(root.left), minDepth(root.right)) + 1;
-}
+};
 ```
+
+![image-20210119150654319](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210119150654319.png)
 
 # 更多资料
 

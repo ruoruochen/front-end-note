@@ -4,6 +4,23 @@
 
 请实现一个函数，用来判断一颗二叉树是不是对称的。注意，如果一个二叉树同此二叉树的镜像是同样的，定义其为对称的。
 
+例如，二叉树 [1,2,2,3,4,4,3] 是对称的。
+
+```
+    1
+   / \
+  2   2
+ / \ / \
+3  4 4  3
+```
+
+**示例 1：**
+
+```
+输入：root = [1,2,2,3,4,4,3]
+输出：true
+```
+
 ## 思路
 
 二叉树的右子树是二叉树左子树的镜像二叉树。
@@ -43,6 +60,8 @@ function isSymmetricalTree(node1, node2) {
     return isSymmetricalTree(node1.left, node2.right) && isSymmetricalTree(node1.right, node2.left);
 }
 ```
+
+![image-20210118234535675](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210118234535675.png)
 
 # 更多资料
 
