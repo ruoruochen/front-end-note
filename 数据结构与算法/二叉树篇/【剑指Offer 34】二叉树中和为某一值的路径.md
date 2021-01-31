@@ -45,34 +45,38 @@
 // 1.函数功能：计算二叉树中某路径的和 === 给定值
 // 2.递归条件：到达叶子结点：if sum === 给定值，存入
 // 3.等价表达式，减小规模 在每个结点有两条路走，走左节点，走右节点。
-function FindPath(root, expectNumber) {
-    //存储路径结果
-    const result = [];
-    if (root) {
-        FindPathCore(root, expectNumber, [], 0, result);
-    }
-    return result;
+var pathSum = function (root, sum) {
+  const result = [];
+  if (root) {
+    getSumPath(root, sum, [], 0, result);
+  }
+  return result;
+};
+
+var getSumPath = function (root, resultsum, stack, mysum, result) {
+  stack.push(root.val);
+  mysum += root.val;
+
+  if (!root.left && !root.right && resultsum === mysum) {
+    result.push(stack.slice(0));
+  }
+
+  if (root.left) {
+    getSumPath(root.left, resultsum, stack, mysum, result);
+  }
+
+  if (root.right) {
+    getSumPath(root.right, resultsum, stack, mysum, result)
+  }
+
+  //两个方向都走完了，无路可走，回溯。
+  //此处pop是为了从stack中删除该节点，不要占位置。
+  stack.pop();
 }
 
-function FindPathCore(node, expectNumber, stack, sum, result) {
-    //记录下当前走的节点
-    stack.push(node.val);
-    sum += node.val;
-    if (!node.left && !node.right && sum === expectNumber) {
-        result.push(stack.slice(0));
-    }
-    //走左右两个方向
-    if (node.left) {
-        FindPathCore(node.left, expectNumber, stack, sum, result);
-    }
-    if (node.right) {
-        FindPathCore(node.right, expectNumber, stack, sum, result);
-    }
-    //两个方向都走完了，无路可走，回溯。
-  	//此处pop是为了从stack中删除该节点，不要占位置。
-    stack.pop();
-}
 ```
+
+![image-20210131195947280](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210131195947280.png)
 
 # 更多资料
 
