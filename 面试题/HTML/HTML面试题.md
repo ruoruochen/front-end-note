@@ -273,7 +273,8 @@ FOUC：主要指的是样式闪烁的问题，由于浏览器渲染机制（比�
 
 #### 如何优化关键渲染路径？（浏览器渲染过程）
 
-关键渲染路径优化的目的在于缩短首次渲染页面的时间。为尽快完成首次渲染，我们需要最大限度减小以下三种可变因素：
+# 关键渲染路径优化的目的在于缩短首次渲染页面的时间。为尽快完成首次渲染，我们需要最大限度减小以下三种可变因素：
+
  （1）关键资源的数量。
  （2）关键路径长度。
  （3）关键字节的数量。
@@ -380,3 +381,153 @@ WebSocket 使得客户端和服务器之间的数据交换变得更加简单，�
      
      使用[if lt IE 9]……[endif]判断 IE 的版本，限定只有 IE9 以下浏览器版本需要执行的语句。
 
+**C**
+
+#### HTML5 的离线储存怎么使用，工作原理能不能解释一下？
+
+离线储存就是在用户没有网络时，可以正常访问站点或应用，在用户有网络时，更新用户机器上的缓存文件。
+
+HTML5 的离线存储的原理：是基于一个新建的 .appcache 文件的缓存机制，通过这个文件上的解析清单离线存储资源，这些资源就会像 cookie 一样被存储了下来。之后当网络在处于离线状态下时，浏览器会通过被离线存储的数据进行页面展示。
+
+如何使用的大致步骤：
+
+（1）创建一个和 html 同名的 manifest 文件，例如cache.manifest，然后在页面头部加入一个 manifest 的属性，属性值为刚刚创建的文件。
+
+     <html lang="en" manifest="cache.manifest">
+
+（2）在如下 cache.manifest 文件的编写离线存储的资源。
+
+```
+   	CACHE MANIFEST
+   	#v0.11
+   	
+   	CACHE:
+   	
+   	js/app.js
+   	css/style.css
+   	
+   	NETWORK:
+   	resourse/logo.png
+   	
+   	FALLBACK:
+   	/ /offline.html
+```
+
+离线存储的manifest一般由三个部分组成：
+
+CACHE: 表示需要离线存储的资源列表，由于包含 manifest 文件的页面将被自动离线存储，所以不需要把页面自身也列出来。
+
+NETWORK: 表示在它下面列出来的资源只有在在线的情况下才能访问，他们不会被离线存储，所以在离线情况下无法使用这些资源。不过，如果在 CACHE 和NETWORK 中有一个相同的资源，那么这个资源还是会被离线存储，也就是说 CACHE 的优先级更高。
+
+FALLBACK: 指定了一个后备页面，当资源无法访问时，浏览器会使用该页面。比如上面这个文件表示的就是如果访问根目录下任何一个资源失败了，那么就去访问 offline.html 。
+
+（3）在离线状态时，操作 window.applicationCache 进行离线缓存的操作。
+
+
+ 如何更新缓存：
+
+（1）更新 manifest 文件
+（2）通过 javascript 操作
+（3）清除浏览器缓存
+
+ 注意事项：
+
+（1）如果 manifest 文件，或者内部列举的某一个文件不能正常下载，整个更新过程都将失败，浏览器继续全部使用老的缓存。
+（2）引用 manifest 的 html 必须与 manifest 文件同源，在同一个域下。
+（3）FALLBACK 中的资源必须和 manifest 文件同源。
+（4）当 manifest 文件发生改变时，资源请求本身也会触发更新。
+
+ 详细的使用可以参考： [《HTML5 离线缓存-manifest 简介》](https://yanhaijing.com/html/2014/12/28/html5-manifest/) [《有趣的 HTML5：离线存储》](https://segmentfault.com/a/1190000000732617)
+
+#### 浏览器是怎么对 HTML5 的离线储存资源进行管理和加载的呢？
+
+在线的情况下，浏览器发现 html 头部有 manifest 属性，它会请求 manifest 文件，如果是第一次访问 ，那么浏览器就会根据 manifest 文件的内容下载相应的资源并且进行离线存储。如果已经访问过并且资源已经离线存储了，那么浏览器就会使用离线的资源加载页面，然后浏览器会对比新的 manifest 文件与旧的 manifest 文件，如果文件没有发生改变，就不做任何操作，如果文件改了，那么就会重新下载文件中的资源并进行离线存储。
+离线的情况下，浏览器就直接使用离线存储的资源。
+
+#### 常见的浏览器端的存储技术有哪些？
+
+浏览器常见的存储技术有 cookie、localStorage 和 sessionStorage。
+还有两种存储技术用于大规模数据存储，webSQL（已被废除）和 indexDB。
+IE 支持 userData 存储数据，但是基本很少使用到，除非有很强的浏览器兼容需求。
+
+#### 请描述一下 cookies，sessionStorage 和 localStorage 的区别
+
+浏览器端常用的存储技术是 cookie 、localStorage 和 sessionStorage。
+
+cookie 其实最开始是服务器端用于记录用户状态的一种方式，由服务器设置，在客户端存储，然后每次发起同源请求时，发送给服务器端。cookie 最多能存储 4 k 数据，它的生存时间由 expires 属性指定，并且 cookie 只能被同源的页面访问共享。
+
+localStorage 也是 html5 提供的一种浏览器本地存储的方法，它一般也能够存储 5M 或者更大的数据。除非手动删除它，否则它不会失效，并且 localStorage 也只能被同源页面所访问共享。
+
+sessionStorage 是 html5 提供的一种浏览器本地存储的方法。它一般能够存储 5M 或者更大的数据，它和localStorage 不同的是，它在当前窗口关闭后就失效了，并且 sessionStorage 只能被同一个窗口的同源页面所访问共享。
+
+上面几种方式都是存储少量数据的时候的存储方式，当我们需要在本地存储大量数据的时候，我们可以使用浏览器提供的一种本地的数据库的 indexDB 。它不是关系型数据库，它内部采用对象仓库的形式存储数据，它更接近 NoSQL 数据库。
+
+详细的资料可以参考： [《请描述一下 cookies，sessionStorage 和 localStorage 的区别？》](https://segmentfault.com/a/1190000017423117) [《浏览器数据库 IndexedDB 入门教程》](http://www.ruanyifeng.com/blog/2018/07/indexeddb.html)
+
+#### iframe 有那些优缺点？
+
+iframe 元素会创建包含另外一个文档的内联框架。
+
+**优点:**
+1.程序调入静态页面比较方便;
+2.页面和程序分离;
+
+**缺点：**
+
+主要缺点有：
+（1） iframe 会阻塞主页面的 onload 事件。window 的 onload 事件需要在所有 iframe 加载完毕后（包含里面的元素）才会触发。在 Safari 和 Chrome 里，通过 JavaScript 动态设置 iframe 的 src 可以避免这种阻塞情况。
+（2） 搜索引擎的检索程序无法解读这种页面，不利于网页的 SEO 。
+（3） iframe 和主页面共享连接池，而浏览器对相同域的连接有限制，所以会影响页面的并行加载。
+（4） 浏览器的后退按钮失效。
+（5） 小型的移动设备无法完全显示框架。
+
+详细的资料可以参考： [《使用 iframe 的优缺点》](https://blog.csdn.net/yintianqin/article/details/72625785) [《iframe 简单探索以及 iframe 跨域处理》](https://segmentfault.com/a/1190000009891683)
+
+#### Label 的作用是什么？是怎么用的
+
+ label 标签是用来定义表单控制间的关系，当用户选择该标签时，浏览器会自动将焦点转到和标签相关的表单控件上。
+
+例如创建一个Input标签，设置其name属性。再创建一个label标签，设置其for属性，其属性值为上面创建的name属性值。这样就实现了选择label，焦点跳转至Input的效果。
+
+```html
+ <label for="Name">Number:</label>
+ <input type="text" name="Name" id="Name"/>
+```
+
+#### HTML5 的 form 的自动完成功能是什么？
+
+autocomplete 属性规定输入字段是否启用自动完成功能。默认为启用，设置为 autocomplete=off 可以关闭该功能。
+
+自动完成功能允许浏览器预测对字段的输入。当用户在字段开始输入时，浏览器基于之前输入过的值，显示出在字段中填写的选项。
+
+autocomplete 属性适用于 <form>，以及一些的 <input> 类型：text, search, url, telephone, email, password, datepickers, range 以及 color。
+
+#### 如何实现浏览器内多个标签页之间的通信?
+
+实现多个标签页之间的通信，本质上都是通过中介者模式来实现的。因为标签页之间没有办法直接通信，因此我们可以找一个中介者，让标签页和中介者进行通信，然后让这个中介者来进行消息的转发。
+
+第一种实现的方式是使用 websocket 协议，因为 websocket 协议可以实现服务器推送，所以服务器就可以用来当做这个中介者。标签页通过向服务器发送数据，然后由服务器向其他标签页推送转发。
+
+第二种是使用 ShareWorker 的方式，shareWorker 会在页面存在的生命周期内创建一个唯一的线程，并且开启多个页面也只会使用同一个线程。这个时候共享线程就可以充当中介者的角色。标签页间共享一个线程，然后通过这个共享的线程来实现数据的交换。
+
+第三种方式是使用 localStorage 的方式，我们可以在一个标签页中对 localStorage 的变化事件进行监听，然后当另一个标签页修改数据的时候，我们就可以通过这个监听事件来获取到数据。这个时候 localStorage 对象就是充当的中介者的角色。
+
+相关资料：
+
+```
+ （1）使用 WebSocket，通信的标签页连接同一个服务器，发送消息到服务器后，服务器推送消息给所有连接的客户端。
+
+ （2）使用 SharedWorker （只在 chrome 浏览器实现了），两个页面共享同一个线程，通过向线程发送数据和接收数据来实现标
+     签页之间的双向通行。
+
+ （3）可以调用 localStorage、cookies 等本地存储方式，localStorge 另一个浏览上下文里被添加、修改或删除时，它都会触
+     发一个 storage 事件，我们通过监听 storage 事件，控制它的值来进行页面信息通信；
+
+ （4）如果我们能够获得对应标签页的引用，通过 postMessage 方法也是可以实现多个标签页通信的。
+```
+
+详细的资料可以参考：
+
+[《WebSocket 教程》](http://www.ruanyifeng.com/blog/2017/05/websocket.html) [《WebSocket 协议：5分钟从入门到精通》](https://www.cnblogs.com/chyingp/p/websocket-deep-in.html) [《WebSocket 学习（一）——基于 socket.io 实现简单多人聊天室》](https://segmentfault.com/a/1190000011538416) [《使用 Web Storage API》](https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API) [《JavaScript 的多线程，Worker 和 SharedWorker》](https://www.zhuwenlong.com/blog/article/590ea64fe55f0f385f9a12e5) [《实现多个标签页之间通信的几种方法》](https://juejin.im/post/5acdba01f265da23826e5633#heading-1)
+
+**D**
