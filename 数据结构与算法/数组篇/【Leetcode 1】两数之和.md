@@ -32,23 +32,31 @@
 ## 代码
 
 ```js
+/* 思路：
+使用一个map将遍历过的数字存起来，val为键，下标为值
+对于每一次遍历，在map中查找是否有target-nums[i]的值
+如果有，则条件成立，返回坐标。
+如果没有，将该数字存入map中 */
+
 var twoSum = function (nums, target) {
-    const map = {};
-    if (Array.isArray(nums)) {
-        for (let i = 0; i < nums.length; i++) {
-            //存在与nums[i]和为target的数。
-            if (map[target - nums[i]] != undefined) {
-                //返回两个的下标
-                return [map[target - nums[i]], i];
-            } else {
-                //将该数和下标存入map
-                map[nums[i]] = i;
-            }
-        }
+  const map = new Map();
+  if (Array.isArray(nums)) {
+    for (let i = 0; i < nums.length; i++) {
+      if (map.has(target - nums[i])) {
+        return [map.get(target - nums[i]), i];
+      } else {
+        // 存入该数
+        map.set(nums[i], i);
+      }
     }
-    return [];
+  }
+  return [];
 };
+
+
 ```
+
+![image-20210202183428003](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210202183428003.png)
 
 # 更多资料
 
