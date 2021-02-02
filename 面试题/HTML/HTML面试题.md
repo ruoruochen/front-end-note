@@ -538,3 +538,25 @@ autocomplete 属性适用于 <form>，以及一些的 <input> 类型：text, sea
 [《WebSocket 教程》](http://www.ruanyifeng.com/blog/2017/05/websocket.html) [《WebSocket 协议：5分钟从入门到精通》](https://www.cnblogs.com/chyingp/p/websocket-deep-in.html) [《WebSocket 学习（一）——基于 socket.io 实现简单多人聊天室》](https://segmentfault.com/a/1190000011538416) [《使用 Web Storage API》](https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API) [《JavaScript 的多线程，Worker 和 SharedWorker》](https://www.zhuwenlong.com/blog/article/590ea64fe55f0f385f9a12e5) [《实现多个标签页之间通信的几种方法》](https://juejin.im/post/5acdba01f265da23826e5633#heading-1)
 
 **D**
+
+#### 页面可见性（Page Visibility API） 可以有哪些用途？如何使用？
+
+这个新的 API 的意义在于，通过监听网页的可见性，可以预判网页的卸载，还可以用来节省资源，减缓电能的消耗。比如，一旦用户不看网页，下面这些网页行为都是可以暂停的。
+（1）对服务器的轮询
+（2）网页动画
+（3）正在播放的音频或视频
+
+在说这个API的具体使用方法前，先说一下他的属性和事件。
+
+首先这个 API 主要在`document`对象上，新增了一个`document.visibilityState`属性。该属性返回一个字符串，表示页面当前的可见性状态，共有三个可能的值：
+
+- hidden: 页面彻底不可见
+- visible: 页面至少部分可见
+- prerender :页面即将或正在渲染，处于不可见状态。
+
+只要`document.visibilityState`属性发生变化，就会触发`visibilitychange`事件。因此，可以通过监听这个事件（通过`document.addEventListener()`方法或`document.onvisibilitychange`属性），跟踪页面可见性的变化。
+
+当页面可见性状态为hidden的时候，进行暂停视频播放等等操作。能够有效的节省资源，降低电耗。
+
+详细资料可以参考： [《Page Visibility API 教程》](http://www.ruanyifeng.com/blog/2018/10/page_visibility_api.html)
+
