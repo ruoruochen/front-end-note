@@ -184,7 +184,9 @@ div是网站布局的盒子标签。div出现之前使用table布局，因为tab
 
 #### img标签上的title和alt属性的区别是什么？
 
-title属性是为元素提供标题信息，即当光标悬浮在标签上后显示的信息；alt属性是图片的替换文本，即当图片不能正常显示时（如加载失败），用文字代替。 
+title属性是为元素提供标题信息，即当光标悬浮在标签上后显示的信息；
+
+alt属性是图片的替换文本，即当图片不能正常显示时（如加载失败），用文字代替。 除了纯装饰图片外都必须设置有意义的alt值，搜索引擎会重点分析。
 
 #### 简述src和href的区别 
 
@@ -546,7 +548,7 @@ autocomplete 属性适用于 <form>，以及一些的 <input> 类型：text, sea
 （2）网页动画
 （3）正在播放的音频或视频
 
-在说这个API的具体使用方法前，先说一下他的属性和事件。
+这个API的具体使用方法
 
 首先这个 API 主要在`document`对象上，新增了一个`document.visibilityState`属性。该属性返回一个字符串，表示页面当前的可见性状态，共有三个可能的值：
 
@@ -559,4 +561,140 @@ autocomplete 属性适用于 <form>，以及一些的 <input> 类型：text, sea
 当页面可见性状态为hidden的时候，进行暂停视频播放等等操作。能够有效的节省资源，降低电耗。
 
 详细资料可以参考： [《Page Visibility API 教程》](http://www.ruanyifeng.com/blog/2018/10/page_visibility_api.html)
+
+#### 如何在页面上实现一个圆形的可点击区域？
+
+（1）css 实现，使用 border-radius ，设置border-radius 为50%，即可将正方形变成圆形，实现一个圆形的点击区域。
+（2） html 实现，使用 <area> 来给 <img> 图像标记热点区域的方式。<map> 标签用来定义一个客户端图像映射，<area> 标签用来定义图像映射中的区域，area 元素永远嵌套在 map 元素内部，我们可以将 area 区域设置为圆形，从而实现可点击的圆形区域。 
+
+```html
+<img src="shilaimu.jpg" alt="史莱姆照片" title="史莱姆" width="299" height="299" border="0" usemap="#Map" />
+<map name="Map" id="Map">
+    <area shape="circle" coords="150,150,150" href="www.hao123.com" target="_blank" alt="">
+</map>
+```
+
+（3） js 实现，我们将使用判断一个点在不在圆内的简单算法，通过监听文档的点击事件，获取每次点击时鼠标的位置，判断该位置是否在我们规定的圆形区域内。
+
+详细资料可以参考： [《如何在页面上实现一个圆形的可点击区域？》](https://maizi93.github.io/2017/08/29/如何在页面上实现一个圆形的可点击区域？/) [《HTML 标签及在实际开发中的应用》](https://www.zhangxinxu.com/wordpress/2017/05/html-area-map/)
+
+#### 实现不使用 border 画出 1 px 高的线，在不同浏览器的标准模式与兼容模式下都能保持一致的效果。
+
+使用div绘制线，设置高为1px，overflow:hidden。
+
+```html
+<div style="height:1px;overflow:hidden;background:red"></div>
+```
+
+#### title 与 h1 的区别？
+
+title标签：写在网页的head部分，是展示给搜索引擎看的，搜索引擎的搜索结果中展示的标题就是这个title标签里的内容。
+
+h1标签：写在文章正文的标题部分，是展示给用户看的。
+
+#### Canvas 和 SVG 有什么区别？
+
+Canvas 是一种通过 JavaScript 来绘制 2D 图形的方法。Canvas 是逐像素来进行渲染的，因此当我们对 Canvas 进行缩放时，会出现锯齿或者失真的情况。
+
+SVG 是一种使用 XML 描述 2D 图形的语言。SVG 基于 XML，这意味着 SVG DOM 中的每个元素都是可用的。我们可以为某个元素附加 JavaScript 事件监听函数。并且 SVG 保存的是图形的绘制方法，因此当 SVG 图形缩放时并不会失真。
+
+#### 网页验证码是干嘛的，是为了解决什么安全问题？
+
+（1）网页验证码是区分用户是计算机还是人的公共全自动程序。它可以防止恶意破解密码、批量注册、刷票、论坛灌水等行为。
+（2）有效防止黑客对某一个特定注册用户用特定程序暴力破解方式进行不断的登陆尝试的行为。能够有效地保证用户账号的安全性。
+
+#### 渐进增强和优雅降级的定义
+
+渐进增强：针对低版本浏览器进行构建页面，保证最基本的功能，然后再针对高级浏览器进行效果、交互等改进和追加功能达到更好的用户体验。
+
+优雅降级：一开始就根据高版本浏览器构建完整的功能，然后再针对低版本浏览器进行兼容。
+
+#### attribute 和 property 的区别是什么？
+
+attribute 是 dom 元素在文档中作为 html 标签拥有的属性
+property 是 dom 元素在 js 中作为对象拥有的属性。 
+
+对于 html 的标准属性来说，attribute 和 property 是同步的，是会自动更新的(input的value值除外)，但是对于自定义的属性来说，他们是不同步的。
+
+```html
+  <input type='text' name="testName" class="testClass" cc='111' id='testInpt' value='123' />
+  <script>
+    var input = document.querySelector(".testClass");
+    input.addEventListener("blur", function () {
+      console.log("property 的值");
+      console.log(input.value);
+      console.log("attribute 的值");
+      console.log(input.getAttribute("value"));
+    })
+  </script>
+```
+
+![image-20210202123156401](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210202123156401.png)
+
+#### 对 web标准中的可用性、可访问性和可维护性的理解
+
+web标准**主要强调**的是一个网站的**结构,样式,行为**相分离，**（优点）**从而达到结构清晰，易于阅读，易于维护的目的。
+
+可用性（Usability）：产品是否容易上手，用户能否有效率完成任务，以及这过程中用户的主观感受可好，是从用户的角度来看产品的质量。可用性好意味着产品质量高，是企业的核心竞争力
+可访问性（Accessibility）：Web 内容对于残障用户的可阅读和可理解性
+可维护性（Maintainability）：一般包含两个层次，一是当系统出现问题时，快速定位并解决问题的成本，成本低则可维护性好。二是代码是否容易被人理解，是否容易修改和增强功能。
+
+#### IE 各版本和 Chrome 可以并行下载多少个资源？
+
+```
+ （1）  IE6 2 个并发
+ （2）  iE7 升级之后的 6 个并发，之后版本也是 6 个
+ （3）  Firefox，chrome 也是6个
+```
+
+#### Flash、Ajax 各自的优缺点，在使用中如何取舍？
+
+ Flash：
+ （1） Flash 适合处理多媒体、矢量图形、访问机器
+ （2） 对 CSS、处理文本上不足，不容易被搜索
+Ajax：
+ （1） Ajax 对 CSS、文本支持很好，支持搜索
+ （2） 多媒体、矢量图形、机器访问不足
+共同点：
+ （1） 与服务器的无刷新传递消息
+ （2） 可以检测用户离线和在线状态
+ （3） 操作 DOM
+
+在使用中如何取舍，主要看使用场景。如果需要处理多媒体、矢量图形、访问机器的任务比较多，那就使用Flash，如果对CSS、文本支持要求比较多，那就用Ajax。
+
+
+
+#### 怎么重构页面？
+
+重构页面的主要方向是代码优化，性能提升。CSS优化、更好的语义化文档、浏览器兼容、页面性能、SEO优化。
+
+页面重构需要注意以下几点：
+
+1.前端代码规范
+
+- 合理的网页结构布局
+- 删除无用代码，精简代码
+
+- 语义化html
+
+2.提高页面加载性能
+
+- 规范css和js的引用顺序，提高首屏渲染速度。
+- javascript按需加载
+- 图片懒加载
+- 使用CDN上的文件等等。
+
+#### 说一说浏览器架构
+
+![img](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/16923a1943fdd344)当代现有的浏览器主要由用户界面（**The user interface**）、浏览器引擎（**The browser engine**）、呈现引擎（**The rendering engine**）、网络（**Networking**）、JavasScript 解释器（**JavaScript interpreter**）、用户界面后端（**UI backend**）、数据存储组成（**Data storage**）。
+
+而这些组件的功能如下：
+
+1. **用户界面** - 包括地址栏、前进/后退按钮、书签菜单等。除了浏览器主窗口显示的您请求的页面外，其他显示的各个部分都属于用户界面。
+2. **浏览器引擎** - 在用户界面和渲染引擎之间传送指令。
+3. **渲染引擎** - 负责显示请求的内容。如果请求的内容是 HTML，它就负责解析 HTML 和 CSS 内容，并将解析后的内容显示在屏幕上。
+4. **网络** - 用于网络调用，比如 HTTP 请求。其接口与平台无关，并为所有平台提供底层实现。
+5. **用户界面后端** - 用于绘制基本的窗口小部件，比如组合框和窗口。其公开了与平台无关的通用接口，而在底层使用操作系统的用户界面方法。
+6. **JavaScript 解释器**。用于解析和执行 JavaScript 代码。
+7. **数据存储**。这是持久层。浏览器需要在硬盘上保存各种数据，例如 Cookie。新的 HTML 规范 (HTML5) 定义了“网络数据库”，这是一个完整（但是轻便）的浏览器内数据库。
 
