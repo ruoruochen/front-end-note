@@ -485,7 +485,7 @@ sessionStorage 是 html5 提供的一种浏览器本地存储的方法。它一�
 
 #### iframe 有那些优缺点？
 
-iframe 元素会创建包含另外一个文档的内联框架。
+iframe 元素会创建包含另外一个文档的**内联框架**。
 
 **优点:**
 1.程序调入静态页面比较方便;
@@ -494,8 +494,8 @@ iframe 元素会创建包含另外一个文档的内联框架。
 **缺点：**
 
 主要缺点有：
-（1） iframe 会阻塞主页面的 onload 事件。window 的 onload 事件需要在所有 iframe 加载完毕后（包含里面的元素）才会触发。~~在 Safari 和 Chrome 里，通过 JavaScript 动态设置 iframe 的 src 可以避免这种阻塞情况。~~
-（2） 搜索引擎的检索程序无法解读这种页面，不利于网页的 SEO 。
+（1） iframe 会阻塞主页面的 onload 事件。window 的 onload 事件需要在所有 iframe 加载完毕后才会触发。~~在 Safari 和 Chrome 里，通过 JavaScript 动态设置 iframe 的 src 可以避免这种阻塞情况。~~
+（2） 网络爬虫不会爬取iframe中的内容，不利于网页的 SEO 。
 （3） iframe 和主页面共享连接池，而浏览器对相同域的连接有限制，所以会影响页面的并行加载。
 （4） 浏览器的后退按钮失效。
 （5） 小型的移动设备无法完全显示框架。
@@ -503,6 +503,11 @@ iframe 元素会创建包含另外一个文档的内联框架。
 详细的资料可以参考： [《使用 iframe 的优缺点》](https://blog.csdn.net/yintianqin/article/details/72625785) [《iframe 简单探索以及 iframe 跨域处理》](https://segmentfault.com/a/1190000009891683)
 
 #### Label 的作用是什么？是怎么用的
+
+```
+1.Label标签的定义和作业
+2.举例使用
+```
 
  label 标签是用来定义表单控制间的关系，当用户选择该标签时，浏览器会自动将焦点转到和标签相关的表单控件上。
 
@@ -514,6 +519,12 @@ iframe 元素会创建包含另外一个文档的内联框架。
 ```
 
 #### HTML5 的 form 的自动完成功能是什么？
+
+```
+1.xxx属性规定自动完成功能
+2.
+3.适用于哪些标签
+```
 
 autocomplete 属性规定输入字段是否启用自动完成功能。默认为启用，设置为 autocomplete=off 可以关闭该功能。
 
@@ -621,8 +632,8 @@ SVG 是一种使用 XML 描述 2D 图形的语言。SVG 基于 XML，这意味�
 
 #### attribute 和 property 的区别是什么？
 
-attribute 是 dom 元素在文档中作为 html 标签拥有的属性
-property 是 dom 元素在 js 中作为对象拥有的属性。 
+attribute 是 **dom 元素**<u>在文档中</u>**作为** html 标签**拥有的属性**
+property 是 **dom 元素**<u>在 js 中</u>**作为**对象**拥有的属性。** 
 
 对于 html 的标准属性来说，attribute 和 property 是同步的，是会自动更新的(input的value值除外)，但是对于自定义的属性来说，他们是不同步的。
 
