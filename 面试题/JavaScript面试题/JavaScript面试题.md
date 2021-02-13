@@ -309,3 +309,11 @@ ToBoolean，它负责处理其他值到布尔类型的强制类型转换。
 （6）对象/数组变为数字：先调取Symbol.toPrimitive 获取原始值，没有再通过valueOf获得原始值；如果没有原始值，再调取toString变为字符串，最后把字符串转为数字。
 ```
 
+#### {} 和 [] 的 valueOf 和 toString 的结果是什么？
+
+```
+{} 的 valueOf 结果为 {} ，toString 的结果为 "[object Object]"
+
+[] 的 valueOf 结果为 [] ，toString 的结果为 ""
+```
+
