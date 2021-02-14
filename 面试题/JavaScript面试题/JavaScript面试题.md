@@ -236,7 +236,7 @@ undefined 在 js 中不是一个保留字，这意味着我们可以使用 undef
 ![image-20200630114115388](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20200630112211059.png)
 
 原型链的特点：
-原型链实现了继承。JavaScript 对象是通过引用来传递的，我们创建的每个新对象实体中并没有一份属于自己的原型副本。当我们修改原型时，与之相关的对象也会继承这一改变。
+原型链实现了继承。**JavaScript 对象是通过引用来传递的**，我们创建的每个新对象实体中并没有一份属于自己的原型副本。当我们修改原型时，与之相关的对象也会继承这一改变。
 
 ####  js 获取原型的方法？
 
@@ -256,9 +256,9 @@ undefined 在 js 中不是一个保留字，这意味着我们可以使用 undef
 
 #### typeof NaN 的结果是什么？
 
-NaN 意指“不是一个数字”（not a number），NaN 是一个“警戒值”（sentinel value，有特殊用途的常规值），用于指出数字类型中的错误情况，即“执行数学运算没有成功，这是失败后返回的结果”。
-
 typeof NaN; // "number"
+
+NaN 意指“不是一个数字”（not a number），NaN 是一个“警戒值”（sentinel value，有特殊用途的常规值），用于指出数字类型中的错误情况。
 
 NaN 是一个特殊值，它和自身不相等，是唯一一个非自反（自反，reflexive，即 x === x 不成立）的值。而 NaN != NaN为 true。
 
@@ -270,23 +270,21 @@ Array 构造函数只带一个数字参数的时候，该参数会被作为数�
 
 #### 说一说其他值到字符串的转换规则？
 
-ToString ，它负责处理非字符串到字符串的强制类型转换。
-
 （1）Null 和 Undefined 类型 ，null 转换为 "null"，undefined 转换为 "undefined"，
 （2）Boolean 类型，true 转换为 "true"，false 转换为 "false"。
-（3）Number 类型的值直接转换，不过那些极小和极大的数字会使用指数形式。
-（4）Symbol 类型的值直接转换，但是只允许显式强制类型转换，使用隐式强制类型转换会产生错误。
+（3）Number 类型的值直接转换，**不过那些极小和极大的数字会使用指数形式。**
+（4）Symbol 类型的值直接转换，但是**只允许显式**强制类型转换，使用**隐式**强制类型转换会产生**错误**。
 （5）对普通对象来说，除非自行定义 toString() 方法，否则会调用 toString()（Object.prototype.toString()）来返回内部属性 [[Class]] 的值，如"[object Object]"。如果对象有自己的 toString() 方法，字符串化时就会调用该方法并使用其返回值。
 
 #### 其他值到布尔类型的值的转换规则？
 
-ToBoolean，它负责处理其他值到布尔类型的强制类型转换。
+利用Boolean对象进行转换
 
 以下这些是假值：
 • undefined
 • null
 • false
-• +0、-0 和 NaN
+• 0和 NaN
 • ""
 
 假值的布尔强制类型转换结果为 false。从逻辑上说，假值列表以外的都应该是真值。
@@ -316,4 +314,6 @@ ToBoolean，它负责处理其他值到布尔类型的强制类型转换。
 
 [] 的 valueOf 结果为 [] ，toString 的结果为 ""
 ```
+
+**B**
 
