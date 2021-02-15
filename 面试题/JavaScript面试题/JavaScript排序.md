@@ -163,13 +163,17 @@ function quickSort(arr) {
 
 - 快速排序的的平均时间复杂度是O(n * log n)，但最糟情况的复杂度是O(n ^ 2)，对于[1, 2, 3, 4, 5] 这种有序数组。快排的稳定性不如归并排序.
 
-# 归并排序
+## 归并排序
 
 #### 基本思想
 
+把数组分成N份，进行两两归并，获得 n/2 个长度为 2 的局部有序表，不断地进行两两归并，最终合并成长度为N的有序表。
+
+```
 1. 把 n 个记录看成 n 个长度为 l 的有序子表 
 2. 进行两两归并使记录关键字有序，得到 n/2 个长度为 2 的有序子表
 3. 重复第 2 步直到所有记录归并成一个长度为 n 的有序表为止。
+```
 
 #### 代码实现
 
@@ -195,7 +199,7 @@ function mergeSort(a) {
     , left = a.slice(0, mid)
     , right = a.slice(mid);
 
-  return merge(mergeSort(left), mergeSort(right));
+  return m!erge(mergeSort(left), mergeSort(right));
 }
 ```
 
