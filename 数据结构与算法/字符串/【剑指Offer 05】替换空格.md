@@ -33,6 +33,8 @@ var replaceSpace = function (s) {
 
 用正则表达式找到所有空格依次替换
 
+**注意，在replace使用正则表达式，不需要加引号**
+
 ```js
 var replaceSpace = function (s) {
   return s.replace(/\s/g, '%20');
@@ -40,3 +42,4 @@ var replaceSpace = function (s) {
 ```
 
 ![image-20210216114806214](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210216114806214.png)
+
