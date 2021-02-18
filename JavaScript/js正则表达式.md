@@ -10,6 +10,8 @@
 
 **1.字面量**
 
+**“隐式位置” \b，匹配这样的位置：它的前一个“显式位置”字符和后一个“显式位置”字符不全是 \w。**
+
 ```js
 var reg = /\bare\b/g;
 var str = "You are a beautiful girls. There are many boys parsue you.";
@@ -31,7 +33,7 @@ var reg = new RegExp('\\bare\\b','g');
 
 #### 1.2 匹配方法
 
-- string.match(reg) 获取匹配内容
+- string.match(reg) 获取匹配内容的数组集合
 - string.search(reg) 匹配字符串是否有与正则匹配的字符串，有返回索引，否则-1.
 - string.replace(reg，str2) 替换
 - string.split(reg) 字符串拆分成数组
@@ -175,7 +177,7 @@ console.log(str7.match(reg7));//["abcabc", "abcabc"]
 
 ​	 (1) 转义符：\
 
-​     (2) 圆括号和方括号：(),, []
+​     (2) 圆括号和方括号：(), []
 
 ​     (3) 量词： *, +, ?, {n}, {n,}, {n,m}
 
