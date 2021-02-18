@@ -54,10 +54,8 @@ function selectSort(arr) {
 
 ```
 面试官提问：
-为什么要从后往前比较？
+为什么要从后往前比较            
 ```
-
-
 
 #### 代码实现
 
@@ -109,15 +107,15 @@ function insertionSort(arr) {
     preIndex = i - 1;
     current = arr[i];
     while (preIndex >= 0 && arr[preIndex] > current) {
-      //往后移动
+      //元素往后移动，坐标向前-
       arr[preIndex + 1] = arr[preIndex];
       preIndex--;
     }
+    //将元素插入
     arr[preIndex + 1] = current;
   }
   return arr;
 }
-
 ```
 
 #### 优劣
