@@ -136,6 +136,16 @@ function insertionSort(arr) {
 
 #### 代码实现
 
+`forEach() 方法对数组的每个元素执行一次提供的函数。`
+
+递归出口：Length<=1 只有一个值，排序完成，返回。
+
+递归表达式：
+
+```js
+quickSort(Arr) = quickSort(lowArr).concat(pivotArr).concat(quickSort(highArr));
+```
+
 ```js
 function quickSort(arr) {
   //递归出口
@@ -175,40 +185,41 @@ function quickSort(arr) {
 
 #### 基本思想
 
-把数组分成N份，进行两两归并，获得 n/2 个长度为 2 的有序序列，将若干有序序列逐步归并，最终归并为一个有序序列。
+其基本思想是分治策略，先划分再合并。把数组一分为二，然后递归地排序好每部分，最后合并。
 
-```
-1. 把 n 个记录看成 n 个长度为 l 的有序子表 
-2. 进行两两归并使记录关键字有序，得到 n/2 个长度为 2 的有序子表
-3. 重复第 2 步直到所有记录归并成一个长度为 n 的有序表为止。
-```
+![img](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/16d09aebbc5cd5b3)
 
 #### 代码实现
 
 ```js
+function mergeSort(a) {
+  //长度为1，直接返回
+  if (a.length === 1) 
+    return a;
+
+  //数组一分为二
+  var mid = Math.floor(a.length / 2)
+    , left = a.slice(0, mid)
+    , right = a.slice(mid);
+
+  //合并数组
+  return merge(mergeSort(left), mergeSort(right));
+}
+
 function merge(left, right) {
   var tmp = [];
-
+  //合并两个已经排好序的数组
   while (left.length && right.length) {
     if (left[0] < right[0])
       tmp.push(left.shift());
     else
       tmp.push(right.shift());
   }
-
+  //当左右数组长度不等.将比较完后剩下的数组项链接起来即可
   return tmp.concat(left, right);
 }
 
-function mergeSort(a) {
-  if (a.length === 1) 
-    return a;
 
-  var mid = Math.floor(a.length / 2)
-    , left = a.slice(0, mid)
-    , right = a.slice(mid);
-
-  return m!erge(mergeSort(left), mergeSort(right));
-}
 ```
 
 **时间复杂度O(nlogn)**
@@ -247,18 +258,20 @@ function mergeSort(a) {
 
 ```js
 function ajustMaxHeap(array, index, length) {
-    //i为每一层的第一个节点
+    //i为当前子树根节点的左节点    i = 2 * i + 1往下一层
     for (let i = 2 * index + 1; i < length; i = 2 * i + 1) {
-        //同层的下一个节点存在 且数值比该节点小 向右移动
+        //寻找孩子结点最大值
+        //右节点存在，且右节点更大，向右移动
         if (i + 1 < length && array[i + 1] > array[i]) {
             i++;
         }
-        //如果顶层节点大于底层节点，break
+        //当前子树根节点 > 孩子节点的最大值，break
         if (array[index] >= [array[i]]) {
             break;
         } else {
-          //交换
+            //交换位置
             [array[index], array[i]] = [array[i], array[index]];
+            //继续和下一层节点比较
             index = i;
         }
     }
@@ -266,9 +279,10 @@ function ajustMaxHeap(array, index, length) {
 
 //构建大顶堆
 function createMaxHeap(arr, length) {
-    // 子树数目
+    // Math.floor(length / 2) - 1为子树数目，i为根节点索引号，
+    // 从下往上构建子树
     for (let i = Math.floor(length / 2) - 1; i >= 0; i--) {
-        //调整大顶堆
+        //调整大顶堆 i为根节点
         ajustMaxHeap(arr, i, length);
     }
     return arr;
