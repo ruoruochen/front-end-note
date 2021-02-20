@@ -63,6 +63,10 @@ function reConstructBinaryTree(pre, inorder) {
 
 ![image-20210117143245101](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210117143245101.png)
 
+**练习题**
+
+[leetcode 106 中后序构建二叉树](https://leetcode-cn.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/)
+
 # 更多资料
 
 整理不易，若对您有帮助，请给个「关注+点赞」，您的支持是我更新的动力 👇
