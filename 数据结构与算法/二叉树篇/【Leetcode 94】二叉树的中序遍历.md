@@ -63,7 +63,7 @@ var inorderTraversal = function(root){
             current = current.left;
         }
         current = stack.pop();
-        result.push(current);
+        result.push(current.val);
         current = current.right;
     }
     return result;
