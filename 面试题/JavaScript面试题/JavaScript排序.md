@@ -230,7 +230,7 @@ function merge(left, right) {
 
 ##### 优点：
 
-- 容易理解，稳定
+- 容易理解，稳定，快，最坏也O(nlogn)
 
 ##### 缺点：
 
