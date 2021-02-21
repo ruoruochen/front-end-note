@@ -6,7 +6,7 @@
 
 参考以下这颗二叉搜索树：
 
-    
+
          5
         / \
        2   6
@@ -36,35 +36,44 @@
 3. 除最后一个节点和左子树外的其他值为右子树，若右子树有一个比根节点小，则返回false。
 4. 若存在左右子树，递归检测是否规范。
 
-**注意！！！在获取右子树序列时需要把根节点排除在外。**
+**注意！！！**
+
+**1.在获取右子树序列时需要把根节点排除在外。**
+
+**2. i j < sequence.length - 1**
+
+**3.rightArr从i开始 postorder.length-1结束（不包含此元素）**
 
 #### 代码
 
 ```js
-function VerifySquenceOfBST(sequence) {
-  if (sequence && sequence.length > 0) {
-    const root = sequence[sequence.length - 1];
-    for (var i = 0; i < sequence.length - 1; i++) {
-      if (sequence[i] > root) {
-        break;
-      }
-    }
-    for (let j = i; j < sequence.length - 1; j++) {
-      if (sequence[j] < root) {
-        return false;
-      }
-    }
-    var left = true;
-    if (i > 0) {
-      left = VerifySquenceOfBST(sequence.slice(0, i));
-    }
-    var right = true;
-    if (i < sequence.length - 1) {
-      right = VerifySquenceOfBST(sequence.slice(i, sequence.length - 1))
-    }
-    return left && right;
+var verifyPostorder = function (postorder) {
+  if (postorder.length <= 0) {
+    return true;
   }
-}
+
+  let node = postorder[postorder.length - 1];
+  for (var i = 0; i < postorder.length - 1; i++) {
+    if (postorder[i] > node) {
+      break;
+    }
+  }
+  for (var j = i + 1; j < postorder.length - 1; j++) {
+    if (postorder[j] < node) {
+      return false;
+    }
+  }
+  let leftArr = [];
+  let rightArr = [];
+  if (i > 0) {
+    leftArr = postorder.slice(0, i);
+  }
+
+  if (i < postorder.length - 1) {
+    rightArr = postorder.slice(i , postorder.length-1);
+  }
+  return verifyPostorder(leftArr) && verifyPostorder(rightArr);
+};
 ```
 
 ![image-20210119122244653](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210119122244653.png)

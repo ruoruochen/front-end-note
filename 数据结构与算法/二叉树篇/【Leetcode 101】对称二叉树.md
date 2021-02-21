@@ -30,18 +30,17 @@
 对称二叉树满足以下条件：
 
 - 根节点相同
-- 左子树的左节点与右子树的右节点相同
-- 左子树的右节点与右子树的左节点详图
+- root1的左节点与右root2的右节点相同
+- root1的右节点与root2的左节点相同
 
 ## 代码
 
 `没想出来`
 
 ```js
- function isSymmetrical(pRoot) {
-      return isSymmetricalTree(pRoot, pRoot);
-    }
-
+var isSymmetric = function(root) {
+    return isSymmetricalTree(root, root);
+};
 function isSymmetricalTree(node1, node2) {
     //特判
     //如果两棵树都为空树，对称
