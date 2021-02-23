@@ -640,20 +640,18 @@ autocomplete 属性适用于 <form>，以及一些的 <input> 类型：text, sea
 	监听visibilitychange事件，
 ```
 
-页面可见性的用途是，通过监听网页的可见性，预判网页的卸载，还可以减少资源浪费。
+页面可见性的用途是，通过监听网页的可见性，**预判网页的卸载**，还可以减少资源浪费。
 
 比如，一旦用户不看网页，下面这些网页行为都是可以暂停的。
 （1）对服务器的轮询
 （2）网页动画
 （3）正在播放的音频或视频
 
-这个API的具体使用方法，在说他的具体使用方法之前我们先要了解他的visibilityState属性。首先这个 API 主要在`document`对象上，新增了一个`document.visibilityState`属性。该属性返回一个字符串，表示页面当前的可见性状态，共有三个可能的值：
+这个API的具体使用方法，我们通过监听`visibilitychange`事件，监听页面可见性的变化，当页面可见性状态为hidden的时候，进行暂停视频播放等等操作。那么页面可见性通过visibilityState属性体现的，`document.visibilityState`属性。该属性返回一个字符串，表示页面当前的可见性状态，共有三个可能的值：
 
 - hidden: 页面彻底不可见
 - visible: 页面至少部分可见
 - prerender :页面即将或正在渲染，处于不可见状态。
-
-只要`document.visibilityState`属性发生变化，就会触发`visibilitychange`事件。因此，具体使用方法就是，我们可以通过监听这个事件，跟踪页面可见性的变化。当页面可见性状态为hidden的时候，进行暂停视频播放等等操作。能够有效的节省资源，降低电耗。
 
 详细资料可以参考： [《Page Visibility API 教程》](http://www.ruanyifeng.com/blog/2018/10/page_visibility_api.html)
 
@@ -763,7 +761,7 @@ Ajax：
 
 #### 说一说浏览器架构
 
-![img](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/16923a1943fdd344)当代现有的浏览器主要由用户界面（**The user interface**）、浏览器引擎（**The browser engine**）、呈现引擎（**The rendering engine**）、网络（**Networking**）、JavasScript 解释器（**JavaScript interpreter**）、用户界面后端（**UI backend**）、数据存储组成（**Data storage**）。
+![img](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/16923a1943fdd344)当代现有的浏览器主要由用户界面（**The user interface**）、浏览器引擎（**The browser engine**）、渲染引擎（**The rendering engine**）、网络（**Networking**）、JavasScript 解释器（**JavaScript interpreter**）、用户界面后端（**UI backend**）、数据存储组成（**Data storage**）。
 
 而这些组件的功能如下：
 
