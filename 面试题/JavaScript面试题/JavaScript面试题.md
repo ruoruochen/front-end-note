@@ -336,3 +336,260 @@ null == 0  // null在设计上，在此处不尝试转型. 所以 结果为false
 
 **B**
 
+#### JavaScript 什么是闭包?
+
+闭包是指有权访问另一个函数作用域中变量的函数，创建闭包的最常见的方式就是在一个函数内创建另一个函数，创建的函数可以访问到当前函数的局部变量。
+闭包有两个常用的用途。
+
+1.使我们在函数外部能够访问到函数内部的变量。
+
+2.使已经运行结束的函数上下文中的变量对象继续留在内存中，因为闭包函数保留了这个变量对象的引用，所以这个变量对象不会被回收。
+
+闭包有很多好处，但是物极必反，如果我们滥用闭包，函数中的变量都被保存在内存中，内存消耗很大，造成网页的性能问题。解决方法是在退出函数之前，将不使用的局部变量全部删除
+
+#### Symbol类型是做什么的？
+
+`Symbol` 是 `ES6` 新推出的一种基本类型，它表示独一无二的值。它最大的用途就是用来定义对象唯一的属性名。
+
+#### 如何定义对象唯一的属性名。
+
+由于 Symbol 值是独一无二的值，所以我们可以把它作为对象的属性名，就能保证不会出现同名的属性，还能防止某一个属性被不小心覆盖。
+
+通过Symbol()方法可以生成一个symbol，里面可以带参数，也可以不带参数
+
+```js
+let mySymbol = Symbol();
+
+// 第一种写法
+let a = {};
+a[mySymbol] = 'Hello!';
+
+// 第二种写法
+let a = {
+  [mySymbol]: 'Hello!'
+};
+
+// 第三种写法
+let a = {};
+Object.defineProperty(a, mySymbol, { value: 'Hello!' });
+
+// 以上写法都得到同样结果
+a[mySymbol] // "Hello!"
+```
+
+```
+Symbol 类型的注意点
+ 
+- 1.Symbol 函数前不能使用 new 命令，否则会报错。
+- 2.Symbol 函数可以接受一个字符串作为参数，表示对 Symbol 实例的描述，主要是为了在控制台显示，或者转为字符串时，比较容易区分。
+- Symbol值不能与其他类型值运算，不能转数值；可以转字符串和布尔值
+- 不能用.运算符，要用方括号
+- `Symbol名.description`，直接返回 Symbol 的描述。
+- 3.Symbol 作为属性名时，该属性不会出现在 for...in、for...of 循环中，也不会被 Object.keys() 返回。
+- 4.Object.getOwnPropertySymbols 方法返回一个数组，成员是当前对象的所有用作属性名的 Symbol 值。
+- 5.Symbol.for 接受一个字符串作为参数，首先在全局中搜索有没有以该参数为名称的Symbol值。如果有，就返回这个 Symbol 值，否则就新建并返回一个以该字符串为名称的 Symbol 值。
+- 6.Symbol.keyFor 方法返回一个已登记的 Symbol 类型值的 key。
+```
+
+##### Symbol和Symbol.for的区别
+
+`Symbol.for()`与`Symbol()`这两种写法，都会生成新的 Symbol。它们的区别是，前者会被登记在全局环境中供搜索，后者不会。`Symbol.for()`不会每次调用就返回一个新的 Symbol 类型的值，而是会先检查给定的`key`是否已经存在，如果不存在才会新建一个值。比如，如果你调用`Symbol.for("1")`30 次，每次都会返回同一个 Symbol 值，但是调用`Symbol("1")`30 次，会返回 30 个不同的 Symbol 值。
+
+`Symbol()`写法没有登记机制
+
+#### 列举ES6的新特性并说一下如何使用
+
+##### 1.const 与 let以及var以及块级作用域
+
+具体如何使用
+
+三者使用的区别
+
+- 变量提升：var声明会被变量提升到函数顶部，let和const声明不会提升。
+
+- 作用域：var是函数作用域；let和const是块级作用域, 在{}里就形成了一个作用域
+
+- 重复声明：var 可以重复定义；let和const重复定义会报错。
+
+**const是常量**
+
+const声明一个只读的常量，一旦声明，常量的值就不能改变。但const实际上保证的，并不是变量的值不得改动，而是变量指向的那个内存地址所保存的数据不得改动。对于简单类型的数据（数值、字符串、布尔值），值就保存在变量指向的那个内存地址，因此等同于常量。但对于复合类型的数据（主要是对象和数组），变量指向的内存地址，保存的只是一个指向实际数据的指针，`const`只能保证这个指针是固定的，至于它指向的数据结构是不是可变的，就完全不能控制了。
+
+**let和const没有变量提升，会存在暂时性死区**
+
+```
+var tmp = 123;
+if (true) {
+  tmp = 'abc'; // ReferenceError
+  let tmp;
+}
+复制代码
+```
+
+比如，存在全局变量`temp`，但是块级作用域内`let`又声明了一个局部变量`temp`，局部变量就绑定这个块级作用域，所以在`let`声明变量前，对`temp`赋值会报错。
+
+##### 2.箭头函数
+
+ES6 中，箭头函数就是函数的一种简写形式，使用括号包裹参数，跟随一个 =>，紧接着是函数体；
+
+具体的使用细节：
+
+箭头函数和普通函数的区别
+
+- 箭头函数不绑定arguments，取而代之用rest参数...代替arguments对象，来访问箭头函数的参数列表。
+- 箭头函数没有prototype属性，不能用作构造函数，即不可以使用new 关键字来实例化对象，否则会抛出一个错误。
+- 箭头函数没有自己的this，箭头函数的this指向在定义的时候继承自外层第一个普通函数的this。
+- 普通函数可以使用call修改this。但箭头函数不能用call、apply修改里面的this
+
+##### 3.Promise（常用）
+
+Promise作为ES6中推出的新概念，Promise的出现改变了JS的异步编程，现在基本上异步请求都是使用Promise实现。
+
+Promise的出现主要是为了解决回调地狱的问题。
+
+回调地狱就是多层嵌套的问题。 每种任务的处理结果存在两种可能性（成功或失败），那么需要在每种任务执行结束后分别处理这两种可能性，需要多次异步请求的话，就会显得代码跳跃且乱。
+
+具体的使用的话：
+
+Promise 是一个构造函数，接收一个函数作为参数，返回一个 Promise 实例。
+
+一个 Promise 实例有三种状态，分别是 pending、resolved 和 rejected，分别代表了等待、成功和失败。实例的状态只能由等待转变成功或者等待转失败，并且状态一经改变，就无法再被改变了。
+
+状态的改变是通过 resolve() 和 reject() 函数来实现的，我们可以在异步操作结束后调用这两个函数改变 Promise 实例的状态。
+
+Promise的原型上定义了一个 then 方法， 分别是成功和失败的回调。我们可以使用这个 then 方法可以为两个状态的改变注册回调函数。
+
+这样子我们创建了一个最基本的promise。
+
+#### 手写一个 Promise
+
+```js
+const PENDING = "pending";
+const RESOLVED = "resolved";
+const REJECTED = "rejected";
+
+function MyPromise(fn) {
+  // 保存初始化状态
+  var self = this;
+  // 初始化状态
+  this.state = PENDING;
+  // 用于保存 resolve 或者 rejected 传入的值
+  this.value = null;
+  // 用于保存 resolve 的回调函数
+  this.resolvedCallbacks = [];
+  // 用于保存 reject 的回调函数
+  this.rejectedCallbacks = [];
+
+  // 状态转变为 resolved 方法
+  function resolve(value) {
+    // 判断传入元素是否为 Promise 值，如果是，则状态改变必须等待前一个状态改变后再进行改变
+    if (value instanceof MyPromise) {
+      return value.then(resolve, reject);
+    }
+
+    // 保证代码的执行顺序为本轮事件循环的末尾
+    setTimeout(() => {
+      // 只有状态为 pending 时才能转变，
+      if (self.state === PENDING) {
+        // 修改状态
+        self.state = RESOLVED;
+
+        // 设置传入的值
+        self.value = value;
+
+        // 执行回调函数
+        self.resolvedCallbacks.forEach(callback => {
+          callback(value);
+        });
+      }
+    }, 0);
+  }
+
+  // 状态转变为 rejected 方法
+  function reject(value) {
+    // 保证代码的执行顺序为本轮事件循环的末尾
+    setTimeout(() => {
+      // 只有状态为 pending 时才能转变
+      if (self.state === PENDING) {
+        // 修改状态
+        self.state = REJECTED;
+        // 设置传入的值
+        self.value = value;
+        // 执行回调函数
+        self.rejectedCallbacks.forEach(callback => {
+          callback(value);
+        });
+      }
+    }, 0);
+  }
+
+  // 将两个方法传入函数执行
+  try {
+    fn(resolve, reject);
+  } catch (e) {
+    // 遇到错误时，捕获错误，执行 reject 函数
+    reject(e);
+  }
+}
+
+MyPromise.prototype.then = function(onResolved, onRejected) {
+  // 首先判断两个参数是否为函数类型，因为这两个参数是可选参数
+  onResolved =
+    typeof onResolved === "function"
+      ? onResolved
+      : function(value) {
+          return value;
+        };
+
+  onRejected =
+    typeof onRejected === "function"
+      ? onRejected
+      : function(error) {
+          throw error;
+        };
+
+  // 如果是等待状态，则将函数加入对应列表中
+  if (this.state === PENDING) {
+    this.resolvedCallbacks.push(onResolved);
+    this.rejectedCallbacks.push(onRejected);
+  }
+
+  // 如果状态已经凝固，则直接执行对应状态的函数
+
+  if (this.state === RESOLVED) {
+    onResolved(this.value);
+  }
+
+  if (this.state === REJECTED) {
+    onRejected(this.value);
+  }
+};
+```
+
+Promise在设计的时候保证所有响应的处理回调都是异步调用的，不会阻塞代码的执行，Promise将then方法的回调放入一个叫微任务的队列中，确保这些回调任务在同步任务执行完以后再执行，这部分同样也是事件循环的知识点。
+
+#### .call() 和 .apply() 的区别？
+
+它们的作用一样的，区别仅在于传入参数的形式的不同。
+
+apply 接受两个参数，第一个参数指定了函数体内 this 对象的指向，第二个参数为一个带下标的集合，这个集合可以为数组，也可以为类数组，apply 方法把这个集合中的元素作为参数传递给被调用的函数。
+
+call 传入的参数数量不固定，跟 apply 相同的是，第一个参数也是代表函数体内的 this 指向，从第二个参数开始往后，每个参数被依次传入函数。
+
+#### 构造函数的new都做了些什么？
+
+分为四步：
+
+① JS内部首先会先生成一个对象； 
+
+② 再把函数中的this指向该对象；
+
+③ 然后执行构造函数中的语句； 
+
+④ 最终返回该对象实例。
+
+但是！！因为箭头函数没有自己的``this``，它的``this``其实是继承了外层执行环境中的``this``，且``this``指向永远不会随在哪里调用、被谁调用而改变，所以箭头函数不能作为构造函数使用，否则用new调用时会报错！
+
+#### 介绍各个数据结构的特点
+
+二叉树是个啥，有几种遍历，分别怎么实现之类的，最后问了个快排（排序必快排）
