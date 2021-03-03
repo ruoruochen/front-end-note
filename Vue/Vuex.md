@@ -18,7 +18,7 @@ Vuex 是一个状态管理模式，它采用集中式存储管理应用的所有
 
 表示“单向数据流”理念的简单示意
 
-![image-20201222095704879](img/image-20201222095704879.png)
+![image-20201222095704879](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201222104442959.png)
 
 
 
@@ -62,7 +62,7 @@ Vuex 是一个状态管理模式，它采用集中式存储管理应用的所有
 
    挂载
 
-   ![image-20201222103547188](img/image-20201222103547188.png)
+   ![image-20201222103547188](.../img/image-20201222103547188.png)
 
 3. 使用：
 
@@ -73,7 +73,7 @@ Vuex 是一个状态管理模式，它采用集中式存储管理应用的所有
 
 Actions中处理异步操作。建议使用Mutations修改状态，不建议Vue Components直接修改状态。
 
-![image-20201222104442959](img/image-20201222104442959.png)
+![image-20201222104442959](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201222095704879.png)
 
 ```js
   //定义方法
@@ -330,7 +330,7 @@ change() {
 
 输出结果：
 
-![image-20201228201342212](img/image-20201228201342212.png)
+![image-20201228201342212](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201228201342212.png)
 
 #### 2.3.5 Modules
 
