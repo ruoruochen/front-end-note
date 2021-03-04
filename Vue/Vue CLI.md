@@ -112,7 +112,7 @@ Vue-CLI是Vue.js的脚手架，用于自动生成vue.js+webpack的项目模板�
 
 创建完成后，目录如图所示：
 
-![image-20201128095712021](img/image-20201128095712021.png)
+![image-20201128095712021](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201128095712021.png)
 
 其中build和config都是配置相关的文件。
 
@@ -189,7 +189,7 @@ vue create 项目名
 
 **目录结构：**
 
-![image-20201128102154720](img/image-20201128102154720.png)
+![image-20201128102154720](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201128102154720.png)
 
 **vue3使用npm run serve运行服务器**
 

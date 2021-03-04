@@ -130,7 +130,7 @@ history接口有五种模式改变url而不刷新页面。
 
    如果是手动配置router，还需要在main.js中添加：
 
-   ![image-20201208214158930](img/image-20201208214158930.png)
+   ![image-20201208214158930](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201208214158930.png)
 
 3. 在组件中路由，通过<router-link><router-view>。
 
@@ -283,7 +283,7 @@ export default {
 
 2. 在routes中配置映射关系。注意是在映射关系中增加属性children，其属性值同样为数组。
 
-   ![image-20201205160918815](img/image-20201205160918815.png)
+   ![image-20201205160918815](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201205160918815.png)
 
 3. 在Home组件中使用router-link 和router-view
 
@@ -350,7 +350,7 @@ export default {
 
 使用`npm run build`命令将之前创建的项目打包，打开dist文件夹，器目录结构如下：
 
-![image-20201205152710220](img/image-20201205152710220.png)
+![image-20201205152710220](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201205152710220.png)
 
 - app.xxx.js是我们自己编写的业务代码
 - vendor.xxx.js是第三方框架，例如vue/vue-router/axios等
@@ -521,7 +521,7 @@ export default {
 
 2. 但对于嵌套组件来说，不能保留嵌套组件的状态，因为在路由配置中，我们会设定默认路径，跳转到指定路径，想要实现嵌套组件的状态保留，还需要配合组件内的守卫。
 
-   ![image-20201207192111558](img/image-20201207192111558.png)
+   ![image-20201207192111558](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201207192111558.png)
 
    >使用keep-alive时vue会给我们多添加两个钩子，activated和deactivated
    >
@@ -542,17 +542,17 @@ keep-alive有两个重要属性：
 </keep-alive>
 ```
 
-![image-20201207193211290](img/image-20201207193211290.png)
+![image-20201207193211290](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201209092038366.png)
 
 ### TabBar案例
 
-![image-20201209092038366](img/image-20201209092038366.png)
+![image-20201209092038366](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201207193211290.png)
 
 #### 路径别名
 
 cli3/cli4查找node_module下的@vue/cli-server/lib/config/base.js
 
-![image-20201209102249641](../img/image-20201209102249641.png)
+![image-20201209102249641](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201209102249641.png)
 
 - 通过.set('assets',api.resolve('@/assets'))添加路径别名
 

@@ -551,7 +551,7 @@ const p = new Promise((resolve, reject) => reject('出错了'))
 **常见的microtask有：**
 
 - `process.nextTick (Node环境中)`
-- `Promise callbacks`
+- `Promise callbacks` 
 - `Object.observe (基本上已经废弃)`
 - `MutationObserver`
 
@@ -559,7 +559,7 @@ const p = new Promise((resolve, reject) => reject('出错了'))
 
 **执行顺序**
 
-![image-20201214092953116](img/image-20201214092953116.png)
+![image-20201214092953116](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201214092953116.png)
 
 顺序执行宏任务，当宏任务的JS堆栈清空之后，执行微任务。微任务清空即为一个宏任务的完成，接着执行另一个宏任务。
 
