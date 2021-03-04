@@ -395,8 +395,6 @@ Symbol 类型的注意点
 
 `Symbol.for()`与`Symbol()`这两种写法，都会生成新的 Symbol。它们的区别是，前者会被登记在全局环境中供搜索，后者不会。`Symbol.for()`不会每次调用就返回一个新的 Symbol 类型的值，而是会先检查给定的`key`是否已经存在，如果不存在才会新建一个值。比如，如果你调用`Symbol.for("1")`30 次，每次都会返回同一个 Symbol 值，但是调用`Symbol("1")`30 次，会返回 30 个不同的 Symbol 值。
 
-`Symbol()`写法没有登记机制
-
 #### 列举ES6的新特性并说一下如何使用
 
 ##### 1.const 与 let以及var以及块级作用域
@@ -409,7 +407,10 @@ Symbol 类型的注意点
 
 - 作用域：var是函数作用域；let和const是块级作用域, 在{}里就形成了一个作用域
 
-- 重复声明：var 可以重复定义；let和const重复定义会报错。
+
+```
+块级作用域,也就是在{}内部声明的变量只能够在{}内部访问到，在{}外部无法访问到其内部声明的变量，
+```
 
 **const是常量**
 
@@ -423,7 +424,6 @@ if (true) {
   tmp = 'abc'; // ReferenceError
   let tmp;
 }
-复制代码
 ```
 
 比如，存在全局变量`temp`，但是块级作用域内`let`又声明了一个局部变量`temp`，局部变量就绑定这个块级作用域，所以在`let`声明变量前，对`temp`赋值会报错。
@@ -441,9 +441,11 @@ ES6 中，箭头函数就是函数的一种简写形式，使用括号包裹参�
 - 箭头函数没有自己的this，箭头函数的this指向在定义的时候继承自外层第一个普通函数的this。
 - 普通函数可以使用call修改this。但箭头函数不能用call、apply修改里面的this
 
+>- new发生了什么
+
 ##### 3.Promise（常用）
 
-Promise作为ES6中推出的新概念，Promise的出现改变了JS的异步编程，现在基本上异步请求都是使用Promise实现。
+Promise的出现改变了JS的异步编程，现在基本上异步请求都是使用Promise实现。
 
 Promise的出现主要是为了解决回调地狱的问题。
 
@@ -453,7 +455,7 @@ Promise的出现主要是为了解决回调地狱的问题。
 
 Promise 是一个构造函数，接收一个函数作为参数，返回一个 Promise 实例。
 
-一个 Promise 实例有三种状态，分别是 pending、resolved 和 rejected，分别代表了等待、成功和失败。实例的状态只能由等待转变成功或者等待转失败，并且状态一经改变，就无法再被改变了。
+一个 Promise 实例有三种状态，分别是 pending、fulfilled 和 rejected，分别代表了进行中、成功和失败。实例的状态只能由进行中转变成功或者进行中转失败，并且状态一经改变，就无法再被改变了。
 
 状态的改变是通过 resolve() 和 reject() 函数来实现的，我们可以在异步操作结束后调用这两个函数改变 Promise 实例的状态。
 
@@ -461,44 +463,91 @@ Promise的原型上定义了一个 then 方法， 分别是成功和失败的回
 
 这样子我们创建了一个最基本的promise。
 
-#### 手写一个 Promise
+>- 实现一下Promise
+
+##### 4.模板字符串
+
+ES6新增了模板字符串，用反引号(``)表示，可以用于定义多行字符串，或者在字符串中嵌入变量。如果要在模板字符串中嵌入变量，需要将变量名写在${}之中。
+
+##### 5.for ... of循环
+
+for ... of是作为ES6新增的遍历方式,允许遍历一个含有iterator接口的数据结构并且返回各项的值。它与for ... in的区别如下：
+
+1. for ... of获取的是迭代器返回的value值,  for ... in 可以获取对象的键名。
+2. 对于数组的遍历，for ... in会返回数组中所有可枚举的属性， for ... of只返回数组的下标对应的属性值
+
+##### 6.对象属性/方法简写
+
+- es6允许当对象的属性和值相同时，省略属性名
+- es6允许当一个对象的属性的值是一个方法时，可以使用简写的形式。省略了:function
+
+##### 7.Module模块化
+
+import导入，export导出。ES6 Module是静态的，也就是说它是在编译阶段运行，和var以及function一样具有提升效果。
+
+**import()动态加载。**把import作为一个函数可以实现动态加载模块，它返回一个Promise，Promise被resolve时的值为输出的模块。Vue中路由的懒加载的ES6写法就是使用了这个技术,使得在路由切换的时候能够动态的加载组件渲染视图。
+
+>- 什么是模块化开发
+
+```
+我对模块的理解是，一个模块是实现一个特定功能的一组方法。在最开始的时候，js 只实现一些简单的功能，所以并没有模块的概念，但随着程序越来越复杂，代码的模块化开发变得越来越重要。
+```
+
+##### 8.解构赋值
+
+我对于数组解构原理的理解是，从数组中提取值，按照对应位置，对变量赋值。对象解构原理的理解是，通过键找键，找到了相同的属性名就赋值了。
+
+##### 9.剩余运算符rest/扩展运算符
+
+**扩展运算符**
+
+以数组为例,使用扩展运算符可以"展开"一个数组，可以把这些元素集合放到另外一个数组里面。
+
+**剩余运算符**
+
+消耗3个点后面的数组的所有迭代器，读取后面所有迭代器的value属性，放到右边的数组中。
+
+##### 10.类（Class）
+
+ES6 引入了class（类），让JavaScript的面向对象编程变得更加简单和易于理解。比如说，构造函数、继承、super、this之类的都跟Java、C++很像。
+
+#### 手写一个 Promise/实现一下Promise
+
+简易Promise。
+
+**思路：**
 
 ```js
 const PENDING = "pending";
-const RESOLVED = "resolved";
+const FULFILLED = "fulfilled";
 const REJECTED = "rejected";
 
-function MyPromise(fn) {
-  // 保存初始化状态
+function Promise(fn) {
+  // 保存初始化状态,设置self是为了在resolve、reject函数里面使用，	   resolve、reject函数的this是window
   var self = this;
   // 初始化状态
   this.state = PENDING;
   // 用于保存 resolve 或者 rejected 传入的值
   this.value = null;
   // 用于保存 resolve 的回调函数
-  this.resolvedCallbacks = [];
+  this.fulfilledCallbacks = [];
   // 用于保存 reject 的回调函数
   this.rejectedCallbacks = [];
 
-  // 状态转变为 resolved 方法
+  // 状态转变为 fulfilled 方法
   function resolve(value) {
-    // 判断传入元素是否为 Promise 值，如果是，则状态改变必须等待前一个状态改变后再进行改变
-    if (value instanceof MyPromise) {
-      return value.then(resolve, reject);
-    }
-
     // 保证代码的执行顺序为本轮事件循环的末尾
     setTimeout(() => {
       // 只有状态为 pending 时才能转变，
       if (self.state === PENDING) {
         // 修改状态
-        self.state = RESOLVED;
+        self.state = FULFILLED;
 
         // 设置传入的值
         self.value = value;
 
         // 执行回调函数
-        self.resolvedCallbacks.forEach(callback => {
+        self.fulfilledCallbacks.forEach(callback => {
           callback(value);
         });
       }
@@ -525,6 +574,7 @@ function MyPromise(fn) {
 
   // 将两个方法传入函数执行
   try {
+    //执行Promise
     fn(resolve, reject);
   } catch (e) {
     // 遇到错误时，捕获错误，执行 reject 函数
@@ -532,64 +582,226 @@ function MyPromise(fn) {
   }
 }
 
-MyPromise.prototype.then = function(onResolved, onRejected) {
-  // 首先判断两个参数是否为函数类型，因为这两个参数是可选参数
-  onResolved =
-    typeof onResolved === "function"
-      ? onResolved
-      : function(value) {
-          return value;
-        };
-
-  onRejected =
-    typeof onRejected === "function"
-      ? onRejected
-      : function(error) {
-          throw error;
-        };
-
-  // 如果是等待状态，则将函数加入对应列表中
+Promise.prototype.then = function(onResolved, onRejected) {
+// 如果是等待状态，则将函数加入对应列表中
   if (this.state === PENDING) {
-    this.resolvedCallbacks.push(onResolved);
+    this.fulfilledCallbacks.push(onResolved);
     this.rejectedCallbacks.push(onRejected);
   }
 
   // 如果状态已经凝固，则直接执行对应状态的函数
 
-  if (this.state === RESOLVED) {
+  if (this.state === FULFILLED) {
     onResolved(this.value);
   }
 
   if (this.state === REJECTED) {
     onRejected(this.value);
-  }
+  }	 
+  // 返回this支持then 方法可以被同一个 promise 调用多次
+  return this;
 };
 ```
 
-Promise在设计的时候保证所有响应的处理回调都是异步调用的，不会阻塞代码的执行，Promise将then方法的回调放入一个叫微任务的队列中，确保这些回调任务在同步任务执行完以后再执行，这部分同样也是事件循环的知识点。
+#### call() 、apply() 和bind()的区别？
 
-#### .call() 和 .apply() 的区别？
+apply 、 call 、bind 三者都是用来改变函数的this对象的指向的。
 
-它们的作用一样的，区别仅在于传入参数的形式的不同。
+**apply**
 
-apply 接受两个参数，第一个参数指定了函数体内 this 对象的指向，第二个参数为一个带下标的集合，这个集合可以为数组，也可以为类数组，apply 方法把这个集合中的元素作为参数传递给被调用的函数。
+apply() 方法调用一个函数, 其具有一个指定的this值，以及作为一个数组提供的参数
 
-call 传入的参数数量不固定，跟 apply 相同的是，第一个参数也是代表函数体内的 this 指向，从第二个参数开始往后，每个参数被依次传入函数。
+**语法：**
+
+```js
+fun.apply(thisArg, [argsArray])
+```
+
+- thisArg：在 fun 函数运行时指定的 this 值。需要注意的是，指定的 this 值并不一定是该函数执行时真正的 this 值，如果这个函数处于非严格模式下，则指定为 null 或 undefined 时会自动指向全局对象（浏览器中就是window对象），同时值为原始值（数字，字符串，布尔值）的 this 会指向该原始值的自动包装对象。
+
+- argsArray：一个数组或者类数组对象，其中的数组元素将作为单独的参数传给 fun 函数。如果该参数的值为null 或 undefined，则表示不需要传入任何参数。
+
+**call**
+
+其实 apply 和 call 基本类似，他们的区别只是传入的参数不同。
+
+**语法：**
+
+```js
+fun.call(thisArg[, arg1[, arg2[, ...]]])
+```
+
+所以 apply 和 call 的区别是 call 方法接受的是若干个参数列表，而 apply 接收的是一个包含多个参数的数组。
+
+**bind**、
+
+```
+function.bind(thisArg[, arg1[, arg2[, ...]]])
+```
+
+bind()方法创建一个新的函数, 当被调用时，将其this关键字设置为提供的值，在调用新函数时，它可以接受若干个参数列表。
+
+
+
+#### this
+
+在es5中，this 的指向并不是在创建的时候就可以确定的，this 永远指向最后调用它的那个对象。
 
 #### 构造函数的new都做了些什么？
 
-分为四步：
+1.  首先创建了一个新的空对象 
+2. 再把函数中的this指向该对象；设置原型，将对象的原型设置为函数的 prototype 对象。
+3. 让函数的 this 指向这个对象，执行构造函数的代码
+4. 最终返回该对象实例。
 
-① JS内部首先会先生成一个对象； 
-
-② 再把函数中的this指向该对象；
-
-③ 然后执行构造函数中的语句； 
-
-④ 最终返回该对象实例。
-
-但是！！因为箭头函数没有自己的``this``，它的``this``其实是继承了外层执行环境中的``this``，且``this``指向永远不会随在哪里调用、被谁调用而改变，所以箭头函数不能作为构造函数使用，否则用new调用时会报错！
+因为箭头函数既没有prototype，也没有自己的``this``，它的``this``其实是继承了外层执行环境中的``this``，且`this`指向永远不会改变，所以箭头函数不能作为构造函数使用，用new调用时会报错！
 
 #### 介绍各个数据结构的特点
 
-二叉树是个啥，有几种遍历，分别怎么实现之类的，最后问了个快排（排序必快排）
+**二叉树**是每个节点最多有两个子树的树结构，通常子树被称作“左子树”和“右子树”。
+
+**栈**是先进后出的结构。
+
+**队列**是先进先出的结构。
+
+**堆**实质上是一个完全二叉树，它的根节点是最大值或最小值。每个的节点元素值不小于其子节点 - 最大堆；每个的节点元素值不大于其子节点 - 最小堆
+
+**链表**是用一组任意存储的单元来存储线性表的数据元素。一个对象存储着本身的值和下一个元素的地址。
+
+#### 二叉树是什么，有几种遍历，分别怎么实现之类的
+
+简单，略
+
+#### JS的事件循环/JS是如何实现异步的？
+
+ JS是单线程的，但又能实现异步的原因在于事件循环和任务队列体系。先说一下几个概念：同步任务、异步任务、任务队列、macrotask、microtask。
+
+同步任务指的是在主线程上排队执行的任务，只有前一个任务执行完毕，才能执行后一个任务。
+
+异步任务指的是，不进入主线程、而进入"任务队列"（task queue）的任务，等待同步任务执行完毕之后，轮询执行异步任务队列中的任务。
+
+macrotask 宏任务，宏任务队列等同于我们常说的任务队列，"任务队列"是一个先进先出的数据结构，排在前面的事件，优先被主线程读取。
+
+microtask 微任务，总是添加到当前任务队列末尾执行。如果在处理microtask期间，如果有新添加的microtasks，也会被添加到队列的末尾并执行。
+
+**事件循环：**
+     JS 会创建一个类似于 `while (true)` 的循环，JS顺序执行宏任务，当宏任务的JS堆栈清空之后，执行微任务。微任务清空即为一个宏任务的完成，接着执行另一个宏任务。
+
+**常见的macrotask有：**
+
+- `run <script>（同步的代码执行）`
+- `setTimeout`
+- `setInterval`
+- `setImmediate (Node环境中)`
+- `requestAnimationFrame`
+- `I/O`
+- `UI rendering`
+
+**常见的microtask有：**
+
+- `process.nextTick (Node环境中)`
+- `Promise callbacks` 
+- `Object.observe (基本上已经废弃)`
+- `MutationObserver`
+- await后面的后面语句
+
+```
+async函数里面await标记之前的语句和 await 后面的语句是同步执行的。
+后面的语句是异步的，丢进Micro
+```
+
+![image-20201214092953116](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201214092953116.png)
+
+顺序执行宏任务，当宏任务的JS堆栈清空之后，执行微任务。微任务清空即为一个宏任务的完成，接着执行另一个宏任务。
+
+#### 手写call 、apply 、bind方法
+
+**实现call方法思路**
+
+1.在Function原型上增加_call方法，接受两个参数。第一个参数为指定的this值，默认值为window；第二个参数使用剩余运算符展开，获取参数列表。
+
+2.将函数this设置为context对象的属性，通过隐式绑定的方式调用函数，把context上的属性删了，并返回函数调用的返回值
+
+>- 这里的原理是：this指向调用它的对象，这是是context调用，所以this指向了context。
+>
+>- 为什么要删除context上的属性。
+>
+>  防止这个属性对context造成影响，而且这个属性本身也没有用啦，不用留着占内存，
+
+**实现apply方法思路**
+
+1.在Function原型上增加_apply方法，接受两个参数。第一个参数为指定的this值，默认值为window；第二个参数接受一个数组，默认值为空数组
+
+2.将函数this设置为context对象的属性，通过隐式绑定的方式调用函数，把context上的属性删了，并返回函数调用的返回值
+
+**实现bind方法思路**
+
+bind方法的实现可以参考apply。bind和apply的区别在于，bind是返回一个绑定好的函数，apply是直接调用。那么实现也很简单，就是返回一个函数，里面执行了apply的操作而已。
+
+不过有一个需要判断的点，因为返回新的函数，要考虑到使用new去调用，并且在this绑定中new的优先级比较高，所以需要判断new的调用，还有一个特点就是bind调用的时候可以传参，调用之后生成的新的函数也可以传参，效果是一样的，所以这一块也要做处理。
+
+您已实现了apply 和 call ，那么bind 直接调用apply 或者 call 会更加优雅。 
+
+```js
+Function.prototype._call = function (context = window, ...args) {
+  // 判断调用对象
+  if (typeof this !== 'function') {
+    throw new TypeError('Error');
+  }
+  args = args ? args : []
+  //创建独一无二属性，以免覆盖原属性
+  const key = Symbol();
+  context[key] = this;
+  //通过隐式绑定的方式调用函数
+  const result = context[key](...args);
+  //删除添加的属性
+  delete context[key];
+  //返回函数调用的返回值
+  return result;
+};
+
+// 第二个参数是数组
+Function.prototype._apply = function (context = window, args = []) {
+  // 判断调用对象
+  if (typeof this !== 'function') {
+    throw new TypeError('Error');
+  }
+  const key = Symbol();
+  context[key] = this;
+  //通过隐式绑定的方式调用函数
+  const result = context[key](...args);
+  //删除添加的属性
+  delete context[key];
+  //返回函数调用的返回值
+  return result;
+};
+
+Function.prototype._bind = function (context, ...args) {
+  if (typeof this !== 'function') { 
+    throw new TypeError('Error');
+  }
+  //返回一个绑定this的函数，我们需要在此保存this
+  const fn = this;
+  return function newFn(...newFnArgs) {
+    //如果使用new调用，此时的this执行实例对象
+    if (this instanceof newFn) {
+      //直接new函数，此时的this指向函数本身
+      return new fn(...args, ...newFnArgs)
+    }
+    //使用apply修改this指向
+    return fn.apply(context, [...args, ...newFnArgs])
+  }
+};
+
+
+let obj = { x: 1 };
+function fn() {
+  console.log(this.x, arguments);
+}
+fn._call(obj, 1, 2, 3);
+fn._apply(obj, [1, 2, 3]);
+
+const bindFn = fn._bind(obj, 1, 2, 3);
+bindFn();
+```
+
