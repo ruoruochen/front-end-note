@@ -80,7 +80,7 @@ npx webpack ./src/main.js ./dist/bundle.js
 
   - npm run build优先使用局部webpack，局部没有才回去全局环境变量找。
 
-    ![image-20201112204746747](img/image-20201112204746747.png)
+    ![image-20201112204746747](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201112204746747.png)
 
 
 
@@ -93,16 +93,14 @@ npx webpack ./src/main.js ./dist/bundle.js
 
 ## loader
 
-开发过程中，需要加载css、图片、ES6转ES5等，而webpack本身的能力不支持紫红色鞋转化，需要给webpack扩展对应的loader。
-
-
+开发过程中，需要加载css、图片、ES6转ES5等，而webpack本身的能力不支持这些转化，需要给webpack扩展对应的loader。
 
 **使用过程**
 
 1. npm 安装对应的loader。参考：[webpack](https://www.webpackjs.com/loaders/)
 2. 在webpack.config.js中的module下配置
 
-![image-20201112211126951](img/image-20201112211126951.png)
+![image-20201112211126951](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201125091335371.png)
 
 
 
@@ -208,7 +206,7 @@ UnhandledPromiseRejectionWarning: TypeError: this.getResolve is not a function
               options: {
                 limit: 10000,
                 // name、hash、ext都是变量，所以放在[]里
-                name: 'img/[name].[hash:8].[ext]'
+                name: '../img/[name].[hash:8].[ext]'
               }
             }
           ]
@@ -626,6 +624,6 @@ npm install --save-dev babel-loader@7 babel-core babel-preset-es2015
 
 3. 修改package.json的scripts脚本
 
-   ![image-20201125091335371](img/image-20201125091335371.png)
+   ![image-20201125091335371](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201112211126951.png)
 
 4. 可以分别执行npm run build、npm run dev
