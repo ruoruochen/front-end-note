@@ -1,4 +1,4 @@
-#### 介绍 JavaScript的数据类型。
+#### 且lean、Number、String，还有在 ES6 中新增的 Symbol 类型。
 
 ```
 1.有两种
@@ -231,12 +231,11 @@ undefined 在 js 中不是一个保留字，这意味着我们可以使用 undef
 
 当我们使用构造函数新建一个对象后，在这个对象的内部将包含一个指针，这个指针指向构造函数的 prototype 属性对应的值，这个指针称为对象的原型。一般来说我们是不应该能够获取到这个值的，但是现在浏览器中都实现了 __proto__ 属性来让我们访问这个属性，但是我们最好不要使用这个属性，因为它不是规范中规定的。ES5 中新增了一个 Object.getPrototypeOf() 方法，我们可以通过这个方法来获取对象的原型。
 
-当我们访问一个对象的属性时，如果这个对象内部不存在这个属性，那么它就会去它的原型对象里找这个属性，这个原型对象又会有自己的原型，于是就这样一直找下去，也就是原型链的概念。原型链的尽头一般来说都是 Object.prototype
+**原型链**
+
+JS的原型链是指原型与原型层层相连接的过程即为原型链。当我们访问一个对象的属性时，如果这个对象内部不存在这个属性，那么它就会去它的原型对象里找这个属性，这个原型对象又会有自己的原型，于是就这样一直找下去，也就是原型链的概念。原型链的尽头一般来说都是 Object.prototype，然后Object.prototype.__proto _ _为null。
 
 ![image-20200630114115388](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20200630112211059.png)
-
-原型链的特点：
-原型链实现了继承。**JavaScript 对象是通过引用来传递的**，我们创建的每个新对象实体中并没有一份属于自己的原型副本。当我们修改原型时，与之相关的对象也会继承这一改变。
 
 ####  js 获取原型的方法？
 
@@ -345,7 +344,105 @@ null == 0  // null在设计上，在此处不尝试转型. 所以 结果为false
 
 2.使已经运行结束的函数上下文中的变量对象继续留在内存中，因为闭包函数保留了这个变量对象的引用，所以这个变量对象不会被回收。
 
-闭包有很多好处，但是物极必反，如果我们滥用闭包，函数中的变量都被保存在内存中，内存消耗很大，造成网页的性能问题。解决方法是在退出函数之前，将不使用的局部变量全部删除
+闭包有很多好处，但是物极必反，如果我们滥用闭包，函数中的变量都被保存在内存中，内存消耗很大，造成网页的性能问题，且容易造成内存泄漏。解决方法是在退出函数之前，将不使用的局部变量全部删除
+
+```js
+function closure(){
+    // div用完之后一直存在内存中，无法被回收
+    var div = document.getElementById('div');
+    div.onclick = function () {
+       console.log(div.innerHTML);// 这里用oDiv导致内存泄露
+    };
+}
+
+// 解除引用避免内存泄露
+function closure(){    
+    var div = document.getElementById('div');    
+    var test = div.innerHTML;
+    div.onclick = function () {
+        console.log(test);
+    };
+    div = null;
+}
+
+```
+
+#### 闭包的应用
+
+- 构造函数的私有属性
+- 函数节流、防抖
+
+**私有属性**
+
+由于javascript中天然没有类的实现，某些不希望被外部修改的`私有属性`可以通过闭包的方式实现。
+
+```js
+function Person(param) {
+    var name = param.name; // 私有属性
+    this.age = 18; // 共有属性
+
+    this.sayName = function () {
+        console.log(name);
+    }
+}
+
+const tom = new Person({name: 'tom'});
+tom.age += 1; // 共有属性，外部可以更改
+tom.sayName(); // tom
+tom.name = 'jerry';// 共有属性，外部不可更改
+tom.sayName(); // tom
+
+```
+
+**函数节流**
+
+节流是指在一段时间内只允许函数执行一次。我们可以使用定时器实现节流。
+
+应用场景如：输入框的联想，可以限定用户在输入时，只在每两秒钟响应一次联想。
+
+```js
+// 节流
+var throttle = function(func, delay){
+    var timer = null;
+
+    return function(){
+        var context = this;
+        var args = arguments;
+        if(!timer){
+            timer = setTimeout(function(){
+                func.apply(context, args);
+                timer = null;
+            },delay);
+        }
+    }
+```
+
+**防抖**
+
+防抖的作用是在短时间内多次触发同一个函数，只执行最后一次，或者只在开始时执行。
+
+以用户拖拽改变窗口大小，触发 `resize` 事件为例，在这过程中窗口的大小一直在改变，所以如果我们在 `resize` 事件中绑定函数，这个函数将会一直触发，而这种情况大多数情况下是无意义的，还会造成资源的大量浪费。
+
+```js
+// 防抖
+function debounce(fn, delay){
+    // 维护一个 timer
+    let timer = null;
+    
+    return function() {
+        // 获取函数的作用域和变量
+        let context = this;
+        let args = arguments;
+        
+        clearTimeout(timer);// 清除重新计时
+        timer = setTimeout(function(){
+            fn.apply(context, args);
+        }, delay)
+    }
+}
+```
+
+
 
 #### Symbol类型是做什么的？
 
@@ -805,3 +902,4 @@ const bindFn = fn._bind(obj, 1, 2, 3);
 bindFn();
 ```
 
+G
