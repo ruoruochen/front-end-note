@@ -62,7 +62,7 @@ Vuex 是一个状态管理模式，它采用集中式存储管理应用的所有
 
    挂载
 
-   ![image-20201222103547188](.../img/image-20201222103547188.png)
+   ![image-20201222103547188](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20201222103547188.png)
 
 3. 使用：
 

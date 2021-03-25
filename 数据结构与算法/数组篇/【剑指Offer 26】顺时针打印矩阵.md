@@ -19,6 +19,8 @@
 
 #### 解法1
 
+**太难想了**
+
 ![image-20210115140524182](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210115140524182.png)
 
 借助图形思考，将复杂的矩阵拆解成若干个圈，循环打印矩阵，每次打印其中一个圈
@@ -47,38 +49,6 @@
 结束列号大于开始列号，需要从右到左打印
 
 结束行号大于开始行号+1，需要从下到上打印
-
-#### 解法2
-
-![image-20210115140549914](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210115140549914.png)
-
-​		如果一条边从头遍历到底，则下一条边遍历的起点随之变化。如果不遍历到底，可以减小横向和竖向遍历之间的影响。我选择一次迭代遍历一个“圈”，然后 4 条边的两端同时收缩，一层层向内处理，按顺时针依次遍历：上、右、下、左层。
-
-​		当不再形成“环”了就结束遍历，剩下一行或一列，然后单独判断即可。
-
-- 上边界 top : 0
-
-- 下边界 bottom : matrix.length - 1
-
-- 左边界 left : 0
-
-- 右边界 right : matrix[0].length - 1
-
-  矩阵不一定是方阵。top < bottom && left < right 是循环的条件。结束循环时，分 3 种情况：
-
-- top == bottom && left < right —— 剩一行。
-
-- top < bottom && left == right —— 剩一列。
-
-- top == bottom && left == right —— 剩一项（也是一行/列）。
-
-  处理剩下的单行或单列。因为是按顺时针推入结果数组的，所以：
-
-- 剩下的一行，从左至右 依次推入结果数组。
-
-- 剩下的一列，从上至下 依次推入结果数组。
-
-### 代码
 
 #### 解法1
 
@@ -132,6 +102,40 @@ function printCircle(matrix, start, coloums, rows, result) {
 ```
 
 ![image-20210115140814720](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210115140814720.png)
+
+#### 解法2
+
+![image-20210115140549914](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210115140549914.png)
+
+​		如果一条边从头遍历到底，则下一条边遍历的起点随之变化。如果不遍历到底，可以减小横向和竖向遍历之间的影响。我选择一次迭代遍历一个“圈”，然后 4 条边的两端同时收缩，一层层向内处理，按顺时针依次遍历：上、右、下、左层。
+
+​		当不再形成“环”了就结束遍历，剩下一行或一列，然后单独判断即可。
+
+- 上边界 top : 0
+
+- 下边界 bottom : matrix.length - 1
+
+- 左边界 left : 0
+
+- 右边界 right : matrix[0].length - 1
+
+  矩阵不一定是方阵。top < bottom && left < right 是循环的条件。结束循环时，分 3 种情况：
+
+- top == bottom && left < right —— 剩一行。
+
+- top < bottom && left == right —— 剩一列。
+
+- top == bottom && left == right —— 剩一项（也是一行/列）。
+
+  处理剩下的单行或单列。因为是按顺时针推入结果数组的，所以：
+
+- 剩下的一行，从左至右 依次推入结果数组。
+
+- 剩下的一列，从上至下 依次推入结果数组。
+
+### 代码
+
+
 
 #### 解法2
 
