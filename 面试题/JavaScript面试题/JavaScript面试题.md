@@ -1,4 +1,4 @@
-#### 且lean、Number、String，还有在 ES6 中新增的 Symbol 类型。
+#### 说一下JS的基本数据类型
 
 ```
 1.有两种
