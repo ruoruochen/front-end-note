@@ -29,17 +29,42 @@
 
 ## 代码
 
+**dfs 深度优先遍历**
+
 ```js
 var maxDepth = function (root) {
   if (!root) {
     return 0;
   }
-
   return Math.max(maxDepth(root.left), maxDepth(root.right)) + 1;
 };
 ```
 
 ![image-20210119144930487](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210119144930487.png)
+
+**bfs 广度优先遍历**
+
+```js
+var maxDepth = function (root) {
+  if (!root) return 0;
+  let depth = 1;
+  let quene = [root];
+  while (quene.length) {
+    //当前层节点数
+    const levelSize = quene.length;
+    //节点出列，子节点入队列
+    for (let i = 0; i < levelSize; i++) {
+      const cur = quene.shift();
+      if (cur.left) quene.push(cur.left);
+      if (cur.right) quene.push(cur.right);
+    }
+    if (quene.length) depth++;
+  }
+  return depth;
+};
+```
+
+
 
 # 更多资料
 
