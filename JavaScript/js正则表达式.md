@@ -185,4 +185,37 @@ console.log(str7.match(reg7));//["abcabc", "abcabc"]
 
 ​     (5) “或”操作： |
 
+### 练习
+
+1、匹配select中所选中的项
+
+```js
+select id,name,age from student;
+```
+
+```js
+let str = "select id,name,age from student;";
+let reg = /^(select)(\w|\s|,){1,}(from)/;
+let arr = str.match(reg);
+let args = arr[0].slice(7, -5).trim().split(',')
+console.log(args);
+```
+
+2、正则表达式匹配手机号码
+
+```js
+let IsPhone = /^1([358][0-9]|[4][134]|[7][12345])([0-9]){8}$/
+console.log(IsPhone.test("15177890987"));//true
+```
+
+3、正则判断IP地址
+
+```js
+let IsIP = /^(([01]([\d]){0,2}|[2]([0-4][\d]|[5][0-7]))\.){3}([01]([\d]){0,2}|[2]([0-4][\d]|[5][0-7]))$/;
+let ip = "257.1.1.1";
+
+console.log(IsIP.test(ip));//true
+```
+
+4、正则处理数字千分位，如`12345`替换为`12,345`
 
