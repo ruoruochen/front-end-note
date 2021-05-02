@@ -18,7 +18,7 @@
 
 这一张图告诉我们，对于快慢指针，当slow和fast相遇时，相遇点在C,	同时推导出 =>2(AB+BC) = AB+BC+CB+BC	=> AB = CB
 
-![Floyd1](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/20200804111327945.png)
+![Floyd1](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/20200804111327945.png)·
 
 第二张图告诉我们，当slow走到入口节点B的时候，fast走到D,也就是说 => 2AB = AB+BC+CD =>AB = BC+CD
 结合上图的结论  AB = CB	则可以推导出 => CB = BC+CD =>CD+DB = BC+CD => DB=BC	也就是为什么 BC,BD两个距离都是Y
