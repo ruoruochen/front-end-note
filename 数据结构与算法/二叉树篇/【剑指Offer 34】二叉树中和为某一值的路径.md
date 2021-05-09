@@ -78,6 +78,42 @@ var getSumPath = function (root, resultsum, stack, mysum, result) {
 
 ![image-20210131195947280](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210131195947280.png)
 
+```js
+function pathSum( root ,  sum ) {
+    //递归
+    //状态变量：temp数组，node当前结点，currentSum当前和
+    //递归出口：到达叶子结点且currentSum == sum
+    //剪枝：currentSum>sum时不再往下求
+    //递归列表，往左右子树走
+    const res = [];
+    var dfs = function(node,currentSum,temp){
+        //一进来就放
+        temp.push(node.val);
+        currentSum += node.val;
+        
+        if(!node.left && !node.right && currentSum == sum){
+          res.push(temp.slice(0));
+        }
+        
+        if(node.left){
+            dfs(node.left,currentSum,temp);
+        }
+        
+        if(node.right){
+            dfs(node.right,currentSum,temp);
+        }
+        temp.pop();
+    }
+    if(root){
+            dfs(root,0,[]);
+    }
+  
+    return res;
+}
+```
+
+
+
 # 更多资料
 
 整理不易，若对您有帮助，请给个「关注+点赞」，您的支持是我更新的动力 👇
