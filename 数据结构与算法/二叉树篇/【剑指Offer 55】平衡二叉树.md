@@ -17,12 +17,14 @@
 
 ## 思路
 
+#### 解法1
+
+**我感觉这个方法不太好理解**
+
 - 后续遍历二叉树，在遍历二叉树每个节点前都会遍历其左右子树
 
 - 若左右子树存在一个不平衡或左右子树差值大于1，则整棵树不平衡
 - 若左右子树平衡，则返回当前树深：左右子树最大深度+1
-
-## 代码
 
 ```js
 // 1.函数功能：求二叉树是否平衡
@@ -50,6 +52,31 @@ function balanced(node) {
 ```
 
 ![image-20210119152531319](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210119152531319.png)
+
+#### 解法2
+
+```js
+var getMaxDeep = (root)=>{
+    //最大深度
+    if(!root) return 0;
+    return Math.max(getMaxDeep(root.left),getMaxDeep(root.right))+1;
+}
+
+var isBalanced = function(root) {
+   //平衡二叉树 = 当前树平衡 + 左子树平衡 + 右子树平衡
+   //判断树平衡：左右深度相差<=1
+   //递归判断 获取左子树高度 右子树高度
+   if(!root) return true
+   let left = getMaxDeep(root.left);
+   let right = getMaxDeep(root.right);
+   if(Math.abs(left-right)>1){
+       return false;
+   }
+   return isBalanced(root.left) && isBalanced(root.right);
+};
+```
+
+
 
 # 更多资料
 
