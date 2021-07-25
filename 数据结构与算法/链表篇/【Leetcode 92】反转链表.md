@@ -74,23 +74,20 @@ var reverseList = function (head) {
 #### 代码2
 
 ```js
-var reverseList = function (pHead) {
-	//非递归
-    //第一个节点
-    let myhead = pHead;
-    //curent用于遍历链表
+var reverseList = function(head) {
+    // 非递归反转
+    let thead = head;
     let current = null;
-    while(pHead && pHead.next){
-        current = pHead.next;
-        //初始头结点的next执行current.next
-        pHead.next = current.next;
-        //current的next指向头结点
-        current.next = myhead;
-        //改变头结点
-        myhead = current;
+    while(head && head.next){
+        //遍历head 获取每一个结点
+        current = head.next
+        head.next = current.next
+        //交换节点指向和头结点
+        current.next = thead;
+        thead = current
     }
-    return myhead;
-}
+    return thead;
+};
 ```
 
 # 更多资料
