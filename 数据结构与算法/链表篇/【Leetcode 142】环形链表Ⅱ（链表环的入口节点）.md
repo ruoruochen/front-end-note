@@ -69,6 +69,34 @@ function EntryNodeOfLoop(pHead) {
 }
 ```
 
+更简便的写法：
+```js
+function EntryNodeOfLoop(pHead) {
+    if (!pHead || !pHead.next) {
+        return null;
+    }
+    let P1 = pHead.next;
+    let P2 = pHead.next.next;
+    // 1.判断是否有环
+    while (P1 != P2) {
+        //p2走到终点，说明没有环
+        if (P2 === null || P2.next === null) {
+            return null;
+        }
+        P1 = P1.next;
+        P2 = P2.next.next;
+    }
+     //p1为相遇结点
+    P2 = pHead;
+    //一起走
+    while(P1!==P2){
+        P1 = P1.next;
+        P2 = P2.next;
+    }
+    return P1;
+}
+```
+
 # 更多资料
 
 整理不易，若对您有帮助，请给个「关注+点赞」，您的支持是我更新的动力 👇
