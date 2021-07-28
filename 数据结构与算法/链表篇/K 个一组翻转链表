@@ -1,0 +1,46 @@
+## K 个一组翻转链表
+
+```js
+const myReverse = (head, tail) => {
+    let prev = tail.next;
+    let p = head;
+    while (prev !== tail) {
+        const nex = p.next;
+        p.next = prev;
+        prev = p;
+        p = nex;
+    }
+    //返回头尾结点
+    return [tail, head];
+}
+var reverseKGroup = function(head, k) {
+    //创建亚结点作为pre结点
+    const hair = new ListNode(0);
+    hair.next = head;
+    let pre = hair;
+
+    //当结点不为空，遍历
+    while (head) {
+        //尾结点=pre结点，从这里走k步
+        let tail = pre;
+        // 查看剩余部分长度是否大于等于 k
+        for (let i = 0; i < k; ++i) {
+            tail = tail.next;
+            //<k步，遍历完成 返回
+            if (!tail) {
+                return hair.next;
+            }
+        }
+        //下一结点
+        const nex = tail.next;
+        //反转链表获得头尾结点
+        [head, tail] = myReverse(head, tail);
+        // 把子链表重新接回原链表
+        pre.next = head;
+        tail.next = nex;
+        pre = tail;
+        head = tail.next;
+    }
+    return hair.next;
+};
+```
