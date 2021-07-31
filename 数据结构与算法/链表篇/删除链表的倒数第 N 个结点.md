@@ -51,6 +51,9 @@ var removeNthFromEnd = function(head, n) {
 
 ##### 快慢指针法
 
+亚结点的作用是什么？
+去特殊化，我们删除任意一个结点，需要获取到他前面的结点，除了第一个结点没有前面的结点，所以我们需要创建一个亚结点去特殊化。
+
 ```js
 var removeNthFromEnd = function(head, n) {
     //创建哑结点
