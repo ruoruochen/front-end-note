@@ -20,7 +20,7 @@
 
 ## 思路
 
-快慢指针法
+#### 快慢指针法
 
 - 1.先找到两个链表的长度`length1`、`length2`
 - 2.让长一点的链表先走`length2-length1`步，让长链表和短链表起点相同
@@ -29,7 +29,6 @@
 
 ![image-20210110134735970](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210110134735970.png)
 
-## 代码
 
 ```js
 var getIntersectionNode = function (headA, headB) {
@@ -75,6 +74,27 @@ function getLength(head) {
 ```
 
 ![image-20210114140418738](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210114140418738.png)
+
+#### 哈希集合法
+
+```js
+var getIntersectionNode = function(headA, headB) {
+        const set = new Set();
+        let temp = headA;
+        while(temp){
+            set.add(temp);
+            temp = temp.next;
+        }
+        temp = headB;
+        while(temp){
+            if(set.has(temp)){
+                return temp;
+            }
+            temp = temp.next;
+        }
+        return null;
+};
+```
 
 # 更多资料
 
