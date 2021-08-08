@@ -284,6 +284,8 @@ buildEntry主要就是拿到config，使用rollup编译，并生成文件。
 
 ## 4 Vue初始化的过程
 
+![image-20210510164310365](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210510164310365.png)
+
 打开`src/platforms/web/entry-runtime-with-comipiler.js`，这是Runtime-Compiler构建Vue的入口，我们可以看到`import Vue from './runtime/index'`，这句话是关键代码，我们跟进去看看
 
 ![image-20210510152456422](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210510152456422.png)

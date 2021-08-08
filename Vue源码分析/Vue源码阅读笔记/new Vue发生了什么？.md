@@ -292,7 +292,7 @@ export class Observer {
 }
 ```
 
-`defineReactive`方法中，使用`Object.defineProperty`进行数据劫持，在`set`中调用dep.notify通知依赖更新。
+`defineReactive`方法中，使用`Object.defineProperty`进行数据劫持，在`get`中依赖收集，在`set`中调用dep.notify通知依赖更新。
 
 ```js
 export function defineReactive (
