@@ -68,6 +68,42 @@ var threeSum = function (nums) {
 }
 ```
 
+```js
+var threeSum = function(nums) {
+    //定一（相同跨过） 移二
+    nums.sort((a,b)=>a-b);
+    const res = [];
+    for(let i = 0;i<nums.length-2;i++){
+        //相同跨过
+        if(i && nums[i] === nums[i-1]) continue;
+        let p1 = i+1 ,p2 = nums.length-1;
+        while(p1<p2){
+            //去重
+            if((p1>i+1&&nums[p1]===nums[p1-1])) {
+                p1++;
+                continue
+            }
+            if((p2<nums.length-1&&nums[p2]===nums[p2+1])){
+                p2--;
+                continue;
+            }
+            let sum = nums[i]+nums[p1]+nums[p2];
+            if(sum === 0){
+                res.push([nums[i],nums[p1],nums[p2]]);
+                p1++;
+                p2--;
+            }else if(sum<0){
+                p1++;
+            }else{
+                p2--;
+            }
+        }
+    }
+    return res;
+};
+```
+
+
 ![image-20210202193325642](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210202193325642.png)
 
 # 更多资料
