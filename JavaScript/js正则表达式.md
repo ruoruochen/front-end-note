@@ -111,7 +111,7 @@ console.log(reg4.test('!'));//true
 
 **量词表示匹配多少个目标对象，精确匹配长度使用{}。**
 
-![image-20210812162141516](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210812162141516.png)
+![image-20210812163902083](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210812163902083.png)
 
 ```js
 // 1. * 匹配连续出现零次或多次字符
