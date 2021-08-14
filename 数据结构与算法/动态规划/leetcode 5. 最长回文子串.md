@@ -126,7 +126,35 @@ var longestPalindrome = function (s) {
 }
 
 ```
-
+```js
+var longestPalindrome = function(s) {
+    //max = 1 start = 0len = s.length;
+    //动态规划 dp[i][j] 下标i到j 是否形成回文串 true /false; i>=j才有意义
+    //状态转移 dp[i][j] = dp[i+1][j-1] && s[i] === s[j];（j>1 i<s.length-1)
+    // 方向 i从大到小 j从小到大
+    // if true j-i+1>max? max = xxx,start = i
+    // 初始化  dp[len-1][len-i] = true;
+    let max = 1,start =0,len = s.length;
+    let dp =new Array(len);
+    for(let i =0;i<len;i++){
+        dp[i] = new Array(len).fill(true);
+    }
+    //初始化
+    dp[len-1][len-1] = true;
+    for(let i =len-2;i>=0;i--){
+        for(let j =i;j<len;j++){
+            dp[i][j] = dp[i+1][j-1] && s[i] === s[j];
+            if(dp[i][j] && j-i+1 >max){
+                max = j-i+1;
+                start = i;
+                end = j;
+            }
+        }
+    }
+    
+    return s.substr(start,max);
+};
+```
 
 
 ![image-20210330223351262](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210330223351262.png)
