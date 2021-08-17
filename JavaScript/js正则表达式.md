@@ -57,9 +57,8 @@ console.log(res);//["1", "2", "3", "4", "5", "6", "7"]
 
 **记住常用三个：i g m**
 
+<<<<<<< HEAD
 ![image-20210812162115023](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210812162115023.png)
-
-
 
 ```js
 //1.匹配所有项，忽略大小写。
@@ -81,7 +80,7 @@ console.log(reg2.test(str));//false
 #### 2.2 元字符
 
 ![image-20210812162130320](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210812162130320.png)
-
+=======
 **s(space) d(digital) w(word)小写匹配，大写取反。**
 
 ```js
@@ -112,7 +111,7 @@ console.log(reg4.test('!'));//true
 **量词表示匹配多少个目标对象，精确匹配长度使用{}。**
 
 ![image-20210812163902083](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20210812163902083.png)
-
+=======
 ```js
 // 1. * 匹配连续出现零次或多次字符
 const reg1 = /hi*/gi
@@ -229,4 +228,4 @@ console.log(IsIP.test(ip));//true
 
 2、方括号必须转义
 
-3、「^」在首和「-」在中必须转义 
+3、「^」在首和「-」在中必须转义

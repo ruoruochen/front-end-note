@@ -79,6 +79,47 @@ var fourSum = function (nums, target) {
 };
 ```
 
+<<<<<<< HEAD
+=======
+```js
+var fourSum = function(nums, target) {
+    // 定二 移二
+    nums.sort((a,b)=>a-b);
+    const res = [];
+    for(let i =0;i<nums.length-3;i++){
+        //去重
+        if(i && nums[i] === nums[i-1]) continue;
+        for(let j = i+1;j<nums.length-2;j++){
+            if(j>i+1 && nums[j] === nums[j-1]) continue;
+            let sum = target - nums[i] - nums[j];
+            let p1 = j+1 , p2 = nums.length-1;
+            while(p1<p2){
+                //p1 p2 去重
+                if(p1>j+1 && nums[p1] === nums[p1-1]) {
+                    p1++;
+                    continue;
+                }
+                if(p2<nums.length-1 && nums[p2] === nums[p2+1]){
+                    p2--;
+                    continue;
+                }
+                if(nums[p1]+nums[p2] === sum){
+                    res.push([nums[i],nums[j],nums[p1],nums[p2]]);
+                    p1++;
+                    p2--;
+                }else if(nums[p1]+nums[p2] < sum){
+                    p1++;
+                }else{
+                    p2--;
+                }
+            }
+        }
+    }
+    return res;
+};
+```
+
+>>>>>>> a9f8a625a0f9e0944befa320c5e63711529a707a
 ## 附加练习题：五数之和
 
 ```js
