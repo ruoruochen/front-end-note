@@ -174,26 +174,18 @@ const increment = () => {
 **Redux Action 生成器**
 
 ```js
-//actions.js
-export const INCREMENT = "INCREMENT";
-export const DECREMENT = "DECREMENT";
-
-export function increment() {
-  return { type: INCREMENT };
-}
-
-export const decrement = () => ({ type: DECREMENT });
-
-//Counter.js
-import { increment, decrement } from './actions';
-increment = () => {
-    this.props.dispatch(increment()); // << 在这使用
-};
+const addTodo = text => ({
+  type: "ADD_TODO",
+  id: nextTodoId++,
+  text
+});
 ```
 
-不要 `dispatch(increment)` 🚫
+这种接收一些需要修改的参数，返回一个 Action 的函数在 Redux 中被称为 Action Creators（动作创建器）。
 
-应该 `dispatch(increment())` ✅
+```js
+dispatch(addTodo('我是一只小小小图雀'))
+```
 
 **mapStateToProps工作机制**
 
