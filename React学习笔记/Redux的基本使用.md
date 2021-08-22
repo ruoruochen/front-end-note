@@ -241,11 +241,225 @@ function doStuff() {
 }
 ```
 
+####  Redux Thunk
+
 安装 Redux Thunk
 
 ```js
 npm install --save redux-thunk
 ```
+
+因为reducer是纯函数，我们不能在里面做API调用，也不能在action生成器中返回一个调用API的函数。这个时候我们就需要用到异步中间件。
+
+**"thunk"** 是指被其它函数作为返回值的**函数**。
+
+```JS
+function doStuff() {
+  return function(dispatch, getState) {
+    // 在这里 dispatch actions
+    // 或者获取数据
+    // 或者该干啥干啥
+  }
+}
+```
+
+被返回的函数就是 "thunk"，把它作为返回值的就是“action 生成器”。
+
+Action 生成器返回的函数接收两个参数：`dispatch` 函数和 `getState`。大多数场景你只需要 `dispatch`，但有时你想根据 Redux state 里面的值额外做些事情。这种情况下，调用 `getState()` 你就会获得整个 state 的值然后按需所取。
+
+**Redux Thunk的使用**
+
+1、安装redux-thunk
+
+2、引入 `redux-thunk` 然后通过 Redux 的 `applyMiddleware` 函数把它应用到 store 中。
+
+```js
+const store = createStore(
+  reducer,
+  applyMiddleware(thunk)
+);
+```
+
+3、创建Action生成器
+
+```js
+export function fetchProducts() {
+  return dispatch => {
+    dispatch(fetchProductsBegin());
+    return fetch("/products")
+      .then(res => res.json())
+      .then(json => {
+        dispatch(fetchProductsSuccess(json.products));
+        return json.products;
+      })
+      .catch(error => dispatch(fetchProductsFailure(error)));
+  };
+}
+```
+
+4、（局部组件需要数据）在componentDidMount / useEffect中调用dispatch action获取数据
+
+（全局数据）创建store后，就是用store.dispatch action
+
+**Redux Actions命名规范**
+
+获取数据的 Redux actions 通常使用标准三连：BEGIN、SUCCESS、FAILURE。
+
+在你调用 API **之前**，dispatch BEGIN action。
+
+调用成功**之后**，你可以 dispatch SUCCESS 数据。如果请求失败，你可以 dispatch  FAILURE错误信息。
+
+全部代码：
+
+1、创建全局Store，允许中间件。
+
+```js
+import thunk from 'redux-thunk';
+import { createStore, applyMiddleware } from 'redux';
+import reducer from './productReducer.js'
+
+const store = createStore(
+  reducer,
+  applyMiddleware(thunk)
+);
+```
+
+2、创建action生成器、redux-thunk以及reducer函数
+
+```JS
+//ACTIONS生成器 productActions.js
+export const FETCH_PRODUCTS_BEGIN   = 'FETCH_PRODUCTS_BEGIN';
+export const FETCH_PRODUCTS_SUCCESS = 'FETCH_PRODUCTS_SUCCESS';
+export const FETCH_PRODUCTS_FAILURE = 'FETCH_PRODUCTS_FAILURE';
+
+export const fetchProductsBegin = () => ({
+  type: FETCH_PRODUCTS_BEGIN
+});
+
+export const fetchProductsSuccess = products => ({
+  type: FETCH_PRODUCTS_SUCCESS,
+  payload: { products }
+});
+
+export const fetchProductsFailure = error => ({
+  type: FETCH_PRODUCTS_FAILURE,
+  payload: { error }
+});
+
+export function fetchProducts() {
+  return dispatch => {
+    dispatch(fetchProductsBegin());
+    return fetch("/products")
+      .then(res => res.json())
+      .then(json => {
+        dispatch(fetchProductsSuccess(json.products));
+        return json.products;
+      })
+      .catch(error => dispatch(fetchProductsFailure(error)));
+  };
+}
+```
+
+```js
+//reducer函数 productReducer.js
+import {
+  FETCH_PRODUCTS_BEGIN,
+  FETCH_PRODUCTS_SUCCESS,
+  FETCH_PRODUCTS_FAILURE
+} from './productActions';
+
+const initialState = {
+  items: [],
+  loading: false,
+  error: null
+};
+
+export default function productReducer(state = initialState, action) {
+  switch(action.type) {
+    case FETCH_PRODUCTS_BEGIN:
+      // 把 state 标记为 "loading" 这样我们就可以显示 spinner 或者其他内容
+      // 同样，重置所有错误信息。我们从新开始。
+      return {
+        ...state,
+        loading: true,
+        error: null
+      };
+
+    case FETCH_PRODUCTS_SUCCESS:
+      // 全部完成：设置 loading 为 "false"。
+      // 同样，把从服务端获取的数据赋给 items。
+      return {
+        ...state,
+        loading: false,
+        items: action.payload.products
+      };
+
+    case FETCH_PRODUCTS_FAILURE:
+      // 请求失败，设置 loading 为 "false".
+      // 保存错误信息，这样我们就可以在其他地方展示。
+      // 既然失败了，我们没有产品可以展示，因此要把 `items` 清空。
+      //
+      // 当然这取决于你和应用情况：
+      // 或许你想保留 items 数据！
+      // 无论如何适合你的场景就好。
+      return {
+        ...state,
+        loading: false,
+        error: action.payload.error,
+        items: []
+      };
+
+    default:
+      // reducer 需要有 default case。
+      return state;
+  }
+}
+```
+
+3、在`ProductList` 组件发起请求 获取数据
+
+```js
+import React from "react";
+import { connect } from "react-redux";
+import { fetchProducts } from "/productActions";
+
+class ProductList extends React.Component {
+  componentDidMount() {
+    this.props.dispatch(fetchProducts());
+  }
+
+  render() {
+    const { error, loading, products } = this.props;
+
+    if (error) {
+      return <div>Error! {error.message}</div>;
+    }
+
+    if (loading) {
+      return <div>Loading...</div>;
+    }
+
+    return (
+      <ul>
+        {products.map(product =>
+          <li key={product.id}>{product.name}</li>
+        )}
+      </ul>
+    );
+  }
+}
+
+const mapStateToProps = state => ({
+  products: state.products.items,
+  loading: state.products.loading,
+  error: state.products.error
+});
+
+export default connect(mapStateToProps)(ProductList);
+
+```
+
+
 
 参考链接
 
