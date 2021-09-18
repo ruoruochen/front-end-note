@@ -90,6 +90,24 @@ var reverseList = function(head) {
 };
 ```
 
+```js
+function ReverseList(pHead)
+{
+   //非递归反转 遍历链表 当前节点指向反转结点的头节点
+    if(!pHead ||!pHead.next) return pHead;
+    let reverseHead = pHead;
+    let current = null;
+    while(pHead && pHead.next){
+        current = pHead.next;
+        pHead.next = current.next;
+        //节点交换
+        current.next = reverseHead;
+        reverseHead = current;
+    }
+    return reverseHead;
+}
+```
+
 进阶题目：[K个一组翻转链表](https://leetcode-cn.com/problems/reverse-nodes-in-k-group/)
 
 # 更多资料
