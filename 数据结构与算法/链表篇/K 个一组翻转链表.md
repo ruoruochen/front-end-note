@@ -47,3 +47,47 @@ function reverseList(head,tail){
     return [tail,head];
 }
 ```
+
+```js
+function reverseKGroup( head ,  k ) {
+    //局部翻转 pre指向头，尾指向next
+    let preHead = new ListNode(-1);
+    preHead.next = head;
+    let pre = preHead
+    while(head){
+        //每一轮为一组 尾结点移动
+        let tail = pre;
+        for(let i =0;i<k;i++){
+            //如果凑不够k个，结束
+            tail = tail.next;
+             if(!tail) return preHead.next;
+        }
+        let next = tail.next;
+        //翻转 head 到 tail，返回翻转后的头尾
+        [head,tail]= reverse(head,tail)
+        //拼接
+        pre.next = head;
+        tail.next = next;
+        //更新
+        pre = tail;
+        head = tail.next;
+    }
+    return preHead.next
+}
+
+function reverse(head,tail){
+    //局部翻转列表：遍历head~tail的节点，每个节点指向前一个结点
+    //结束：pre节点===tail节点 
+    let pre = null;
+    let current = head;
+    while(pre!==tail){
+        let temp = current.next
+        current.next = pre;
+        pre = current;
+        current = temp;
+    }
+    
+    return [tail,head];
+}
+```
+
