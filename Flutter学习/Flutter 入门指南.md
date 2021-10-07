@@ -395,7 +395,13 @@ getString() {
 }
 ```
 
-### 1.3 Flutter
+### 1.3 Flutter 布局
+
+在 Flutter 里，万物皆控件：Widget。
+
+
+
+
 
 #### 控件基础
 
@@ -429,7 +435,11 @@ StatefulWidget 类本身是不变的，但是 State 类在 widget 生命周期�
 
 类比于Android的Layout，有一个chidren属性，接受控件数组。
 
-常用的布局控件有 Row、Column、Stack、Flex、Scaffold 等。
+常用的布局控件有 Row、Column、ListTile、Stack、Flex、Scaffold 等。
+
+**Row**
+
+属性：mainAxisAlignment、crossAxisAlignment用于控制行、列子项的对齐。
 
 **Scaffold布局控件**
 
@@ -462,7 +472,7 @@ Navigator.of(context).push(MaterialPageRoute(builder: (context) {
 
 常用的功能控件有 Navigator、NotificationListener、Theme 等。
 
-#### 状态state
+#### 状态state管理
 
 在 Flutter 的响应式风格的框架中，调用 `setState()` 会为 State 对象触发 `build()` 方法，从而导致对 UI 的更新
 
