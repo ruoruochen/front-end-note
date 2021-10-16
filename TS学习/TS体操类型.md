@@ -115,15 +115,110 @@ type MyOmit<T, K extends keyof T> = {
 }
 ```
 
-#### Readonly 2
+#### Readonly 2 TODO!
 
 ![image-20211015160815675](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211015160815675.png)
 
-使用交集类型`&`
+使用交集类型`&`，K的默认值：T的key值的联合类型
 
 ```typescript
 type MyReadonly2<T, K extends keyof T = keyof T> = T & {
   readonly [P in K]:T[P];
 } 
+```
+
+#### 深度 Readonly
+
+![image-20211016111331414](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211016111331414.png)
+
+索引签名 + 条件类型 + infer推理
+
+```typescript
+type DeepReadonly<T> = T extends {[propName:string]:infer R}?{readonly [i in keyof T]:DeepReadonly<T[i]> }:T;
+```
+
+#### 数组转联合类型
+
+![image-20211016112038618](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211016112038618.png)
+
+思路：使用索引访问类型进行实现，获取索引为number类型对应的值，即得到联合类型
+
+```typescript
+type TupleToUnion<T extends any[]> = T[number]
+```
+
+#### 可串联构造器
+
+![image-20211016113629617](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211016113629617.png)
+
+```typescript
+type Chainable<T extends {} = {}> = {
+  option<K extends string = string, V = any>(key: K, value: V): Chainable<T & { [P in K]: V }>
+  get(): T
+}
+```
+
+#### 最后一个元素
+
+![image-20211016163744840](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211016163744840.png)
+
+解法一：将T元素展开，取最后一个元素
+
+解法二：使用剩余运算符接受前面的元素，推断最后一个元素，返回。
+
+```typescript
+//解法1
+type Last<T extends any[]> = [never,...T][T["length"]]
+//解法2
+type Last<T extends any[]> = T extends [...infer R, infer L] ? L : never
+```
+
+#### Promise.all
+
+![image-20211016170358373](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211016170358373.png)
+
+```typescript
+declare function PromiseAll<T extends any[]>(
+  values: readonly [...T]
+): Promise<{ [K in keyof T]: T[K] extends Promise<infer R> ? R : T[K] }>
+```
+
+#### Type Lookup
+
+![image-20211016171816842](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211016171816842.png)
+
+原思路：
+
+遍历联合类型U，对比每个的type和T是否相等
+问题1：如何遍历联合类型？ **解答：通过分布条件类型，会映射到各个联合成员上**
+问题2：如果判断是否相等？**解答：通过{type:infer R}获取到type的属性值R，在通过R extends T判断是否相等**
+
+```typescript
+type LookUp<U, T extends string> = U extends {type:infer R}?R extends T?U:never:never;
+```
+
+#### Trim Left
+
+![image-20211016172954792](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211016172954792.png)
+
+思路：extends 某种格式，`${ignore}${infer R}` 再对剩下的R去trim。
+
+**小结：**
+
+- 在JS中，我们惯性思维是遍历后，符合某个条件进行操作。
+- 而TS中，我们一般是extends 某个格式（${ignore}${infer R}），然后在进行递归操作。一般是配合extends和infer
+
+```typescript
+type ignore =' ' | '\t' | '\n';
+type TrimLeft<S extends string> = S extends `${ignore}${infer R}` ? TrimLeft<R> : S;
+```
+
+#### Capitalize
+
+![image-20211016193144227](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211016193144227.png)
+
+```typescript
+//是否有字符，有，则第一个转大写，如果没有，直接返回
+type Capitalize<S extends string> = S extends `${infer C}${infer R}` ? `${Uppercase<C>}${R}` : S
 ```
 
