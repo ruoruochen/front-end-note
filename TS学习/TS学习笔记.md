@@ -687,9 +687,13 @@ const roArray: ReadonlyArray<string> = ["red", "green", "blue"];
 
 `Array<Type>`的简写为`Type<>`，而`ReadonlyArray<Type>`的简写为`readonly Type[]`
 
+**Readonly<T>**
+
+`Readonly` 会接收一个 *泛型参数*，并返回一个完全一样的类型，只是所有属性都会被 `readonly` 所修饰。
+
 **元组类型**
 
-指定特定位置元素的类型
+元组类型：长度和元素类型都确定的数组。
 
 ```ts
 type StringNumberPair = [string, number];
@@ -923,9 +927,28 @@ function createLabel<T extends number|string>(idOrName:T):NameOrId<T>{
 
 ![image-20211012173928731](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012173928731.png)
 
+**条件类型使用 infer 进行类型推理**
 
+`infer`：表示在`extends`条件语句中待推断的类型变量。
 
-条件类型约束
+```typescript
+type Params<T> = T extends (...args: infer P) => any ? P : T
+
+interface User {
+  name: string
+  age: number
+}
+
+type Func = (user: User) => void
+
+type MyParam = Params<Func> // MyParam = User
+type AA = Params<string> // string
+
+```
+
+语句分析：如果T类型是接受一些参数的函数，则返回这个参数的类型，否则返回T。
+
+**条件类型约束**
 
 希望效果：获取message，如果没有message 类型为never
 
@@ -1012,6 +1035,24 @@ interface Person {
  
 type LazyPerson = Getter<Person>;
 ```
+
+### 模板文字类型
+
+#### `Uppercase<StringType>`
+
+将字符串转大写
+
+#### `Lowercase<StringType`
+
+将字符串转小写
+
+#### `Capitalize<StringType>`
+
+将字符串第一个字符转大写，其他不变。
+
+#### `Uncapitalize<StringType>`
+
+将字符串第一个字符转小写，其他不变。
 
 ## Class
 
@@ -1267,3 +1308,91 @@ export type Animals = Cat | Dog;
 const name = createCatName();
 ```
 
+## 内置类型别名
+
+#### Partial< Type >
+
+`Partial<Type>`：将某个类型的属性全变为可选项。
+
+#### Required< Type >
+
+`Required<Type>`：将某个类型的属性全变为必选项。
+
+#### Readonly< Type >
+
+`Readonly<Type>`：将某个类型所有属性变为只读属性
+
+#### Record< Keys,Type >
+
+`Record<Keys,Type>`：将 K 中所有的属性的值转化为 T 类型。
+
+```typescript
+type Record<K extends keyof any, T> = {
+    [P in K]: T;
+};
+```
+
+例子：
+
+```typescript
+interface CatInfo {
+  age: number
+  breed: string
+}
+
+type CatName = 'miffy' | 'boris' | 'mordred'
+
+const cats: Record<CatName, CatInfo> = {
+  miffy: { age: 10, breed: 'Persian' },
+  boris: { age: 5, breed: 'Maine Coon' },
+  mordred: { age: 16, breed: 'British Shorthair' },
+}
+
+let b = cats.boris //let b: CatInfo
+```
+
+#### Pick < Type,Keys >
+
+`Pick <Type,Keys> `：从Type中取出一组属性Keys构造新的类型。
+
+#### Omit< Type,Keys >
+
+`Omit<Type,Keys>`：从Type中删除Keys属性，构造类型。
+
+#### Exclude< Type,ExcludedUnion >
+
+`Exclude<Type,ExcludedUnion> `：获取Type类排除ExcludedUnion后的联合成员。
+
+#### Extract< Type,Union >
+
+`Extract<Type,Union>`：获取Type可分配给Union的联合成员，即求同。
+
+#### NonNullable< Type >
+
+`NonNullable<Type>`：排除Type中的null、undefined后，得到的类型。
+
+#### Parameters< Type >
+
+`Parameters<T>`：获得函数的参数类型组成的元组类型。
+
+#### ConstructorParameters< Type >
+
+`ConstructorParameters<Type>`：获取构造函数参数类型的元组类型。
+
+#### ReturnType< Type >
+
+`ReturnType<T>`：获取函数 Type 的返回类型。
+
+#### InstanceType< Type >
+
+`InstanceType<Type>`：获取构造函数类型的实例类型。
+
+#### ThisParameterType< Type >
+
+`ThisParameterType<Type>`：获取函数的this参数的类型
+
+#### OmitThisParameter< Type > TODO
+
+#### ThisType< Type>
+
+`ThisType<T>`：指定上下文对象类型
