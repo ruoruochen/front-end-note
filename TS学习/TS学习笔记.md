@@ -874,7 +874,7 @@ API:`ReturnType<x>`，接受一个函数类型，并返回它的返回类型。
 
 ![image-20211012170442802](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012170442802.png)
 
-2、将 typeof f 传给 ReturnType ☑
+2、将 typeof 传给 ReturnType ☑
 
 ![image-20211012170526475](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012170526475.png)
 
@@ -882,7 +882,9 @@ API:`ReturnType<x>`，接受一个函数类型，并返回它的返回类型。
 
 1、使用索引访问特定属性
 
-![image-20211012170954764](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012170954764.png)2、索引类型本身就是一种类型，所以我们可以使用 keyof 以及其他类型（例如|）
+![image-20211012170954764](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012170954764.png)
+
+2、索引类型本身就是一种类型，所以我们可以使用 keyof 以及其他类型（例如|）
 
 ![image-20211012171047159](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012171047159.png)
 
