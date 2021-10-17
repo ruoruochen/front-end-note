@@ -1,6 +1,10 @@
+# 前言
+
+记录TS体操类型，一开始不会的体操及其题解
+
 ## :x:EASY 
 
-#### 4 实现Pick
+#### 4 实现**Pick**
 
 ![image-20211014112157258](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211014112157258.png)
 
@@ -222,3 +226,91 @@ type TrimLeft<S extends string> = S extends `${ignore}${infer R}` ? TrimLeft<R> 
 type Capitalize<S extends string> = S extends `${infer C}${infer R}` ? `${Uppercase<C>}${R}` : S
 ```
 
+#### Replace
+
+![image-20211017094948163](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211017094948163.png)
+
+```typescript
+// 判断From是否为空字符串，是，直接返回S
+// 不是，找到第一个匹配上From的，转为To
+type Replace<S extends string,From extends string,To extends string> = From extends ''? S
+  : S extends `${infer F}${From}${infer R}`
+  ? `${F}${To}${R}`: S
+```
+
+#### ReplaceAll
+
+![image-20211017095831617](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211017095831617.png)
+
+```typescript
+type ReplaceAll<S extends string, From extends string, To extends string> =  From extends ""?S:S extends `${infer U}${From}${infer R}`?
+`${ReplaceAll<U,From,To>}${To}${ReplaceAll<R,From,To>}`:S;
+```
+
+#### 追加参数
+
+![image-20211017100309634](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211017100309634.png)
+
+```typescript
+type AppendArgument<Fn, A> = Fn extends (...args:infer U)=>infer T?
+(...args:[...U,A])=>T:Fn;
+```
+
+#### Permutation 排列组合
+
+![image-20211017101534758](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211017101534758.png)
+
+```typescript
+// 利用联合类型的分布条件类型，使用Exclude从U中排除当前T，递归情况。
+type Permutation<T, U = T> = [T] extends [never] ? [] : T extends T ? [T, ...Permutation<Exclude<U, T>>] : never;
+```
+
+#### Length of String 求String的长度
+
+![image-20211017102603125](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211017102603125.png)
+
+将第一个字符放入数组后，递归取出字符串中的字符放入数组中
+
+```typescript
+type StrToArr<S extends string> = S extends `${infer Head}${infer Rest}`
+  ? [Head, ...StrToArr<Rest>]
+  : []
+type LengthOfString<S extends string> = StrToArr<S>['length']
+```
+
+#### Flatten 拍平数组
+
+![image-20211017103604010](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211017103604010.png)
+
+```typescript
+// 遍历数组，如果是数组，递归拍平
+type Flatten<T extends any[]> = T extends [infer R, ...infer U]
+  ? R extends any[]
+    ? [...Flatten<R>, ...Flatten<U>]
+    : [R, ...Flatten<U>]
+  : []
+```
+
+
+
+### 小结
+
+1、联合类型转数组
+
+```typescript
+type union = 'Hi' | 'Hello';
+type arr = [union]
+```
+
+2、数组转联合类型
+
+通过const断言，让其类型不扩展。
+
+再使用typeof arr[number]，获取到每一个索引的类型，即字符串本身
+
+```typescript
+const arr = ['name', 'age', 'location', 'email'] as const;
+type A = typeof arr[number];//'name' | 'age' | 'location' | 'email'
+```
+
+3、TS类型相互转换
