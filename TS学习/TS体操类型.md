@@ -291,11 +291,70 @@ type Flatten<T extends any[]> = T extends [infer R, ...infer U]
   : []
 ```
 
+#### Append to object 追加对象属性
 
+![image-20211018083938063](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211018083938063.png)
+
+方法：遍历T中的key 外加U，组成一个新的对象
+
+```typescript
+type AppendToObject<T extends object, U extends string, V extends any> = {
+  [K in (keyof T | U)]:K extends keyof T?T[K]:V;
+}
+```
+
+**为什么不能直接使用`&`交集类型**
+
+使用`&`类型并没有直接返回一个新的对象。
+
+#### Absolute 绝对值
+
+![image-20211018090054590](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211018090054590.png)
+
+T是否能匹配上负号，如果匹配上，取负号以外的值；否则，转字符串输出。
+
+```typescript
+type Absolute<T extends number | string | bigint> = `${T}` extends `-${infer U}`?`${U}`:`${T}`
+```
+
+#### String to Union 
+
+![image-20211018092001975](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211018092001975.png)
+
+通过extends匹配出一个一个字符，使用`|`拼接
+
+```typescript
+type StringToUnion<T extends string> = T extends `${infer A}${infer B}` ? A | StringToUnion<B> : never
+```
+
+#### Merge 合并类型属性
+
+![image-20211018093035729](C:%5CUsers%5CAsus%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20211018093035729.png)
+
+```typescript
+type Merge<T extends object,U extends object>={
+  [K in keyof(T & U)]:K extends keyof U?U[K]:K extends keyof T?T[K]:never
+}
+```
+
+#### CamelCase 
+
+![image-20211018100148920](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211018100148920.png)
+
+```typescript
+// 驼峰 
+// 1、判断S是否满足`xxx-xxx`格式，不满足直接返回S
+// 2、判断S是否为首字符大写模式，若是，则保留-，继续递归驼峰
+// 3、不是大写模式，移除-,递归驼峰
+type CamelCase<S extends string> =S extends `${infer first}-${infer rest}`? rest extends Capitalize<rest>?
+  `${first}-${CamelCase<rest>}`:`${first}${Capitalize<CamelCase<rest>>}`:S;
+```
 
 ### 小结
 
-1、联合类型转数组
+#### 联合类型与其他类型的相互转换
+
+##### 联合类型与数组
 
 ```typescript
 type union = 'Hi' | 'Hello';
@@ -313,4 +372,13 @@ const arr = ['name', 'age', 'location', 'email'] as const;
 type A = typeof arr[number];//'name' | 'age' | 'location' | 'email'
 ```
 
-3、TS类型相互转换
+##### 联合类型与字符串
+
+1、字符串转联合类型
+
+通过extends匹配出一个一个字符，使用`|`拼接
+
+```typescript
+type StringToUnion<T extends string> = T extends `${infer A}${infer B}` ? A | StringToUnion<B> : never
+```
+
