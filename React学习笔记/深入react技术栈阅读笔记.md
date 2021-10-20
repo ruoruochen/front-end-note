@@ -640,7 +640,96 @@ export default HOC;
 
 **反向继承**
 
-在`render`方法中返回`super.render()`方法。
+高阶组件返回的组件继承于`WrappedComponent`，在`render`方法中调用并返回`super.render()`。
+
+```jsx
+const HOC = (WrappedComponent) => {
+  return class extends WrappedComponent {
+    render() {
+      return super.render();
+    }
+  }
+}
+```
+
+- 反向继承特点：允许高阶组件通过`this`访问被包裹组件，故可以通过`this`直接读取和操作被包裹组件的`state`和`refs`以及生命周期方法。
+- 反向继承方式实现的高阶组件可以通过 `super.render()` 方法获取到传入组件实例的 `render` 结果
+
+**劫持原组件生命周期方法**
+
+因为返回新组建继承与`WrappedComponent`，同名方法会覆盖`WrappedComponent`内部的方法。
+
+此时在这个方法中劫持到原方法，执行后，在增加其他新的操作。
+
+![image-20211020152404500](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211020152404500.png)
+
+**读取和操作被包裹组件的`state`**
+
+![image-20211020152645128](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211020152645128.png)
+
+**渲染劫持，修改React元素树**
+
+![image-20211020154147289](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211020154147289.png)
+
+**属性代理和反向继承对比**
+
+- 属性代理：主要对props进行操作
+- 反向继承：主要对State、生命周期、render进行操作。
+
+参考链接：[React Hoc](https://juejin.cn/post/6844904050236850184#heading-18)
 
 > - 介绍一下高阶组件 TODO
+>
+> - 前端设计组件的原则（JS考题中有部分）TODO
+>
+>   一般按照功能来进行组件的封装，原则
+>
+>   1、组件再分离，多个组件出现的重叠部分，抽象成更细小的组件，提高复用性。并且我们希望这些组件是木偶式的。
+>
+>   2、逻辑再抽离，将组件中相同的交互逻辑、业务逻辑进行抽象复用，可以使用高阶组件实现。
 
+#### 2.4.3 组合式开发实践
+
+**1、组件再分离**
+
+多个组件中出现的重叠部分，我们希望把他抽离出来，形成更细小的组件。
+
+**对于颗粒度最小的组件，我们希望它是纯粹的、木偶式的。**
+
+**2、逻辑再抽象**
+
+将组件中相同的交互逻辑、业务逻辑进行抽象复用，可以使用高阶组件实现。
+
+### 2.5 组件性能优化
+
+主要问题：避免不必要渲染。
+
+React 提供的方法：`PureComponent`。
+
+#### 2.5.1 纯函数
+
+**纯函数**
+
+- 相同输入，相同输出。
+- 没有副作用。（在纯函数中我们不能改变外部状态：修改全局变量、修改参数等。）
+- 没有额外的状态依赖。（方法内的状态都只在方法的生命周期内存活）
+
+#### 2.5.2 PureComponent
+
+使用`shallowEqual`对新旧`props`进行前比较。
+
+本质上就是内嵌了一个`shouldComponentUpdate`生命周期，使用`PureComponent`，不能再使用`shouldComponentUpdate`方法
+
+> - QUES：实现一个shallowEqual TODO
+
+#### 2.5.3 key
+
+如果每个子组件是一个数组/迭代器，必须要有一个唯一的`key prop`，否则会报警告。
+
+> - QUES：KEY值的作用？TODO
+>
+>   标识当前项的唯一性，类似于身份证。
+>
+> - QUES：为什么不能用index作为key
+>
+>   因为当中间插入学生时，Index与学生的唯一信息没有相匹配，相当于用了一个随机键。
