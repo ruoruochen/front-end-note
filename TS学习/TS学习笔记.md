@@ -1,4 +1,4 @@
-# TypeScript Study
+TypeScript Study
 
 10.8 1h50min
 
@@ -862,7 +862,7 @@ function createArray<T = string>(length: number, value: T): Array<T> {
 
 ### Typeof 类型运算符
 
-使用 typeof 运算符引用变量/属性的类型
+使用 typeof 运算符引用**变量/属性的类型**，不能用在泛型
 
 ![image-20211012170132271](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012170132271.png)
 
@@ -907,6 +907,14 @@ type Array = arr[number]
 
 ### 条件类型
 
+**extends**
+
+如果`T`包含的类型 是 `U`包含的类型的 **'子集'**，那么取结果`X`，否则取结果`Y`。
+
+```typescript
+T extends U ? X : Y
+```
+
 类似于三元表达式，一个简单使用，如果Dog是Animal的子类，则Exmaple1 type为number.....
 
 ![image-20211012173106244](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012173106244.png)
@@ -932,6 +940,8 @@ function createLabel<T extends number|string>(idOrName:T):NameOrId<T>{
 **条件类型使用 infer 进行类型推理**
 
 `infer`：表示在`extends`条件语句中待推断的类型变量。
+
+**infer声明的这个变量只能在true分支中使用**
 
 ```typescript
 type Params<T> = T extends (...args: infer P) => any ? P : T
@@ -1364,6 +1374,12 @@ let b = cats.boris //let b: CatInfo
 #### Exclude< Type,ExcludedUnion >
 
 `Exclude<Type,ExcludedUnion> `：获取Type类排除ExcludedUnion后的联合成员。
+
+```typescript
+type T0 = Exclude<"a" | "b" | "c", "a">; // "b" | "c"
+type T1 = Exclude<"a" | "b" | "c", "a" | "b">; // "c"
+type T2 = Exclude<string | number | (() => void), Function>; // string | number
+```
 
 #### Extract< Type,Union >
 

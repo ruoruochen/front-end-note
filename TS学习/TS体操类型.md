@@ -399,6 +399,84 @@ Omit API，从第一个中移除第二个。
 type Diff<O, O1> = Omit<O & O1, keyof (O | O1)>
 ```
 
+#### AnyOf
+
+![image-20211020102842616](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211020102842616.png)
+
+1、首先判断数组是否有元素，没有false。
+
+2、判断数组是否`[0, '', false, [], {}]`的子集，是则false，不是则说明存在真值，true。
+
+```typescript
+type AnyOf<T extends readonly any[]> = T[number] extends never ? false : [0, '', false, [], {}] extends T ? false : true
+```
+
+#### IsNever
+
+![image-20211020103530987](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211020103530987.png)
+
+需要在T联合类型中将never剔除，为什么？
+
+**在使用泛型的条件类型中never extends never为false**
+
+```typescript
+type IsNever<T> = Exclude<T,never> extends never?true:false 
+```
+
+#### IsUnion
+
+![image-20211020105642547](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211020105642547.png)
+
+解释一下原理，利用分布条件类型，extends会应用于联合类型的每个成员
+
+例子1：`IsUnion<string|number>`
+
+1、先解释`T extends O` ?
+
+我们以为：`string | number extends string | number`
+
+实际上是：`(string extends string | number) | (number extends string |number)?`
+
+即：T有两种类型：`string`、`number`
+
+2、此时[T] 为 ：`[string] | [number]`，而[O]为extends后面的东西，没有被分布条件类型分布，所以此时[O]为：`[ string|number ]`
+
+3、比较[O] extends [T]，在该情况下 extends 不成立，返回true。
+
+
+
+我们再看看 只传单个类型的情况
+
+例子2：`isUnion<string>`
+
+利用分布条件类型，T也只有一种类型，此时[T]为`[string]`，[O]为`[string]`，该情况下extends成立，返回false。
+
+```typescript
+type IsUnion<T extends any, O = T> = T extends O ? [O] extends [T] ? false : true : never
+```
+
+#### ReplaceKeys
+
+将联合类型U中的T属性的类型改成Y中对应的声明类型，如果没有则改为never。
+
+![image-20211020142518974](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211020142518974.png)
+
+思路：
+
+1、利用条件分布类型应用到`U`的每一个联和成员上。
+
+2、遍历每个联和成员上的属性，判断属性是否在是`T`中，如果不在，保持`U[K]`不变；如果在，进行进一步判断
+
+3、判断K是否在Y的属性中，如果在，属性类型修改为`Y[K]`，否则`never`
+
+```typescript
+type ReplaceKeys<U, T, Y> = U extends object
+  ? {
+      [K in keyof U]: K extends T ? (K extends keyof Y ? Y[K] : never) : U[K]
+    }
+  : never
+```
+
 ### 小结
 
 #### 联合类型与其他类型的相互转换
