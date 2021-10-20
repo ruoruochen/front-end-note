@@ -398,3 +398,249 @@ const style = {
 **classnames库**
 
 ![image-20211018230521140](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211018230521140.png)
+
+> - QUES：Pub/Sub模式的实现原理 TODO
+
+### 2.4 React 组件抽象
+
+复用公共组件：`mixin`和高阶组件。
+
+#### 2.4.1 mixin
+
+`mixin`类似于组合的概念，给一个东西增加功能。
+
+**`mixin`存在的问题**
+
+- **破坏了原有组件的封装**，可能带了新的state、props，需要我们去维护这些“不可见”的状态，但在开发的时候，我们又不会去注意到。并且`mixin`会存在相互依赖，造成混乱。
+- **命名冲突**，各个`mixin`中不能有相同命名的方法，否则会报错。
+
+#### 2.4.2 高阶组件
+
+**高阶组件**
+
+接受一个React组件，返回一个新的React组件。
+
+**高阶组件的应用**
+
+- 抽取重复代码，实现组件复用。**常见场景：页面复用。**
+- 条件渲染，控制组件渲染逻辑（渲染劫持）。**常见场景：权限控制。**
+- 捕获/劫持被处理组件的生命周期。**常见场景：组件渲染性能追踪、日志打点。**
+
+**实现高阶组件的方式**
+
+1、属性代理
+
+2、反向继承
+
+**属性代理**
+
+1、操作`Props`，增加、删除、修改props
+
+![image-20211019211313846](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211019211313846.png)
+
+```jsx
+// 返回一个无状态的函数组件
+function HOC(WrappedComponent) {
+  const newProps = { type: 'HOC' };
+  return props => <WrappedComponent {...props} {...newProps}/>;
+}
+
+// 返回一个有状态的 class 组件
+function HOC(WrappedComponent) {
+  return class extends React.Component {
+    render() {
+      const newProps = { type: 'HOC' };
+      return <WrappedComponent {...this.props} {...newProps}/>;
+    }
+  };
+}
+```
+
+
+
+2、抽象`state`
+
+```jsx
+// 高阶组件
+function HOC(WrappedComponent) {
+  return class extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        name: '',
+      };
+      this.onChange = this.onChange.bind(this);
+    }
+    
+    onChange = (event) => {
+      this.setState({
+        name: event.target.value,
+      })
+    }
+    
+    render() {
+      const newProps = {
+        name: {
+          value: this.state.name,
+          onChange: this.onChange,
+        },
+      };
+      return <WrappedComponent {...this.props} {...newProps} />;
+    }
+  };
+}
+
+// 使用
+@HOC
+class Example extends Component {
+  render() {
+    return <input name="name" {...this.props.name} />;
+  }
+}
+```
+
+3、获取 `refs` 引用，通过`ref`回调拿到被包裹组件的引用。
+
+`User`组件（被包裹组件）
+
+```jsx
+import * as React from 'react';
+import * as styles from './index.module.less';
+
+interface IProps {
+  name: string;
+  age: number;
+  inputRef?: any;
+}
+class User extends React.Component<IProps> {
+  private inputElement: any ;
+
+  static sayHello () {
+    console.error('hello world'); // tslint:disable-line
+  }
+
+  constructor (props: IProps) {
+    super(props);
+    this.focus = this.focus.bind(this);
+    this.onChange = this.onChange.bind(this);
+  }
+
+  state = {
+    name: '',
+    age: 0,
+  };
+
+  componentDidMount () {
+    this.setState({
+      name: this.props.name,
+      age: this.props.age,
+    });
+  }
+
+  onChange = (e: any) => {
+    this.setState({
+      age: e.target.value,
+    });
+  }
+
+  focus () {
+    this.inputElement.focus();
+  }
+
+  render () {
+    return (
+      <div className={styles.wrapper}>
+        <div className={styles.nameWrapper}>姓名：{this.state.name}</div>
+        <div className={styles.ageWrapper}>
+          年龄:
+            <input
+              className={styles.input}
+              value={this.state.age}
+              onChange={this.onChange}
+              type="number"
+              ref={input => {
+                if (this.props.inputRef) {
+                  this.props.inputRef(input); // 调用父组件传入的ref回调函数
+                }
+                this.inputElement = input;
+              }}
+            />
+        </div>
+        <div>
+          <button
+            className={styles.button}
+            onClick={this.focus}
+          >
+            获取输入框焦点
+          </button>
+        </div>
+      </div>
+    );
+  }
+}
+
+export default User;
+```
+
+`HOD`高阶组件
+
+```jsx
+import * as React from 'react';
+import * as styles from './index.module.less';
+
+function HOC (WrappedComponent: any) {
+    let inputElement: any = null;
+
+    function handleClick () {
+      inputElement.focus();
+    }
+
+    function wrappedComponentStaic () {
+      WrappedComponent.sayHello();
+    }
+
+    return (props: any) => (
+      <div className={styles.hocWrapper}>
+        <WrappedComponent
+          inputRef={(el: any) => { inputElement = el; }}
+          {...props}
+        />
+        <input
+          type="button"
+          value="获取子组件输入框焦点"
+          onClick={handleClick}
+          className={styles.focusButton}
+        />
+        <input
+          type="button"
+          value="调用子组件static"
+          onClick={wrappedComponentStaic}
+          className={styles.callButton}
+        />
+      </div>
+    );
+}
+
+export default HOC;
+```
+
+4、调用被包裹组件的`static`方法
+
+![image-20211019213517894](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211019213517894.png)
+
+5、通过`props`实现条件渲染。通过`props`控制渲染内容以及是否传入数据。
+
+![image-20211019213825582](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211019213825582.png)
+
+6、其他元素包裹`WrappedComponent`
+
+加固定样式或布局。
+
+![image-20211019214033558](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211019214033558.png)
+
+**反向继承**
+
+在`render`方法中返回`super.render()`方法。
+
+> - 介绍一下高阶组件 TODO
+
