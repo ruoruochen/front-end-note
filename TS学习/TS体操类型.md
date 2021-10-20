@@ -350,6 +350,55 @@ type CamelCase<S extends string> =S extends `${infer first}-${infer rest}`? rest
   `${first}-${CamelCase<rest>}`:`${first}${Capitalize<CamelCase<rest>>}`:S;
 ```
 
+#### KebabCase
+
+![image-20211019093248752](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211019093248752.png)
+
+思路：
+
+泛型参数二：是否为中间的(排除第一个)
+
+1、S能分成两部分 并且L为全小写，则直接拼接，递归R
+
+2、L不为全小写，并且为中间的，则拼接-、小写L，递归R
+
+3、L不为全小写，不为中间，则拼接小写L,递归R
+
+```typescript
+type KebabCase<S extends string,Middle extends boolean = false> = S extends `${infer F}${infer R}`? F extends Lowercase<F>?`${F}${KebabCase<R,true>}`:
+  Middle extends true?`-${Lowercase<F>}${KebabCase<R,true>}`:`${Lowercase<F>}${KebabCase<R,true>}`:S;
+```
+
+#### Diff 获取对象中不同的属性
+
+![image-20211019093916678](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211019093916678.png)
+
+**解法一：**O与O1并集移除O与O1交集。
+
+并集联合类型：keyof (O & O1)
+
+交集联合类型：Extract<keyof O, keyof O1>
+
+从并集中移除交集：Exclude<并集，交集>
+
+```typescript
+type Diff<O, O1> = {
+  [K in Exclude<keyof (O & O1), Extract<keyof O, keyof O1>>]: K extends keyof O
+    ? O[K]
+    : K extends keyof O1
+    ? O1[K]
+    : never
+}
+```
+
+**解法二：**Omit <并集&，交集|>
+
+Omit API，从第一个中移除第二个。
+
+```typescript
+type Diff<O, O1> = Omit<O & O1, keyof (O | O1)>
+```
+
 ### 小结
 
 #### 联合类型与其他类型的相互转换
