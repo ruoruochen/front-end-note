@@ -511,7 +511,7 @@ let greeter = new Greeter("world");
 TypeScript 可以使用三种访问修饰符，分别是 `public`、`private` 和 `protected`。
 
 - `public` 修饰的属性或方法是公有的，可以在任何地方被访问到，默认 `public` 
-- `private` 修饰的属性或方法是私有的，不能在声明它的类的外部访问。但允许在类型检查期间，在类外使用括号表示法进行访问
+- `private` 修饰的属性或方法是私有的，不能在声明它的类的外部访问。
 
 ![image-20211012204217927](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012204217927.png)
 
@@ -563,7 +563,7 @@ const s = new MySafe()
 console.log(s.secretKey)
 ```
 
-**私有字段#**
+### 7.3 私有字段#
 
 使用私有字段`#`，在编译为 JS 后保持私有。
 
@@ -579,13 +579,46 @@ let dog = new Dog()
 console.log(dog.barkAmount)//输出undefined
 ```
 
-### 
+- 私有字段上不能使用成员访问修饰符。
+- 私有字段不能在包含的类之外访问，甚至不能被检测到。
 
-**继承中的方法覆盖**
+### 7.4 访问器
 
-子类需要遵循其基类的契约，例如父类的一个方法不接收参数，子类的同名方法不能强制required参数，可以使用可选。
+通过`setter`和`getter`实现数据的封装和有效性校验。
 
-因为我们常通过基类引用派生类。
+```typescript
+let passcode = "Hello TypeScript";
+
+class Employee {
+  private _fullName: string;
+
+  get fullName(): string {
+    return this._fullName;
+  }
+
+  set fullName(newName: string) {
+    if (passcode && passcode == "Hello TypeScript") {
+      this._fullName = newName;
+    } else {
+      console.log("Error: Unauthorized update of employee!");
+    }
+  }
+}
+
+let employee = new Employee();
+employee.fullName = "Semlinker";
+if (employee.fullName) {
+  console.log(employee.fullName);// "Semlinker"
+}
+```
+
+### 7.5 类的继承`extends`
+
+“子承父业”，类与类之间、接口与接口之间最常见的关系。
+
+#### 继承中的方法覆盖
+
+子类需要遵循其基类的规则，例如父类的一个方法不接收参数，子类的同名方法不能强制required参数，可以使用可选。
 
 ```typescript
 class Base {
@@ -614,17 +647,142 @@ const b: Base = d;
 b.greet();
 ```
 
-假设，我们就是不遵守父类的契约，会发生什么？
+假设，我们就是不遵守父类的规则，会发生什么？
 
 ![image-20211012200834596](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012200834596.png)
 
-并且
+### 7.6 抽象类`abstract`
+
+**抽象类：**提供抽象方法，不可实例化，一般作为基类存在。
+
+`abstract`用于修饰抽象类和抽象方法![image-20211012212057078](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012212057078.png)
+
+## 八、泛型
+
+**泛型：**让一个函数接受不同类型参数的一种模板。
+
+### 8.1 泛型接口
+
+```ts
+//泛型接口
+interface GenericIdentityFn<Type> {
+  (arg: Type): Type;
+}
+ 
+function identity<Type>(arg: Type): Type {
+  return arg;
+}
+ 
+let myIdentity: GenericIdentityFn<number> = identity;
+```
+
+### 8.2 泛型类
+
+**静态成员不能使用类型参数，因为静态成员是通过构造函数访问的**
+
+```ts
+class GenericNumber<NumType> {
+  zeroValue: NumType;
+  add: (x: NumType, y: NumType) => NumType;
+}
+ 
+let myGenericNumber = new GenericNumber<number>();
+myGenericNumber.zeroValue = 0;
+myGenericNumber.add = function (x, y) {
+  return x + y;
+};
+```
+
+### 8.3 泛型约束
+
+#### 1. 类型参数约束
+
+```ts
+function loggingIdentity<Type>(arg: Type): Type {
+  console.log(arg.length);
+  //报错 'length' does not exist on type 'Type'.
+  return arg;
+}
+```
+
+要求：我们希望将这函数的类型参数限制为有Length属性的。
+
+```ts
+function loggingIdentity<Type extends { length: number }>(arg:Type):Type{
+  console.log(arg.length);//OK
+  return arg;
+}
+```
+
+**应用：使用泛型创建工厂模式**
 
 ```typescript
-const b: Base = new Derived();
-// Crashes because "name" will be undefined
-b.greet();
+//通用工厂：泛型+call签名
+function create<Type>(c:{new():Type}):Type{
+    return new c();
+}
+
+//动物园工厂
+class BeeKeeper{
+    hasMask:boolean = true;
+}
+
+class ZooKeeper{
+    nametag:string = 'Mikle';
+}
+
+class Animal{
+    numLeg:number = 4;
+}
+
+class Bee extends Animal{
+    keeper:BeeKeeper = new BeeKeeper();
+}
+
+class Zoo extends Animal{
+    keeper:ZooKeeper = new ZooKeeper();
+}
+
+function createAnimal<A extends Animal>(c:{new():A}):A{
+    return new c();
+}
+
+createAnimal(Bee).keeper.hasMask;
 ```
+
+#### 2. 类型参数相互约束
+
+**使用类型参数约束另外一个类型参数**
+
+```ts
+function getProperty<Type,Key extends keyof Type>(obj:Type,key:Key){
+    return obj[key]
+}
+
+let x={a:'a',b:'b'};
+
+getProperty(x,'a');
+getProperty(x,'m');
+//Error Argument of type '"m"' is not assignable to parameter of type '"a" | "b" 
+```
+
+### 8.4 泛型参数的默认类型
+
+TS 2.3 后的功能
+
+```typescript
+function createArray<T = string>(length: number, value: T): Array<T> {
+    let result: T[] = [];
+    for (let i = 0; i < length; i++) {
+        result[i] = value;
+    }
+    return result;
+}
+```
+
+### 
+
+
 
 ### this
 
@@ -653,23 +811,151 @@ console.log(g());
 //类型为“void”的 "this" 上下文不能分配给类型为“MyClass”的方法的 "this"。
 ```
 
-### 参数属性
+## 九、TS 装饰器
 
-TS 提供了特殊的语法来将构造函数参数转换为具有相同名称和值的类属性。这些被称为*参数属性*
+### 9.1 装饰器简介
 
-![image-20211012211732863](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012211732863.png)
+**什么是装饰器？**
 
-### 类表达式
+- 它是一个表达式
+- 该表达式被执行后，返回一个函数
+- 函数的入参分别为 target、name 和 descriptor
+- 执行该函数后，可能返回 descriptor 对象，用于配置 target 对象
 
-![image-20211012211912939](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012211912939.png)
+**装饰器的分类**
 
-#### 抽象类及其成员
+- 类装饰器（Class decorators）
+- 属性装饰器（Property decorators）
+- 方法装饰器（Method decorators）
+- 参数装饰器（Parameter decorators）
 
-抽象类：提供抽象方法，不可实例化，作为基类存在。`abstract`修饰抽象类和抽象方法
+需要注意的是，若要启用实验性的装饰器特性，你必须在命令行或 `tsconfig.json` 里启用 `experimentalDecorators` 编译器选项：
 
-![image-20211012212057078](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012212057078.png)
+**命令行**：
 
-## 
+```shell
+tsc --target ES5 --experimentalDecorators
+```
+
+**tsconfig.json**：
+
+```json
+{
+  "compilerOptions": {
+     "target": "ES5",
+     "experimentalDecorators": true
+   }
+}
+```
+
+### 9.2 类装饰器
+
+**类装饰器：**用于装饰类，接收一个参数：被装饰的类，返回一个函数。
+
+**类装饰器声明模板：**
+
+```type
+declare type ClassDecorator = <TFunction extends Function>(
+	target: TFunction
+) => TFunction | void;
+```
+
+**例子：**
+
+```typescript
+//装饰器Greeter 接受一个参数，返回一个函数
+//该函数的入参仅使用了target
+//在函数内给target的原型对象上增加属性或方法
+function Greeter(greeting: string) {
+  return function (target: Function) {
+    target.prototype.greet = function (): void {
+      console.log(greeting);
+    };
+  };
+}
+
+//使用装饰器 并传参
+@Greeter("Hello TS!")
+class Greeting {
+  constructor() {
+    // 内部实现
+  }
+}
+
+let myGreeting = new Greeting();
+(myGreeting as any).greet(); // console output: 'Hello TS!';
+```
+
+### 9.3 属性装饰器
+
+**属性装饰器：**用于装饰类的属性，接受两个参数：目标对象、属性名。
+
+**属性装饰器声明模板：**
+
+```typescript
+declare type PropertyDecorator = (target:Object,propertyKey:string|symbol) =>void;
+```
+
+**例子：**
+
+```typescript
+function defaultValue(value: string) {
+  return function (target: any, propertyName: string) {
+    target[propertyName] = value
+  }
+}
+
+class HelloWordClass {
+  constructor() {
+    console.log('我是构造函数')
+  }
+  @defaultValue('zzb')
+  private name: string | undefined
+}
+let p = new HelloWordClass()
+console.log(p.name)
+```
+
+### 9.4 方法装饰器
+
+**方法装饰器：**用于装饰类的方法，接受三个参数：被装饰类、方法名、描述符。
+
+**方法装饰器声明模板：**
+
+```typescript
+declare type MethodDecorator = <T>(target:Object,propertyKey:string|symbol,descriptor:TypePropertyDescript<T>) => TypedPropertyDescriptor<T> | void;
+```
+
+**例子：**`log方法装饰器`，劫持方法
+
+```typescript
+function log(target: Object, propertyKey: string, descriptor: PropertyDescriptor) {
+  let originalMethod = descriptor.value;
+  descriptor.value = function (...args: any[]) {
+    console.log("wrapped function: before invoking " + propertyKey);
+    let result = originalMethod.apply(this, args);
+    console.log("wrapped function: after invoking " + propertyKey);
+    return result;
+  };
+}
+
+class Task {
+  @log
+  runTask(arg: any): any {
+    console.log("runTask invoked, args: " + arg);
+    return "finished";
+  }
+}
+
+let task = new Task();
+let result = task.runTask("learn ts");
+console.log("result: " + result);
+//输出：
+//wrapped function: before invoking runTask
+//runTask invoked, args: learn ts
+//wrapped function: after invoking runTask
+//result: finished
+```
 
 
 
@@ -1156,127 +1442,6 @@ const roArray: ReadonlyArray<string> = ["red", "green", "blue"];
 `Readonly` 会接收一个 *泛型参数*，并返回一个完全一样的类型，只是所有属性都会被 `readonly` 所修饰。
 
 ## 类型操作
-
-### 泛型
-
-#### **泛型接口**
-
-```ts
-//泛型接口+call签名
-interface GenericIdentityFn<Type> {
-  (arg: Type): Type;
-}
- 
-function identity<Type>(arg: Type): Type {
-  return arg;
-}
- 
-let myIdentity: GenericIdentityFn<number> = identity;
-```
-
-#### **泛型类**
-
-**静态成员不能使用类型参数，因为静态成员是通过构造函数访问的**
-
-```ts
-class GenericNumber<NumType> {
-  zeroValue: NumType;
-  add: (x: NumType, y: NumType) => NumType;
-}
- 
-let myGenericNumber = new GenericNumber<number>();
-myGenericNumber.zeroValue = 0;
-myGenericNumber.add = function (x, y) {
-  return x + y;
-};
-```
-
-#### **泛型约束**
-
-```ts
-function loggingIdentity<Type>(arg: Type): Type {
-  console.log(arg.length);
-  //报错 'length' does not exist on type 'Type'.
-  return arg;
-}
-```
-
-我们希望将这函数限制为有Length属性的。
-
-```ts
-interface Lengthwise{
-    length:number;
-}
-
-function loggingIdentity<Type extends Lengthwise>(arg:Type):Type{
-  console.log(arg.length);
-  return arg;
-}
-```
-
-**使用类型参数约束另外一个类型参数**
-
-```ts
-function getProperty<Type,Key extends keyof Type>(obj:Type,key:Key){
-    return obj[key]
-}
-
-let x={a:'a',b:'b'};
-
-getProperty(x,'a');
-getProperty(x,'m');
-//Error Argument of type '"m"' is not assignable to parameter of type '"a" | "b" 
-```
-
-**使用泛型创建工厂模式**
-
-```typescript
-//通用工厂：泛型+call签名
-function create<Type>(c:{new():Type}):Type{
-    return new c();
-}
-
-//动物园工厂
-class BeeKeeper{
-    hasMask:boolean = true;
-}
-
-class ZooKeeper{
-    nametag:string = 'Mikle';
-}
-
-class Animal{
-    numLeg:number = 4;
-}
-
-class Bee extends Animal{
-    keeper:BeeKeeper = new BeeKeeper();
-}
-
-class Zoo extends Animal{
-    keeper:ZooKeeper = new ZooKeeper();
-}
-
-function createAnimal<A extends Animal>(c:{new():A}):A{
-    return new c();
-}
-
-createAnimal(Bee).keeper.hasMask;
-```
-
-**泛型参数的默认类型**
-
-TS 2.3 后的功能
-
-```typescript
-function createArray<T = string>(length: number, value: T): Array<T> {
-    let result: T[] = [];
-    for (let i = 0; i < length; i++) {
-        result[i] = value;
-    }
-    return result;
-}
-```
 
 ### Keyof 类型运算符
 
