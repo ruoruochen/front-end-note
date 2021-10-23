@@ -123,7 +123,8 @@ console.log(ans)//[{name: 'John Reese'},{name: 'Harold Finch'},{name: 'Sameen Sh
 
 **注意：函数组合中要求函数单输入。**
 
-> - QUES：如何实现compose函数 TODO
+> - QUES：如何实现compose函数 
+> - 
 
 #### 函数组合实践
 
@@ -185,3 +186,20 @@ const lastUppder = compose(toUpperCase, head, trace('after reverse'), reverse);
 
 ## 四、实战测试
 
+## 五、总结
+
+**函数式编程的优点**
+
+- 代码简洁，函数复用率高。
+- 可读性强，没有地狱式的嵌套。
+- 出错率低，强调纯函数，测试简单。
+
+**函数式编程的缺点**
+
+- 性能：对方法过度包装，上下文切换的性能开销。
+- 资源占用：为了维持对象状态不可变，创建很多新对象，对垃圾回收压力更大。
+- 递归陷阱：为实现compose迭代，采用递归操作。
+
+参考链接
+
+- [简明 JavaScript 函数式编程——入门篇](https://juejin.cn/post/6844903936378273799#%E6%B5%81%E6%B0%B4%E7%BA%BF%E7%9A%84%E6%9E%84%E5%BB%BA)
