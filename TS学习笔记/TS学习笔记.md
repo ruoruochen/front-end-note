@@ -20,6 +20,31 @@ let list: Array<number> = [1, 2, 3]; // Array<number>泛型语法
 // ES5：var list = [1,2,3];
 ```
 
+**ReadonlyArray类型**
+
+告诉别人，这个数组不能改变！
+
+```ts
+function doStuff(values: ReadonlyArray<string>) {
+//function doStuff(values: readonly string[]) {   
+  // We can read from 'values'...
+  const copy = values.slice();
+  console.log(`The first value is ${values[0]}`);
+ 
+  // ...but we can't mutate 'values'.
+  values.push("hello!");
+  // Property 'push' does not exist on type 'readonly string[]'.
+}
+```
+
+**注意：没有ReadonlyArray这个构造函数，我们不能New ReadonlyArray(xx1,xx2....)**
+
+但是我们可以把一个常规的Arrays分配给ReadonlyArray
+
+```ts
+const roArray: ReadonlyArray<string> = ["red", "green", "blue"];
+```
+
 ### 1.5 Enum枚举类型
 
 TypeScript 支持基于数字和基于字符串的枚举。
@@ -184,7 +209,7 @@ obj.prop = "semlinker";
 
 ### 2.1 类型断言
 
-我们开发者比TS更了解某个实体的类型，此时使用**类型断言**给该实体指定类型。
+我们开发者比TS更了解某个实体的类型，此时使用**类型断言**给该实体指定类型，此时不会进行类型扩展
 
 #### 1. 尖括号语法
 
@@ -198,6 +223,54 @@ let strLength: number = (<string>someValue).length;
 ```typescript
 let someValue: any = "this is a string";
 let strLength: number = (someValue as string).length;
+```
+
+#### 3. 类型扩展
+
+**什么是类型扩展：**某个变量的类型被扩展为通用类型，例如`string`、`number`等。
+
+1、const 声明，将不会进行类型扩展。
+
+```ts
+const constantString = "Hello World";
+
+constantString;// 类型： "Hello World"
+```
+
+2、let/var 声明，会进行类型扩展。
+
+```ts
+let changingString = "Hello World";
+
+changingString; //类型：'string'
+```
+
+3、引用特定的字符串和数字作为类型，不会进行类型扩展
+
+```ts
+function printText(s: string, alignment: "left" | "right" | "center") {
+  // ...
+}
+printText("Hello, world", "left");
+printText("G'day, mate", "centre");
+// Argument of type '"centre"' is not assignable to parameter of type '"left" | "right" | "center"'.
+```
+
+**应用：**
+
+```ts
+const req = { url: "https://example.com", method: "GET" };
+handleRequest(req.url, req.method);
+// Argument of type 'string' is not assignable to parameter of type '"GET" | "POST"'.
+```
+
+原因：method被推理为string，此时handleRequest接受的第二个参数采用文字类型`GET`和`POST`，不匹配。
+
+解决方案：const 断言。对象内属性不会进行类型扩展。
+
+```ts
+const req = { url: "https://example.com", method: "GET" } as const;
+handleRequest(req.url, req.method);
 ```
 
 ### 2.2 非空断言
@@ -260,6 +333,8 @@ function initialize() {
 ### 3.2 typeof 关键字
 
 判断某个对象的类型，跟 JS 的`typeof`差不多。
+
+**注意：不能用在类型参数上（泛型）**
 
 ### 3.3 instanceof 关键字
 
@@ -366,9 +441,110 @@ function printCoord(pt: Point) {
 }
 ```
 
-## 五、TS 函数
+## 五、对象类型
 
-### 5.1 参数类型和返回类型
+### 5.1 对象属性修饰
+
+`可选?`、`readonly只读`
+
+**可选？**
+
+```ts
+interface PaintOptions {
+  shape: Shape;
+  xPos?: number;
+  yPos?: number;
+}
+function paintShape(opts: PaintOptions) {
+  // ...
+}
+const shape = getShape();
+paintShape({ shape });
+paintShape({ shape, xPos: 100 });
+paintShape({ shape, yPos: 100 });
+paintShape({ shape, xPos: 100, yPos: 100 });
+```
+
+**readonly 只读**
+
+被修饰属性无法被写入（类似const，不是一定的不变，只是意味着属性本身不能被重写。）
+
+```ts
+interface Home {
+  readonly resident: { name: string; age: number };
+}
+ 
+function visitForBirthday(home: Home) {
+  console.log(`Happy birthday ${home.resident.name}!`);
+  //可以更新，并且不会报错
+  home.resident.age++;
+}
+ 
+function evict(home: Home) {
+  // 无法分配到 "resident" ，因为它是只读属性。
+  home.resident = {
+Cannot assign to 'resident' because it is a read-only property.
+    name: "Victor the Evictor",
+    age: 42,
+  };
+}
+```
+
+### 5.2 解构赋值重命名
+
+`改名前：改名后`
+
+接受属性shape，被重新定义名字为Shape，xPos被重新定义为number。
+
+```ts
+function draw({ shape: Shape, xPos: number = 100 /*...*/ }) {
+  render(shape)
+  // 找不到名称“shape”。你是否指的是“Shape”?
+  render(xPos)
+  // 找不到名称“xPos”。
+}
+```
+
+### 5.3 索引签名 Index Signatures
+
+有时候我们不知道对象类型属性的所有名称，但是我们知道它的key类型对应的可能值类型。这时候可以使用索引签名来描述可能值的类型。
+
+```typescript
+//这是一个带有索引签名的接口，当索引为number类型时，值类型为string
+interface StringArray {
+    [index: number] : string;
+}
+
+const myArray:StringArray = getStringArray();
+const secondItem = myArray[1];
+// const secondItem: string
+```
+
+**注意：索引签名属性类型必须为字符串/数字**
+
+### 5.4 Keyof 类型运算符
+
+获取对象的key值的类型，为联合类型。
+
+### 5.5 索引访问类型
+
+1、使用索引访问特定属性
+
+![image-20211012170954764](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012170954764.png)
+
+2、索引类型本身就是一种类型，所以我们可以使用 keyof 以及其他类型（例如联合类型）
+
+![image-20211012171047159](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012171047159.png)
+
+3、若使用索引不存在的属性，Error
+
+4、使用`number`索引，可以获取数组元素的类型
+
+![image-20211012171450441](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012171450441.png)
+
+## 六、TS 函数
+
+### 6.1 参数类型和返回类型
 
 ```typescript
 function createUserId(name: string, id: number): string {
@@ -376,7 +552,7 @@ function createUserId(name: string, id: number): string {
 }
 ```
 
-### 5.2 函数类型
+### 6.2 函数类型
 
 ```typescript
 let IdGenerator: (chars: string, nums: number) => string;
@@ -388,7 +564,7 @@ function createUserId(name: string, id: number): string {
 IdGenerator = createUserId;
 ```
 
-### 5.3 可选参数和默认参数
+### 6.3 可选参数和默认参数
 
 ```ts
 // 可选参数
@@ -410,7 +586,7 @@ function createUserId(
 
 为回调编写函数类型时，**切勿编写可选参数**，除非您打算在不传递该参数的情况下调用该函数。
 
-### 5.4 函数重载
+### 6.4 函数重载
 
 同一函数名，接受的参数个数/类型不一致，称为函数重载。
 
@@ -450,7 +626,7 @@ function doSomething(fn: DescribableFunction) {
 注：此时的函数类型表达式，参数和返回类型之使用 ：而非 =>
 ````
 
-## 六、TS 接口
+## 七、TS 接口
 
 **接口：**命名对象的形状（Shape)
 
@@ -472,9 +648,9 @@ function printCoord(pt: Point) {
 
 不同点：接口可进行声明合并，类型别名不行。
 
-## 七、TS 类
+## 八、TS 类
 
-### 7.1 类的属性和方法
+### 8.1 类的属性和方法
 
 **成员属性与静态属性，成员方法与静态方法**
 
@@ -506,7 +682,7 @@ let greeter = new Greeter("world");
 
 > - QUES：成员属性与静态属性，成员方法与静态方法的区别 TODO
 
-### 7.2 成员访问修饰符
+### 8.2 成员访问修饰符
 
 TypeScript 可以使用三种访问修饰符，分别是 `public`、`private` 和 `protected`。
 
@@ -563,7 +739,7 @@ const s = new MySafe()
 console.log(s.secretKey)
 ```
 
-### 7.3 私有字段#
+### 8.3 私有字段#
 
 使用私有字段`#`，在编译为 JS 后保持私有。
 
@@ -582,7 +758,7 @@ console.log(dog.barkAmount)//输出undefined
 - 私有字段上不能使用成员访问修饰符。
 - 私有字段不能在包含的类之外访问，甚至不能被检测到。
 
-### 7.4 访问器
+### 8.4 访问器
 
 通过`setter`和`getter`实现数据的封装和有效性校验。
 
@@ -612,7 +788,7 @@ if (employee.fullName) {
 }
 ```
 
-### 7.5 类的继承`extends`
+### 8.5 类的继承`extends`
 
 “子承父业”，类与类之间、接口与接口之间最常见的关系。
 
@@ -651,17 +827,17 @@ b.greet();
 
 ![image-20211012200834596](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012200834596.png)
 
-### 7.6 抽象类`abstract`
+### 8.6 抽象类`abstract`
 
 **抽象类：**提供抽象方法，不可实例化，一般作为基类存在。
 
 `abstract`用于修饰抽象类和抽象方法![image-20211012212057078](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012212057078.png)
 
-## 八、泛型
+## 九、泛型
 
 **泛型：**让一个函数接受不同类型参数的一种模板。
 
-### 8.1 泛型接口
+### 9.1 泛型接口
 
 ```ts
 //泛型接口
@@ -676,7 +852,7 @@ function identity<Type>(arg: Type): Type {
 let myIdentity: GenericIdentityFn<number> = identity;
 ```
 
-### 8.2 泛型类
+### 9.2 泛型类
 
 **静态成员不能使用类型参数，因为静态成员是通过构造函数访问的**
 
@@ -693,7 +869,7 @@ myGenericNumber.add = function (x, y) {
 };
 ```
 
-### 8.3 泛型约束
+### 9.3 泛型约束
 
 #### 1. 类型参数约束
 
@@ -766,7 +942,7 @@ getProperty(x,'m');
 //Error Argument of type '"m"' is not assignable to parameter of type '"a" | "b" 
 ```
 
-### 8.4 泛型参数的默认类型
+### 9.4 泛型参数的默认类型
 
 TS 2.3 后的功能
 
@@ -780,40 +956,11 @@ function createArray<T = string>(length: number, value: T): Array<T> {
 }
 ```
 
-### 
 
 
+## 十、TS 装饰器
 
-### this
-
-**this 参数**
-
-在 TS 中 this 作为参数具有特殊含义，转为 JS 时，这个参数会被擦除 
-
-![image-20211012210646026](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012210646026.png)
-
-在类中，除了使用箭头函数让this指向当前class，我们还可以在方法添加一个this参数去强制正确调用该方法。
-
-```typescript
-class MyClass {
-  name = "MyClass";
-  getName(this: MyClass) {
-    return this.name;
-  }
-}
-const c = new MyClass();
-// 输出 MyClass 调用正常
-c.getName();
-
-// Error, would crash
-const g = c.getName;
-console.log(g());
-//类型为“void”的 "this" 上下文不能分配给类型为“MyClass”的方法的 "this"。
-```
-
-## 九、TS 装饰器
-
-### 9.1 装饰器简介
+### 10.1 装饰器简介
 
 **什么是装饰器？**
 
@@ -848,7 +995,7 @@ tsc --target ES5 --experimentalDecorators
 }
 ```
 
-### 9.2 类装饰器
+### 10.2 类装饰器
 
 **类装饰器：**用于装饰类，接收一个参数：被装饰的类，返回一个函数。
 
@@ -886,7 +1033,7 @@ let myGreeting = new Greeting();
 (myGreeting as any).greet(); // console output: 'Hello TS!';
 ```
 
-### 9.3 属性装饰器
+### 10.3 属性装饰器
 
 **属性装饰器：**用于装饰类的属性，接受两个参数：目标对象、属性名。
 
@@ -916,7 +1063,7 @@ let p = new HelloWordClass()
 console.log(p.name)
 ```
 
-### 9.4 方法装饰器
+### 10.4 方法装饰器
 
 **方法装饰器：**用于装饰类的方法，接受三个参数：被装饰类、方法名、描述符。
 
@@ -957,564 +1104,66 @@ console.log("result: " + result);
 //result: finished
 ```
 
+### 10.5 参数装饰器
 
+**参数装饰器：**装饰函数参数，接受三个参数：被装饰的类、方法名、参数索引值。
 
-
-
-**通用函数、泛型**
-
-在 TypeScript 中，当我们想要描述两个值之间的对应关系时，会使用*泛型*。我们通过在函数签名中声明一个类型参数来做到这一点：
-
-**泛型都是将两个或多个具有相同类型的值关联起来，一个就没必要啦！**
-
-```ts
-function firstElement<Type>(arr: Type[]): Type | undefined {
-  return arr[0];
-}
-```
-
-**指定类型参数**
-
-```ts
-function combine<Type>(arr1: Type[], arr2: Type[]): Type[] {
-  return arr1.concat(arr2);
-}
-```
-
-当我们参数不匹配时，将报错。
-
-```ts
-const arr = combine([1, 2, 3], ["hello"]);
-// Type 'string' is not assignable to type 'number'.
-```
-
-解决：手动指定类型参数，即手动传Type
-
-```ts
-const arr = combine<string | number>([1, 2, 3], ["hello"]);
-// ☑
-```
-
-
-
-**Function中的this声明**
-
-```ts
-// 1、☑
-interface DB {
-  filterUsers(filter: (this: User) => boolean): User[];
-}
- 
-const db = getDB();
-const admins = db.filterUsers(function (this: User) {
-  return this.admin;
-});
-
-//2、✘ can not use arrow function
-const db = getDB();
-const admins = db.filterUsers(() => this.admin);
-```
-
-**参数结构**
-
-```ts
-function sum({ a, b, c }) {
-  console.log(a + b + c);
-}
-sum({ a: 10, b: 3, c: 9 });
-
-//参数类型注释
-function sum({ a, b, c }: { a: number; b: number; c: number }) {
-  console.log(a + b + c);
-}
-
-//或者使用命名类型
-// Same as prior example
-type ABC = { a: number; b: number; c: number };
-function sum({ a, b, c }: ABC) {
-  console.log(a + b + c);
-}
-```
-
-**void 作为返回值**
-
-void 作为函数返回值时，函数在实现时还是可以返回值的，只不过会被忽略。
-
-
-
-
-
-
-
-**对象类型**
-
-对象属性描述
-
-```ts
-// The parameter's type annotation is an object type
-function printCoord(pt: { x: number,y: number }) {
-  console.log("The coordinate's x value is " + pt.x);
-  console.log("The coordinate's y value is " + pt.y);
-}
-printCoord({ x: 3, y: 7 });
-```
-
-可选属性
-
-```ts
-function printName(obj: { first: string; last?: string }) {
-  // ...
-}
-// Both OK
-printName({ first: "Bob" });
-printName({ first: "Alice", last: "Alisson" });
-```
-
-注：读取可选属性前需要判断是否为undefined
-
-1. 
-
-**文字类型**
-
-const 声明，将不会进行类型扩展。
-
-```ts
-const constantString = "Hello World";
-
-constantString;// 类型： "Hello World"
-```
-
-let/var 声明，会进行类型扩展。(被扩展为通用类型)
-
-```ts
-let changingString = "Hello World";
-
-changingString; //类型：'string'
-```
-
-在类型位置引用特定的字符串和数字作为类型
-
-```ts
-function printText(s: string, alignment: "left" | "right" | "center") {
-  // ...
-}
-printText("Hello, world", "left");
-printText("G'day, mate", "centre");
-// Argument of type '"centre"' is not assignable to parameter of type '"left" | "right" | "center"'.
-```
-
-**文字推理**
-
-TS会对变量类型自动推理
-
-```ts
-const req = { url: "https://example.com", method: "GET" };
-handleRequest(req.url, req.method);
-// Argument of type 'string' is not assignable to parameter of type '"GET" | "POST"'.
-```
-
-原因：method被推理为string，此时handleRequest接受的第二个参数采用文字类型，不匹配。
-
-解决方案：
-
-1. 类型断言。(1)让method拥有文字类型“GET" (2)调用中我提前知道method是文字类型”GET“
-
-   ```ts
-   // Change 1:
-   const req = { url: "https://example.com", method: "GET" as "GET" };
-   // Change 2
-   handleRequest(req.url, req.method as "GET");
-   ```
-
-2. const 断言。对象内属性不会进行类型扩展。
-
-   ```ts
-   const req = { url: "https://example.com", method: "GET" } as const;
-   handleRequest(req.url, req.method);
-   ```
-
-**枚举enum**
-
-了解有这个类型即可。
-
-```js
-enum UserResponse {
-  No = 0,
-  Yes = 1,
-}
- 
-function respond(recipient: string, message: UserResponse): void {
-  // ...
-}
- 
-respond("Princess Caroline", UserResponse.Yes);
-```
-
-## Narrowing 缩小
-
-
-
-
-
-## 对象类型
-
-**定义对象类型的方法**
-
-1、匿名对象
-
-```ts
-function greet(person: { name: string; age: number }) {
-  return "Hello " + person.name;
-}
-```
-
-2、接口命名
-
-```ts
-interface Person {
-  name: string;
-  age: number;
-}
- 
-function greet(person: Person) {
-  return "Hello " + person.name;
-}
-```
-
-3、类型别名
-
-```ts
-type Person = {
-  name: string;
-  age: number;
-};
- 
-function greet(person: Person) {
-  return "Hello " + person.name;
-}
-```
-
-**属性修饰符**
-
-对象类型的属性可以包含：类型、属性是否可选？、是否可写入。
-
-```ts
-interface PaintOptions {
-  shape: Shape;
-  xPos?: number;
-  yPos?: number;
-}
-function paintShape(opts: PaintOptions) {
-  // ...
-}
-const shape = getShape();
-paintShape({ shape });
-paintShape({ shape, xPos: 100 });
-paintShape({ shape, yPos: 100 });
-paintShape({ shape, xPos: 100, yPos: 100 });
-```
-
-解构赋值，赋予默认值
-
-```ts
-function paintShape({ shape, xPos = 0, yPos = 0 }: PaintOptions) {
-  console.log("x coordinate at", xPos);
-                                  
-(parameter) xPos: number
-  console.log("y coordinate at", yPos);
-                                  
-(parameter) yPos: number
-  // ...
-}
-```
-
-前一个被重新定义为后面的名。
-
-接受属性shape，被重新定义名字为Shape，xPos被重新定义为number。
-
-```ts
-function draw({ shape: Shape, xPos: number = 100 /*...*/ }) {
-  render(shape);
-  // Cannot find name 'shape'. Did you mean 'Shape'?
-  render(xPos);
-  // Cannot find name 'xPos'.
-}
-```
-
-readonly 修饰符
-
-被修饰属性无法被写入（类似const，不是一定的不变，只是意味着属性本身不能被重写。）
-
-```ts
-interface Home {
-  readonly resident: { name: string; age: number };
-}
- 
-function visitForBirthday(home: Home) {
-  console.log(`Happy birthday ${home.resident.name}!`);
-  //可以更新，并且不会报错
-  home.resident.age++;
-}
- 
-function evict(home: Home) {
-  // But we can't write to the 'resident' property itself on a 'Home'.
-  home.resident = {
-Cannot assign to 'resident' because it is a read-only property.
-    name: "Victor the Evictor",
-    age: 42,
-  };
-}
-
-```
-
-**索引签名 Index Signatures**
-
-有时候我们不知道类型属性的所有名称，但是我们知道它的key类型对应的可能值类型。这时候可以使用索引签名来描述可能值的类型。
+**参数装饰器声明模板：**
 
 ```typescript
-//这是一个带有索引签名的接口，当索引为number类型时，返回string
-interface StringArray {
-    [index: number] : string;
-}
-
-const myArray:StringArray = getStringArray();
-const secondItem = myArray[1];
-// const secondItem: string
+declare type ParameterDecorator = (target:Object,propertyKey:string|symbol,parameterIndex:number) => void
 ```
 
-**索引签名属性类型必须为字符串/数字**
-
-**扩展类型**
-
-```ts
-interface AddressWithUnit {
-  name?: string;
-  unit: string;
-  street: string;
-  city: string;
-  country: string;
-  postalCode: string;
-}
-
-//单类型扩展
-interface AddressWithUnit extends BasicAddress {
-  unit: string;
-}
-
-//多类型扩展 ,分割
-interface Colorful {
-  color: string;
-}
- 
-interface Circle {
-  radius: number;
-}
- 
-interface ColorfulCircle extends Colorful, Circle {}
- 
-const cc: ColorfulCircle = {
-  color: "red",
-  radius: 42,
-};
-```
-
-**通用对象类型**
-
-场景：一个Box可以包含任何值，有一个函数以Box为参数，需要对不同类型的contents类型进行处理，如何实现？
-
-```ts
-interface Box {
-  contents: any;
-}
-```
-
-1、Bad ✘
-
-为每种类型Box，定义单独的接口，通过函数重载实现。
-
-```ts
-interface NumberBox {
-  contents: number;
-}
-interface StringBox {
-  contents: string;
-}
-interface BooleanBox {
-  contents: boolean;
-}
-
-// 函数重载
-function setContents(box: StringBox, newContents: string): void;
-function setContents(box: NumberBox, newContents: number): void;
-function setContents(box: BooleanBox, newContents: boolean): void;
-function setContents(box: { contents: any }, newContents: any) {
-  box.contents = newContents;
-}
-```
-
-2、good ☑
-
-Box接口的类型参数为泛型。
-
-```ts
-interface Box<Type>{
-    content:Type
-}
-
-//创建不同的box
-let StringBox:Box<string> = {content:'hello world'};
-
-// Box可以实现很大程度的复用
-interface Apple{
-	//....    
-}
-type AppleBox = Box<Apple>
-
-//方法也通过泛型实现，无需重载
-function setContents<Type>(box:Box<Type>,newContents:Type){
-    box.contents = newContents;
-}
-```
-
-
-
-接口、类型别名均能使用泛型
-
-```ts
-type Box<Type> = {
-  contents: Type;
-};
-```
-
-我们可以用泛型来编写泛型辅助类型
-
-```ts
-type OneOrMany<Type> = Type || Type[];
-```
-
-**Array类型**
-
-创建Array
-
-1、字面量
-
-```ts
-let arr = [1,2,3];
-let arr:number[] = [1,2,3];
-let arr:Array<number> = [1,2,3];
-```
-
-2、new
-
-```ts
-let arr = new Array("1","2","3")
-```
-
-**ReadonlyArray类型**
-
-告诉别人，这个数组不能改变！
-
-```ts
-function doStuff(values: ReadonlyArray<string>) {
-//function doStuff(values: readonly string[]) {   
-  // We can read from 'values'...
-  const copy = values.slice();
-  console.log(`The first value is ${values[0]}`);
- 
-  // ...but we can't mutate 'values'.
-  values.push("hello!");
-  // Property 'push' does not exist on type 'readonly string[]'.
-}
-```
-
-没有ReadonlyArray这个构造函数，我们不能New ReadonlyArray(xx1,xx2....)
-
-但是我们可以把一个常规的Arrays分配给ReadonlyArray
-
-```ts
-const roArray: ReadonlyArray<string> = ["red", "green", "blue"];
-```
-
-`Array<Type>`的简写为`Type<>`，而`ReadonlyArray<Type>`的简写为`readonly Type[]`
-
-**Readonly<T>**
-
-`Readonly` 会接收一个 *泛型参数*，并返回一个完全一样的类型，只是所有属性都会被 `readonly` 所修饰。
-
-## 类型操作
-
-### Keyof 类型运算符
-
-![image-20211012165857842](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012165857842.png)
-
-如果类型具有`string`或`number`索引签名，`keyof`则将返回这些类型：
-
-![image-20211012165918031](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012165918031.png)
-
-### Typeof 类型运算符
-
-使用 typeof 运算符引用**变量/属性的类型**，不能用在泛型
-
-![image-20211012170132271](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012170132271.png)
-
-应用：我们想知道某个函数的返回值究竟是什么。
-
-API:`ReturnType<x>`，接受一个函数类型，并返回它的返回类型。
-
-1、直接将函数 f 传给 ReturnType 报错。✘
-
-![image-20211012170442802](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012170442802.png)
-
-2、将 typeof 传给 ReturnType ☑
-
-![image-20211012170526475](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012170526475.png)
-
-### 索引访问类型
-
-1、使用索引访问特定属性
-
-![image-20211012170954764](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012170954764.png)
-
-2、索引类型本身就是一种类型，所以我们可以使用 keyof 以及其他类型（例如|）
-
-![image-20211012171047159](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012171047159.png)
-
-3、若使用索引不存在的属性，Error
-
-4、使用`number`索引，配合可以获取**数组元素的类型**
-
-![image-20211012171450441](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012171450441.png)
+**例子：**
 
 ```typescript
-let arr = string[];
-type Array = arr[number]
+function Log(target: Function, key: string, parameterIndex: number) {
+  let functionLogged = key || target.prototype.constructor.name;
+  console.log(`The parameter in position ${parameterIndex} at ${functionLogged} has
+	been decorated`);
+}
+
+class Greeter {
+  greeting: string;
+  constructor(@Log phrase: string) {
+	this.greeting = phrase; 
+  }
+}
+//输出："The parameter in position 0 at Greeter has been decorated" 
+
 ```
 
+## 十一、条件类型
 
+### 11.1 条件类型的基本使用
 
-5、只能在索引中使用类型type，不能使用const进行变量引用
-
-![image-20211012172300221](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012172300221.png)
-
-### 条件类型
-
-**extends**
-
-如果`T`包含的类型 是 `U`包含的类型的 **'子集'**，那么取结果`X`，否则取结果`Y`。
+使用`extends?x:y;`，如果`T`的类型 是 `U`的类型的 **子集**，那么取结果`X`，否则取结果`Y`，类似于三元表达式。
 
 ```typescript
 T extends U ? X : Y
 ```
 
-类似于三元表达式，一个简单使用，如果Dog是Animal的子类，则Exmaple1 type为number.....
-
-![image-20211012173106244](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012173106244.png)
-
-应用：
+**应用：**
 
 一个createLabel函数，接受为number/string，此时使用函数重载实现.
 
-![image-20211012173342086](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012173342086.png)
+```typescript
+interface IDLabel {
+  id: number
+}
+
+interface NameLabel {
+  name: string
+}
+
+function createLabel(id: number): IDLabel
+function createLabel(name: string): NameLabel
+function createLabel(nameOrId: string | number): NameLabel | IDLabel
+function createLabel(nameOrId: string | number): NameLabel | IDLabel {
+  throw new Error('')
+}
+
+```
 
 使用条件类型修改：
 
@@ -1526,7 +1175,7 @@ function createLabel<T extends number|string>(idOrName:T):NameOrId<T>{
 }
 ```
 
-![image-20211012173928731](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012173928731.png)
+### 11.2 `infer`类型推理
 
 **条件类型使用 infer 进行类型推理**
 
@@ -1549,9 +1198,7 @@ type AA = Params<string> // string
 
 ```
 
-语句分析：如果T类型是接受一些参数的函数，则返回这个参数的类型，否则返回T。
-
-**条件类型约束**
+### 11.3 条件类型约束
 
 希望效果：获取message，如果没有message 类型为never
 
@@ -1566,19 +1213,148 @@ type MessageOf<T> = T["message"];
 
 ```typescript
 type MessageOf<T> = T extends {message:unknown} ? T["message"]:never;
-
-interface Email {
-  message: string;
-}
- 
-interface Dog {
-  bark(): void;
-}
-type EmailMessageContents = MessageOf<Email>;          
-//type EmailMessageContents = string
-type DogMessageContents = MessageOf<Dog>;          
-//type DogMessageContents = never
 ```
+
+### 
+
+## 十二、模板文字类型
+
+### `Uppercase<StringType>`
+
+将字符串转大写
+
+### `Lowercase<StringType`
+
+将字符串转小写
+
+### `Capitalize<StringType>`
+
+将字符串第一个字符转大写，其他不变。
+
+### `Uncapitalize<StringType>`
+
+将字符串第一个字符转小写，其他不变。
+
+## 十三、模块
+
+TS 使用`import type`用于类型的导入。
+
+```typescript
+export type Cat ={braed:string};
+import type {Cat} from 'xxx./js'
+```
+
+导入时内联 type 表明引入的是类型
+
+```typescript
+// @filename: app.ts
+import { createCatName, type Cat, type Dog } from "./animal.js";
+ 
+export type Animals = Cat | Dog;
+const name = createCatName();
+```
+
+## 十四、内置类型别名
+
+### Partial< Type >
+
+`Partial<Type>`：将某个类型的属性全变为可选项。
+
+### Required< Type >
+
+`Required<Type>`：将某个类型的属性全变为必选项。
+
+### Readonly< Type >
+
+`Readonly<Type>`：将某个类型所有属性变为只读属性
+
+### Record< Keys,Type >
+
+`Record<Keys,Type>`：将 K 中所有的属性的值转化为 T 类型。
+
+```typescript
+type Record<K extends keyof any, T> = {
+    [P in K]: T;
+};
+```
+
+例子：
+
+```typescript
+interface CatInfo {
+  age: number
+  breed: string
+}
+
+type CatName = 'miffy' | 'boris' | 'mordred'
+
+const cats: Record<CatName, CatInfo> = {
+  miffy: { age: 10, breed: 'Persian' },
+  boris: { age: 5, breed: 'Maine Coon' },
+  mordred: { age: 16, breed: 'British Shorthair' },
+}
+
+let b = cats.boris //let b: CatInfo
+```
+
+### Pick < Type,Keys >
+
+`Pick <Type,Keys> `：从Type中取出一组属性Keys构造新的类型。
+
+### Omit< Type,Keys >
+
+`Omit<Type,Keys>`：从Type中删除Keys属性，构造类型。
+
+### Exclude< Type,ExcludedUnion >
+
+`Exclude<Type,ExcludedUnion> `：获取Type类排除ExcludedUnion后的联合成员。
+
+```typescript
+type T0 = Exclude<"a" | "b" | "c", "a">; // "b" | "c"
+type T1 = Exclude<"a" | "b" | "c", "a" | "b">; // "c"
+type T2 = Exclude<string | number | (() => void), Function>; // string | number
+```
+
+### Extract< Type,Union >
+
+`Extract<Type,Union>`：获取Type可分配给Union的联合成员，即求同。
+
+### NonNullable< Type >
+
+`NonNullable<Type>`：排除Type中的null、undefined后，得到的类型。
+
+### Parameters< Type >
+
+`Parameters<T>`：获得函数的参数类型组成的元组类型。
+
+### ConstructorParameters< Type >
+
+`ConstructorParameters<Type>`：获取构造函数参数类型的元组类型。
+
+### ReturnType< Type >
+
+`ReturnType<T>`：获取函数 Type 的返回类型。
+
+### InstanceType< Type >
+
+`InstanceType<Type>`：获取构造函数类型的实例类型。
+
+### ThisParameterType< Type >
+
+`ThisParameterType<Type>`：获取函数的this参数的类型
+
+### OmitThisParameter< Type > TODO
+
+### ThisType< Type>
+
+`ThisType<T>`：指定上下文对象类型
+
+
+
+
+
+````temp
+暂时无用 不想整理的东西
 
 ### 映射类型
 
@@ -1639,131 +1415,35 @@ interface Person {
 type LazyPerson = Getter<Person>;
 ```
 
-### 模板文字类型
+### 
 
-#### `Uppercase<StringType>`
+### this
 
-将字符串转大写
+**this 参数**
 
-#### `Lowercase<StringType`
+在 TS 中 this 作为参数具有特殊含义，转为 JS 时，这个参数会被擦除 
 
-将字符串转小写
+![image-20211012210646026](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012210646026.png)
 
-#### `Capitalize<StringType>`
-
-将字符串第一个字符转大写，其他不变。
-
-#### `Uncapitalize<StringType>`
-
-将字符串第一个字符转小写，其他不变。
-
-## 模块
-
-TS 使用`import type`用于类型的导入。
-
-![image-20211012213126734](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012213126734.png)
-
-导入时内联 type 表明引入的是类型
+在类中，除了使用箭头函数让this指向当前class，我们还可以在方法添加一个this参数去强制正确调用该方法。
 
 ```typescript
-// @filename: app.ts
-import { createCatName, type Cat, type Dog } from "./animal.js";
- 
-export type Animals = Cat | Dog;
-const name = createCatName();
-```
-
-## 内置类型别名
-
-#### Partial< Type >
-
-`Partial<Type>`：将某个类型的属性全变为可选项。
-
-#### Required< Type >
-
-`Required<Type>`：将某个类型的属性全变为必选项。
-
-#### Readonly< Type >
-
-`Readonly<Type>`：将某个类型所有属性变为只读属性
-
-#### Record< Keys,Type >
-
-`Record<Keys,Type>`：将 K 中所有的属性的值转化为 T 类型。
-
-```typescript
-type Record<K extends keyof any, T> = {
-    [P in K]: T;
-};
-```
-
-例子：
-
-```typescript
-interface CatInfo {
-  age: number
-  breed: string
+class MyClass {
+  name = "MyClass";
+  getName(this: MyClass) {
+    return this.name;
+  }
 }
+const c = new MyClass();
+// 输出 MyClass 调用正常
+c.getName();
 
-type CatName = 'miffy' | 'boris' | 'mordred'
-
-const cats: Record<CatName, CatInfo> = {
-  miffy: { age: 10, breed: 'Persian' },
-  boris: { age: 5, breed: 'Maine Coon' },
-  mordred: { age: 16, breed: 'British Shorthair' },
-}
-
-let b = cats.boris //let b: CatInfo
+// Error, would crash
+const g = c.getName;
+console.log(g());
+//类型为“void”的 "this" 上下文不能分配给类型为“MyClass”的方法的 "this"。
 ```
 
-#### Pick < Type,Keys >
+## 
+````
 
-`Pick <Type,Keys> `：从Type中取出一组属性Keys构造新的类型。
-
-#### Omit< Type,Keys >
-
-`Omit<Type,Keys>`：从Type中删除Keys属性，构造类型。
-
-#### Exclude< Type,ExcludedUnion >
-
-`Exclude<Type,ExcludedUnion> `：获取Type类排除ExcludedUnion后的联合成员。
-
-```typescript
-type T0 = Exclude<"a" | "b" | "c", "a">; // "b" | "c"
-type T1 = Exclude<"a" | "b" | "c", "a" | "b">; // "c"
-type T2 = Exclude<string | number | (() => void), Function>; // string | number
-```
-
-#### Extract< Type,Union >
-
-`Extract<Type,Union>`：获取Type可分配给Union的联合成员，即求同。
-
-#### NonNullable< Type >
-
-`NonNullable<Type>`：排除Type中的null、undefined后，得到的类型。
-
-#### Parameters< Type >
-
-`Parameters<T>`：获得函数的参数类型组成的元组类型。
-
-#### ConstructorParameters< Type >
-
-`ConstructorParameters<Type>`：获取构造函数参数类型的元组类型。
-
-#### ReturnType< Type >
-
-`ReturnType<T>`：获取函数 Type 的返回类型。
-
-#### InstanceType< Type >
-
-`InstanceType<Type>`：获取构造函数类型的实例类型。
-
-#### ThisParameterType< Type >
-
-`ThisParameterType<Type>`：获取函数的this参数的类型
-
-#### OmitThisParameter< Type > TODO
-
-#### ThisType< Type>
-
-`ThisType<T>`：指定上下文对象类型
