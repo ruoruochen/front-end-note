@@ -748,6 +748,111 @@ Virtual DOM 节点称为 ReactNode，分为三种类型`ReactElement`、`ReactFr
 
 ![image-20211024231031038](https://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/202110242310173.png)
 
+### 4.2 Flux 基本概念
+
+Flux 的三大核心部分是`dispatcher`、`store `和`view`。
+
+#### 1. dispacher和action
+
+#### 2. store
+
+1、`store` 负责保存数据，并定义修改数据的逻辑。
+
+2、调用`dispatcher`的`register`方法将注册为一个监听器，在不同的`action type`
+
+```js
+import { EventEmitter } from 'events'
+import AppDispatcher from '../dispatcher/AppDispatcher'
+import CommentActionType from '../constants/ActionType'
+// 数据：commemnt
+// 方法：getComment loadComment addChangeListener addChangeListener
+let comment = []
+
+const CommentStore = Object.assign({}, EventEmitter.prototype, {
+  // 获取评论
+  getComment() {
+    return comment
+  },
+  // 触发事件
+  emitChange() {
+    this.emit('change')
+  },
+  // 增加监听器
+  addChangeListener(callback) {
+    this.on('change', callback)
+  },
+  // 移除监听器
+  removeChangeListener(callback) {
+    this.removeListener('change', callback)
+  },
+})
+
+AppDispatcher.register((action) => {
+  switch (action.type) {
+    case CommentActionType.LOAD_COMMENT_SUCCESS: {
+      comment = action.payload.comment.commentList
+      CommentStore.emitChange()
+      break
+    }
+    default: {
+    }
+  }
+})
+export default CommentStore
+```
+
+当我们调用`AppDispatcher.dispatch`，就会进入到这个函数中。
+
+#### 3. controller-view
+
+进行`store`与`React组件（view层）`之间的绑定，定义数据更新及传递的方式。
+
+当`store`响应某个`action`并更新数据后，会触发一个更新事件，这个更新事件就是在`controller-view`中进行监听的。当`store`更新时，`controller-view` 会重新获取`store` 中的数据，然后调用`setState`方法触发界面重绘。这样所有的子组件就能获得更新后`store `中的数据了。
+
+#### 4. actionCreator
+
+创建`action`
+
+```js
+import AppDispatcher from '../dispatcher/AppDispatcher'
+import CommentActionType from '../constants/ActionType'
+
+const CommentActions = {
+  loadComment() {
+    // 三种action 获取前、获取成功、获取失败
+    //dispatch action
+    AppDispatcher.dispatcher({
+      type: CommentActionType.LOAD_COMMENT,
+    })
+
+    fetch('../api/response.json')
+      .then((res) => JSON.parse(res))
+      .then((value) => {
+        AppDispatcher.dispatcher({
+          type: CommentActionType.LOAD_COMMENT_SUCCESS,
+          payload: {
+            comment: value,
+          },
+        })
+      })
+      .catch((err) => {
+        AppDispatcher.dispatcher({
+          type: CommentActionType.LOAD_COMMENT_ERROR,
+          error: err,
+        })
+      })
+  }
+}
+```
+
+### 4.3 Flux 缺点
+
+需要手动的创建`dispatcher`
+
+![image-20211025115623965](https://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/202110251156088.png)
+
+## 5 Redux 应用架构
+
 # 二、Question
 
 #### 说一说智能组件和木偶组件
