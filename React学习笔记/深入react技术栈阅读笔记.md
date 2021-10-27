@@ -853,6 +853,148 @@ const CommentActions = {
 
 ## 5 Redux 应用架构
 
+### 5.1 Redux 基础概念
+
+#### 5.1.1 Redux 三大原则
+
+**1. 单一数据源**
+
+> - Redux 如何解决数据源对象过大的问题？TODO
+
+**2. 状态是只读的**
+
+**3. 状态修改均由纯函数完成**
+
+#### 5.1.2 Redux 核心API
+
+##### 1. `createStore`
+
+`createStore`接收两个参数：`reducer`函数、初始`state`。
+
+创建一个`store`对象，该对象身上有 4 个方法：
+
+1. `getState()`：获取`store`中的状态
+2. `dispatch(action)`：调用`dispatch`分发`action`，修改`store`中的数据。
+3. `subscribe(listener)`：注册一个监听者，在`store`变化时触发。
+4. `replaceReducer(nextReducer)`：更新`reducer`函数。
+
+```js
+import {createStore} form 'redux';
+const store = createStore(reducer);
+```
+
+##### 2. Redux 与 React 连接
+
+需要使用`react-redux`库，进行`Redux`和`React`的连接。
+
+该库的核心`API`：`<Provider/>`、`connect()`。
+
+**`<Provider/>`**
+
+使用Provider将组件中的内容包裹起来，store以props形式传递。
+
+**`connect()`**
+
+负责连接React和Redux。
+
+- 获取state：从Redux内部取出整个state，传入mapStateToProps中。
+
+```js
+function mapStateToProps(state,ownProps) {
+  return {
+    count: state.count
+  };
+}
+
+export default connect(mapStateToProps)(Counter);
+```
+
+- 分发action：
+
+  ```js
+  const mapDispatchToProps = (
+    dispatch,
+    ownProps
+  ) => {
+    return {
+      onTodoClick: () => {
+        dispatch({
+          type: 'SET_VISIBILITY_FILTER',
+          filter: ownProps.filter
+        });
+      }
+    };
+  }
+  ```
+
+- 包装原组件：`connect` 是一个**高阶函数（HOC）**，调用它后会返回一个函数，这个函数接受一个组件作为参数，返回一个新包装组件。将state和dispatch通过props的方式传入到原组件内部
+
+- 监听Store变化：connect缓存了Store中state的状态,通过当前state状态和变更前state状态进行比较，如果发生变化就会触发子组件的重新渲染。
+
+  **mapStateToProps如果不传，组件不会监听store的变化，也就是说Store的更新不会引起UI的更新**
+
+### 5.2 Redux middleware 中间件
+
+### 5.2.1 理解 middleware 机制
+
+`Redux`提供 `applyMiddleware` 方法加载 `middleware`。
+
+**`applyMiddleware` 源码**
+
+```js
+import compose from './compose'
+export default function applyMiddleware(...middlewares) {
+  return (next) => (reducer, initialState) => {
+    //next一般传进来createStore
+    let store = next(reducer, initialState)
+    let dispatch = store.dispatch
+    let chain = []
+    var middlewareAPI = {
+      getState: store.getState,
+      dispatch: (action) => dispatch(action),
+    }
+    chain = middlewares.map((middleware) => middleware(middlewareAPI))
+    // 函数式编程
+    dispatch = compose(...chain)(store.dispatch)
+    return {
+      ...store,
+      dispatch,
+    }
+  }
+}
+```
+
+**一个logger middleware 日志中间件的实现**
+
+```js
+export default store => next =>action =>{
+    console.log('dispatch:',action);
+    next(action);
+    console.log('finish',action);
+}
+```
+
+> - `middlewareAPI` 中的 `dispatch` 为什么要用匿名函数包裹呢？TODO
+> - 函数式变成`compose`方法的实现 TODO
+>
+>   - 手写 redux-thunk 的源码 TODO
+
+**middleware 运行原理分析**
+
+**1. 函数式编程的思想设计**
+
+- `middleware`设计采用了函数式编程中的柯里化，通过单参数函数实现多参数函数。
+- `applyMiddleware`中对`middleware`进行层层递归，给`store`、`next`赋值。
+
+`middleware`采用函数柯里化的好处：
+
+1. 易串联。函数柯里化具有延迟执行的特性，通过柯里化积累参数，再使用函数组合形成管道处理数据流。
+2. `store`共享。
+
+
+
+
+
 # 二、Question
 
 #### 说一说智能组件和木偶组件
@@ -1012,3 +1154,17 @@ How（怎么进行）、How（如何高效/如何解决）
 1、组件再分离，多个组件出现的重叠部分，抽象成更细小的组件，提高复用性。并且我们希望这些组件是木偶式的。
 
 2、逻辑再抽离，将组件中相同的交互逻辑、业务逻辑进行抽象复用，可以使用高阶组件实现。
+
+#### 函数式变成 `compose` 方法的实现
+
+接受`funcs`作为参数，返回一个新的函数，该函数接收一个参数作为初始值，`funcs`从右往左执行。
+>
+>```js
+>function compose(...funcs) {
+>return (args) => funcs.reduceRight((composed, f) => f(composed), args)
+>}
+>```
+
+#### `middlewareAPI` 中的 `dispatch` 为什么要用匿名函数包裹呢？
+
+???我们用applyMiddleware是为了改造dispatch,所以applyMiddleware执行完后, dispatch是变化了的，而middlewareAPI是applyMiddleware执行中分发到各个middleware的，所以必须用匿名函数包裹dispatch,这样只要dispatch更新了，middlewareAPI 中的dispatch 应用也会发生变化。
