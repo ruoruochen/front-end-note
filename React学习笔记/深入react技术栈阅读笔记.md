@@ -935,6 +935,14 @@ export default connect(mapStateToProps)(Counter);
 
 ### 5.2 Redux middleware 中间件
 
+[Redux middleware 中间件](https://juejin.cn/post/6844904036013965325#heading-7)
+
+**中间件：** 可以理解为拦截器，对某个过程进行拦截并处理，可以进行串联使用。
+
+在`redux`中我们拦截的是从`dispatch`提交到`reducer`这个过程，增强`dispatch`的功能。
+
+简化：中间件为**独立的、可拔插的**模块，依次给 `dispatch` 增加功能。
+
 ### 5.2.1 理解 middleware 机制
 
 `Redux`提供 `applyMiddleware` 方法加载 `middleware`。
@@ -989,11 +997,69 @@ export default store => next =>action =>{
 `middleware`采用函数柯里化的好处：
 
 1. 易串联。函数柯里化具有延迟执行的特性，通过柯里化积累参数，再使用函数组合形成管道处理数据流。
-2. `store`共享。
 
+**利用`Redux Thunk`中间件进行异步操作**
 
+**redux-thunk**的实现
 
+```js
+const thunk = store=>next=>action=>{
+    typeof action === 'function'?action(store.dispatch,store.getState):next(action);
+}
+```
 
+### 5.3 Redux 异步流
+
+#### 5.3.1 利用中间件简化异步请求
+
+##### 1. redux-thunk
+
+`thunk函数`：通过函数柯里化来实现对函数的惰性求值。这个返回的函数接受两个参数，一个是`dispatch`，一个是`getState`。一般我们会在里面调用`dispatch`进行获取数据。
+
+**Redux Thunk的使用**
+
+1、安装redux-thunk
+
+2、引入 `redux-thunk` 然后通过 Redux 的 `applyMiddleware` 函数把它应用到 store 中。
+
+```js
+import thunk from 'redux-thunk';
+import { createStore, applyMiddleware } from 'redux';
+
+const store = createStore(
+  reducer,
+  applyMiddleware(thunk)
+);
+```
+
+3、创建redux-thunk
+
+这个redux-thunk函数返回一个函数，这个函数接受两个参数，dispatch和getState，然后在函数体中，使用dispatch一个Action，一般为Begin，然后return 发起请求获取数据，然后.then，dispatch，某某某Success，.catch，某某某Fail。
+
+```js
+export function fetchProducts() {
+  return dispatch => {
+    dispatch(fetchProductsBegin());
+    return fetch("/products")
+      .then(res => res.json())
+      .then(json => {
+        dispatch(fetchProductsSuccess(json.products));
+        return json.products;
+      })
+      .catch(error => dispatch(fetchProductsFailure(error)));
+  };
+}
+```
+
+4、（局部组件需要数据）在componentDidMount / useEffect中调用dispatch action获取数据
+
+![image-20211029233720352](C:/Users/Asus/AppData/Roaming/Typora/typora-user-images/image-20211029233720352.png)
+
+（全局数据）创建store后，就是用store.dispatch action
+
+5、这个时候reducer函数内部就是负责处理这些不同的action，拿到payload去赋值
+
+> - redux-thunk的实现代码 TODO
 
 # 二、Question
 
