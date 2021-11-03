@@ -859,8 +859,6 @@ const CommentActions = {
 
 **1. 单一数据源**
 
-> - Redux 如何解决数据源对象过大的问题？TODO
-
 **2. 状态是只读的**
 
 **3. 状态修改均由纯函数完成**
@@ -869,9 +867,15 @@ const CommentActions = {
 
 ##### 1. `createStore`
 
-`createStore`接收两个参数：`reducer`函数、初始`state`。
+`createStore(reducer, [preloadedState], enhancer)`
 
-创建一个`store`对象，该对象身上有 4 个方法：
+**作用：**创建唯一的`Redux store`存放`state`
+
+**参数：**
+
+接受三个参数：`reducer`函数、初始`state`、`enhancer`函数增强`Store`功能
+
+**返回值：**返回一个`Store`对象，对象身上有4个方法：
 
 1. `getState()`：获取`store`中的状态
 2. `dispatch(action)`：调用`dispatch`分发`action`，修改`store`中的数据。
@@ -932,6 +936,12 @@ export default connect(mapStateToProps)(Counter);
 - 监听Store变化：connect缓存了Store中state的状态,通过当前state状态和变更前state状态进行比较，如果发生变化就会触发子组件的重新渲染。
 
   **mapStateToProps如果不传，组件不会监听store的变化，也就是说Store的更新不会引起UI的更新**
+
+#### ❓ QUES:
+
+1、Redux 如何解决数据源对象过大的问题？ TODO
+
+2、实现Redux createStore方法
 
 ### 5.2 Redux middleware 中间件
 
@@ -1036,30 +1046,238 @@ const store = createStore(
 
 这个redux-thunk函数返回一个函数，这个函数接受两个参数，dispatch和getState，然后在函数体中，使用dispatch一个Action，一般为Begin，然后return 发起请求获取数据，然后.then，dispatch，某某某Success，.catch，某某某Fail。
 
+**模板：**
+
 ```js
-export function fetchProducts() {
-  return dispatch => {
-    dispatch(fetchProductsBegin());
-    return fetch("/products")
-      .then(res => res.json())
-      .then(json => {
-        dispatch(fetchProductsSuccess(json.products));
-        return json.products;
-      })
-      .catch(error => dispatch(fetchProductsFailure(error)));
-  };
+//constants 部分省略
+//action creator
+const createFetchDataAction = function(id) {
+    return function(dispatch, getState) {
+        dispatch({
+            type: FETCH_DATA_START, 
+            payload: id
+        })
+        api.fetchData(id) 
+            .then(response => {
+                dispatch({
+                    type: FETCH_DATA_SUCCESS,
+                    payload: response
+                })
+            })
+            .catch(error => {
+                dispatch({
+                    type: FETCH_DATA_FAILED,
+                    payload: error
+                })
+            }) 
+    }
+}
+//reducer
+const reducer = function(oldState, action) {
+    switch(action.type) {
+    case FETCH_DATA_START : 
+        // 处理 loading 等
+    case FETCH_DATA_SUCCESS : 
+        // 更新 store 等处理
+    case FETCH_DATA_FAILED : 
+        // 提示异常
+    }
 }
 ```
 
 4、（局部组件需要数据）在componentDidMount / useEffect中调用dispatch action获取数据
 
-![image-20211029233720352](C:/Users/Asus/AppData/Roaming/Typora/typora-user-images/image-20211029233720352.png)
+![image-20211029233720352](https://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/202110292337568.png)
 
 （全局数据）创建store后，就是用store.dispatch action
 
 5、这个时候reducer函数内部就是负责处理这些不同的action，拿到payload去赋值
 
 > - redux-thunk的实现代码 TODO
+
+##### **2. redux-promise**
+
+将`promise`作为`payload`提交给`dispatch`，让中间件处理，判断`action`或其`payload`为`Promise`时，将其`resolve`，并将`payload`设置为`promise`的成功/失败结果。
+
+**redux-promise跟redux-thunk的区别**
+
+在`redux-thunk`中，我们手动处理一个异步的`then().catch()`，在里面分别`dispatch`不同的action。
+
+而在`redux-promise`中，这些工作由中间件去处理，我们只需要将异步任务在`payload`中执行。
+
+**模板：**
+
+```js
+const FETCH_DATA = 'FETCH_DATA'
+//action creator
+const getData = function(id) {
+    return {
+        type: FETCH_DATA,
+        payload: api.fetchData(id) // 直接将 promise 作为 payload
+    }
+}
+//reducer
+const reducer = function(oldState, action) {
+    switch(action.type) {
+    case FETCH_DATA: 
+        if (action.status === 'success') {
+             // 更新 store 等处理
+        } else {
+                // 提示异常
+        }
+    }
+}
+```
+
+**redux-promise的实现**
+
+```js
+import { isFSA } from 'flux-standard-action'; 
+function isPromise(val) { 
+ return val && typeof val.then === 'function'; 
+}
+
+export default function promiseMiddleware({ dispatch }) {
+  return next => action => {
+    //判断action是否为正常action
+    if (!isFSA(action))  {
+      //如果action是Promise
+      return isPromise(action)
+        ? action.then(dispatch)
+        : next(action);
+    }
+
+    //如果action.payload为Promise 添加回调分别dispatch
+    return isPromise(action.payload)
+      ? action.payload.then(
+          result => dispatch({ ...action, payload: result }),
+          error => {
+            dispatch({ ...action, payload: error, error: true });
+            return Promise.reject(error);
+          }
+        )
+      : next(action);
+  };
+}
+```
+
+##### 3. redux-composable-fetch 自实现中间件
+
+自实现中间件，在中间处理loading状态。识别出一个action为发送请求的action，然后根据url、params、method等参数发送异步请求，并在响应后分发请求成功/失败的action。
+
+接受的参数如下：
+
+```js
+{ 
+ url: '/api/weather.json', 
+ params: { 
+ 	city: encodeURI(city), 
+ }, 
+ types: ['GET_WEATHER', 'GET_WEATHER_SUCESS', 'GET_WEATHER_ERROR'], 
+}
+```
+
+**实现中间件**
+
+```js
+const fetchMiddleware = (store) => (next) => (action) => {
+  // 如果不是异步请求action 直接分发action
+  if (!action.url || !Array.isArray(action?.type)) {
+    next(action)
+  }
+
+  const [LOADING, SUCCESS, ERROR] = action.type
+  console.log('action', LOADING, SUCCESS, ERROR)
+
+  // 异步请求前
+  next({
+    type: LOADING,
+    loading: true,
+  })
+
+  // 发送请求
+  fetch(action.url, { params: action.params })
+    .then((res) => res.json())
+    .then((res) => {
+      next({
+        type: SUCCESS,
+        loading: false,
+        payload: res,
+      })
+    })
+    .catch((err) => {
+      next({
+        type: ERROR,
+        loading: false,
+        error: err,
+      })
+    })
+}
+
+export default fetchMiddleware
+```
+
+##### 3. redux-saga
+
+使用generator替代promise
+
+> - redux-promise的实现 TODO
+
+### 5.4 使用中间件处理复杂异步流
+
+#### 1. 轮询
+
+轮询：在一定时间内重新启动，**发送请求**，实现长连接。
+
+**自实现中间件redux-polling**
+
+### 5.5 Redux 与 路由
+
+#### 5.5.1 嵌套路由及路由匹配
+
+`<Route>组件`：`path`属性指明路由匹配路径，若路由需要参数，加上`:参数名`，若需要可选参数，加上`(:参数名)`
+
+#### 5.5.2 路由切换方式
+
+`hashChange`、`history.pushState`。
+
+两者的区别：
+
+1、`hashChange`：兼容性好、丑陋的`#`
+
+2、`history.pushState`：URL优雅、兼容性IE10+（？TODO）、需要额外的服务端配置解决任意路径刷新问题（？TODO）。
+
+#### QUES
+
+介绍一下前后端路由
+
+1.前端路由：改变URL，页面不刷新。本质上就是切换URL，切换组件。
+
+2.后端路由：客户端发送请求url，后端处理url与页面的映射关系，服务端渲染页面后返回给客户端。
+
+
+
+### 5.6 Redux 与组件
+
+两种类型组件：容器型组件、展示型组件。
+
+**容器型组件：**组件如何工作，即如何更新数据，不包含组件样式。
+
+**展示型组件：**组件如何渲染，即包含Virtual DOM修改或组件、组件样式等。
+
+![image-20211103164032807](https://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/202111031640227.png)
+
+#### QUES:
+
+1、概念解释
+
+容器型组件、展示型组件。
+
+有状态组件、无状态组件。
+
+类、方法
+
+纯组件、非纯组件。
 
 # 二、Question
 
