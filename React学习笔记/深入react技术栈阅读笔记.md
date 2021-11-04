@@ -887,21 +887,29 @@ import {createStore} form 'redux';
 const store = createStore(reducer);
 ```
 
-##### 2. Redux 与 React 连接
+##### 2. `<Provider/>`、`connect()`用于Redux 与 React 连接
 
 需要使用`react-redux`库，进行`Redux`和`React`的连接。
 
 该库的核心`API`：`<Provider/>`、`connect()`。
 
-**`<Provider/>`**
+**`<Provider store>`**
 
-使用Provider将组件中的内容包裹起来，store以props形式传递。
+使用`Provider`将组件中的内容包裹起来，`store`以`props`形式传递。
 
-**`connect()`**
+**`connect([mapStateToProps], [mapDispatchToProps], [mergeProps], [options])`**
 
-负责连接React和Redux。
+**作用：**负责连接`React组件`和`Redux store`。
 
-- 获取state：从Redux内部取出整个state，传入mapStateToProps中。
+**参数：**
+
+- `mapStateToProps(state, [ownProps]): stateProps` 函数：监听`Redux Store`的变化，发生改变则调用该函数，将数据注入到组件`props`中。**（换言之，省略这个参数则不会监听`Redux Store`的变化）**
+- `mapDispatchToProps(dispatch, [ownProps]): dispatchProps` 函数：返回值可以是对象/函数。如果是对象，则对象的函数都会当成`Redux action createor`，最终会将这些属性注入到`props`中。**（函数情况大多数情况用不到，用到再去了解）**
+
+- `mergeProps(stateProps, dispatchProps, ownProps): props` 函数：`mapStateToProps()` 与 `mapDispatchToProps()` 的执行结果和组件自身的 `props` 将传入到这个回调函数中，可以在其中筛选部分数据。
+- [`options`] 定制 `connector` 的行为：
+  - `pure = true`：`connector` 将执行 `shouldComponentUpdate` 并且浅对比 `mergeProps` 的结果，避免不必要的更新，前提是当前组件是一个纯组件，默认值为 `true`。
+  - `withRef = false`：如果为 `true`，`connector` 会保存一个对被包装组件实例的引用，该引用通过 `getWrappedInstance()` 方法获得。默认值为 `false`。
 
 ```js
 function mapStateToProps(state,ownProps) {
@@ -910,54 +918,56 @@ function mapStateToProps(state,ownProps) {
   };
 }
 
-export default connect(mapStateToProps)(Counter);
+const mapDispatchToProps = (
+  dispatch,
+  ownProps
+) => {
+  return {
+    onTodoClick: () => {
+      dispatch({
+        type: 'SET_VISIBILITY_FILTER',
+        filter: ownProps.filter
+      });
+    }
+  };
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(Counter);
 ```
 
-- 分发action：
-
-  ```js
-  const mapDispatchToProps = (
-    dispatch,
-    ownProps
-  ) => {
-    return {
-      onTodoClick: () => {
-        dispatch({
-          type: 'SET_VISIBILITY_FILTER',
-          filter: ownProps.filter
-        });
-      }
-    };
-  }
-  ```
-
-- 包装原组件：`connect` 是一个**高阶函数（HOC）**，调用它后会返回一个函数，这个函数接受一个组件作为参数，返回一个新包装组件。将state和dispatch通过props的方式传入到原组件内部
-
-- 监听Store变化：connect缓存了Store中state的状态,通过当前state状态和变更前state状态进行比较，如果发生变化就会触发子组件的重新渲染。
-
-  **mapStateToProps如果不传，组件不会监听store的变化，也就是说Store的更新不会引起UI的更新**
+**返回值：**返回一个注入了`state`和`action creator`的新`React`组件。
 
 #### ❓ QUES:
 
-1、Redux 如何解决数据源对象过大的问题？ TODO
+1. Redux三大原则
 
-2、实现Redux createStore方法
+   单一数据源、State只读、纯函数修改
+
+2. Redux 如何解决数据源对象过大的问题？ TODO
+
+   至于我们担心的数据源对象过于庞大的问题，可以在5.6.8 节中看到Redux提供的工具函数`combineReducers`是如何化解的。
+
+3. 实现Redux createStore方法，原理
+
+4. 实现connect方法，原理
 
 ### 5.2 Redux middleware 中间件
 
 [Redux middleware 中间件](https://juejin.cn/post/6844904036013965325#heading-7)
 
-**中间件：** 可以理解为拦截器，对某个过程进行拦截并处理，可以进行串联使用。
+**中间件：** 可以理解为拦截器，拦截某个过程并处理。是一个独立的模块。
 
-在`redux`中我们拦截的是从`dispatch`提交到`reducer`这个过程，增强`dispatch`的功能。
+而在`redux`中我们拦截的是从`dispatch`提交到`reducer`这个过程，去给`dispatch`增加功能。
 
-简化：中间件为**独立的、可拔插的**模块，依次给 `dispatch` 增加功能。
-
-### 5.2.1 理解 middleware 机制
+#### 5.2.1 理解 middleware 机制
 
 `Redux`提供 `applyMiddleware` 方法加载 `middleware`。
 
 **`applyMiddleware` 源码**
+
+源码分析：
+
+`applyMiddleware `本质上就是给 `dispatch` 方法增加一些功能，依次执行中间件后使用函数式编程将他们串联起来，获取一个新的`dispatch`，返回一个更新`dispatch`后的`Store`对象
 
 ```js
 import compose from './compose'
@@ -971,9 +981,11 @@ export default function applyMiddleware(...middlewares) {
       getState: store.getState,
       dispatch: (action) => dispatch(action),
     }
+    //依次执行中间件,返回一个函数next=>action=>{}
     chain = middlewares.map((middleware) => middleware(middlewareAPI))
-    // 函数式编程
+    //函数式编程 进行串联，传入参数dispatch,获取一个新的dispatch  函数形式action=>{}
     dispatch = compose(...chain)(store.dispatch)
+    //更新dispatch
     return {
       ...store,
       dispatch,
@@ -982,41 +994,93 @@ export default function applyMiddleware(...middlewares) {
 }
 ```
 
-**一个logger middleware 日志中间件的实现**
+**一个自实现中间件 logger middleware 日志中间件的实现**
 
 ```js
-export default store => next =>action =>{
+export default store => next => action =>{
     console.log('dispatch:',action);
     next(action);
     console.log('finish',action);
 }
 ```
 
-> - `middlewareAPI` 中的 `dispatch` 为什么要用匿名函数包裹呢？TODO
-> - 函数式变成`compose`方法的实现 TODO
->
->   - 手写 redux-thunk 的源码 TODO
+#### ❓ QUES:
 
-**middleware 运行原理分析**
+1. 介绍一下`Redux middleware` 中间件
 
-**1. 函数式编程的思想设计**
+   **中间件：** 可以理解为拦截器，拦截某个过程并处理。是一个独立的模块。
 
-- `middleware`设计采用了函数式编程中的柯里化，通过单参数函数实现多参数函数。
-- `applyMiddleware`中对`middleware`进行层层递归，给`store`、`next`赋值。
+   而在`redux`中我们拦截的是从`dispatch`提交到`reducer`这个过程，去给`dispatch`增加功能。
 
-`middleware`采用函数柯里化的好处：
+2. 实现一下`applyMiddleware`方法
 
-1. 易串联。函数柯里化具有延迟执行的特性，通过柯里化积累参数，再使用函数组合形成管道处理数据流。
+   `applyMiddleware `本质上就是给 `dispatch` 方法增加一些功能，依次执行中间件后使用函数式编程将他们串联起来，获取一个新的`dispatch`，返回一个更新`dispatch`后的`Store`对象
 
-**利用`Redux Thunk`中间件进行异步操作**
+   ```js
+   import compose from './compose'
+   export default function applyMiddleware(...middlewares) {
+     return (next) => (reducer, initialState) => {
+       //next一般传进来createStore
+       let store = next(reducer, initialState)
+       let dispatch = store.dispatch
+       let chain = []
+       var middlewareAPI = {
+         getState: store.getState,
+         dispatch: (action) => dispatch(action),
+       }
+       //依次执行中间件
+       chain = middlewares.map((middleware) => middleware(middlewareAPI))
+       //函数式编程 进行串联，获取一个新的dispatch
+       dispatch = compose(...chain)(store.dispatch)
+       //更新dispatch
+       return {
+         ...store,
+         dispatch,
+       }
+     }
+   }
+   ```
 
-**redux-thunk**的实现
+3. `applyMiddleware`方法中的`middlewareAPI` 中的 `dispatch` 为什么要用匿名函数包裹呢？
 
-```js
-const thunk = store=>next=>action=>{
-    typeof action === 'function'?action(store.dispatch,store.getState):next(action);
-}
-```
+   执行完`applyMiddleware`后，`dispatch`发生变化。我们希望在各个`middleware`中的`dispatch`是最新的，所以必须使用匿名函数包裹`dispatch`，利用闭包保存函数引用。
+
+4. 在`middleware`中调用`store.dispatch(action)`和`next(action)`的区别
+
+   在`middleware`中调用`store .dispatch()`和在其他任何地方调用的效果一样，就是分发`action`。而在`middleware`中调用`next()`,效果是进入下一个`middleware`
+
+   ![image-20211104111959067](https://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/202111041120982.png)
+
+5. 介绍一下函数式编程
+
+   函数式编程是一种编程范式，是指整个程序都有函数调用、函数组成构成。
+
+   - 有三大特点：函数是一等公民、声明式编程、无状态和数据不可变。
+
+   - 函数式编程中最常见的使用是函数柯里化和函数组合。
+   - 柯里化是指将一个一次性接受多个参数的函数改写为多次接受参数的函数。可以进行参数复用，提高函数多样性。
+   - 函数组合是指将多个函数组合成一个函数。
+
+6. 函数式编程`compose`方法的实现
+
+   `compose`返回一个函数接收参数，将函数从右往左执行，每一个函数的返回值作为下一个函数的参数。
+
+   ```js
+   const compose = (...fns) => {
+     return (args) => fns.reduceRight((composed, fn) => fn(composed), args)
+   }
+   ```
+
+7. 实现一些redux-thunk
+
+   redux-thunk本质上就是判断`action`是否为函数，如果是函数，执行函数并将`dispatch`和`getState`作为参数传入；如果不是函数，直接`next(action)`，进入下一个`middleware`。
+
+   ```js
+   const thunk = (store) => (next) => (action) =>
+     typeof action === 'function'
+       ? action(store.dispatch, store.getState)
+       : next(action)
+   ```
 
 ### 5.3 Redux 异步流
 
@@ -1024,13 +1088,15 @@ const thunk = store=>next=>action=>{
 
 ##### 1. redux-thunk
 
-`thunk函数`：通过函数柯里化来实现对函数的惰性求值。这个返回的函数接受两个参数，一个是`dispatch`，一个是`getState`。一般我们会在里面调用`dispatch`进行获取数据。
+`thunk函数`：通过函数柯里化实现函数惰性求值。
 
-**Redux Thunk的使用**
+返回函数接收两个参数：`dispatch`、`getState`
 
-1、安装redux-thunk
+**redux Thunk的使用**
 
-2、引入 `redux-thunk` 然后通过 Redux 的 `applyMiddleware` 函数把它应用到 store 中。
+1、安装 redux-thunk
+
+2、使用`applyMiddleware`应用中间件。
 
 ```js
 import thunk from 'redux-thunk';
@@ -1042,14 +1108,11 @@ const store = createStore(
 );
 ```
 
-3、创建redux-thunk
-
-这个redux-thunk函数返回一个函数，这个函数接受两个参数，dispatch和getState，然后在函数体中，使用dispatch一个Action，一般为Begin，然后return 发起请求获取数据，然后.then，dispatch，某某某Success，.catch，某某某Fail。
+3、创建redux-thunk函数
 
 **模板：**
 
 ```js
-//constants 部分省略
 //action creator
 const createFetchDataAction = function(id) {
     return function(dispatch, getState) {
@@ -1085,25 +1148,13 @@ const reducer = function(oldState, action) {
 }
 ```
 
-4、（局部组件需要数据）在componentDidMount / useEffect中调用dispatch action获取数据
-
-![image-20211029233720352](https://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/202110292337568.png)
-
-（全局数据）创建store后，就是用store.dispatch action
+4、在 `componentDidMount / useEffect` 中调用`dispatch(action)`获取数据。
 
 5、这个时候reducer函数内部就是负责处理这些不同的action，拿到payload去赋值
-
-> - redux-thunk的实现代码 TODO
 
 ##### **2. redux-promise**
 
 将`promise`作为`payload`提交给`dispatch`，让中间件处理，判断`action`或其`payload`为`Promise`时，将其`resolve`，并将`payload`设置为`promise`的成功/失败结果。
-
-**redux-promise跟redux-thunk的区别**
-
-在`redux-thunk`中，我们手动处理一个异步的`then().catch()`，在里面分别`dispatch`不同的action。
-
-而在`redux-promise`中，这些工作由中间件去处理，我们只需要将异步任务在`payload`中执行。
 
 **模板：**
 
@@ -1129,43 +1180,11 @@ const reducer = function(oldState, action) {
 }
 ```
 
-**redux-promise的实现**
+##### 3.  自实现 `redux-composable-fetch` 异步请求中间件
 
-```js
-import { isFSA } from 'flux-standard-action'; 
-function isPromise(val) { 
- return val && typeof val.then === 'function'; 
-}
+中间件判断`action`为异步请求`action`，发送异步请求后，分发请求/失败的`action`。
 
-export default function promiseMiddleware({ dispatch }) {
-  return next => action => {
-    //判断action是否为正常action
-    if (!isFSA(action))  {
-      //如果action是Promise
-      return isPromise(action)
-        ? action.then(dispatch)
-        : next(action);
-    }
-
-    //如果action.payload为Promise 添加回调分别dispatch
-    return isPromise(action.payload)
-      ? action.payload.then(
-          result => dispatch({ ...action, payload: result }),
-          error => {
-            dispatch({ ...action, payload: error, error: true });
-            return Promise.reject(error);
-          }
-        )
-      : next(action);
-  };
-}
-```
-
-##### 3. redux-composable-fetch 自实现中间件
-
-自实现中间件，在中间处理loading状态。识别出一个action为发送请求的action，然后根据url、params、method等参数发送异步请求，并在响应后分发请求成功/失败的action。
-
-接受的参数如下：
+异步请求`action`：
 
 ```js
 { 
@@ -1173,7 +1192,7 @@ export default function promiseMiddleware({ dispatch }) {
  params: { 
  	city: encodeURI(city), 
  }, 
- types: ['GET_WEATHER', 'GET_WEATHER_SUCESS', 'GET_WEATHER_ERROR'], 
+ type: ['GET_WEATHER', 'GET_WEATHER_SUCESS', 'GET_WEATHER_ERROR'], 
 }
 ```
 
@@ -1181,13 +1200,12 @@ export default function promiseMiddleware({ dispatch }) {
 
 ```js
 const fetchMiddleware = (store) => (next) => (action) => {
-  // 如果不是异步请求action 直接分发action
+  // 如果不是异步请求action next(action)进入下一个middleware
   if (!action.url || !Array.isArray(action?.type)) {
     next(action)
   }
 
   const [LOADING, SUCCESS, ERROR] = action.type
-  console.log('action', LOADING, SUCCESS, ERROR)
 
   // 异步请求前
   next({
@@ -1221,23 +1239,61 @@ export default fetchMiddleware
 
 使用generator替代promise
 
-> - redux-promise的实现 TODO
+#### ❓ QUES:
 
-### 5.4 使用中间件处理复杂异步流
+1. `redux-thunk`的实现
 
-#### 1. 轮询
+   ```js
+   const thunk = store=>next=>action=>{
+       typeof action === 'function'?action(store.dispatch,store.getState):next(action);
+   }
+   ```
 
-轮询：在一定时间内重新启动，**发送请求**，实现长连接。
+2. `redux-promise`的实现
 
-**自实现中间件redux-polling**
+   ```js
+   import { isFSA } from 'flux-standard-action'; 
+   function isPromise(val) { 
+    return val && typeof val.then === 'function'; 
+   }
+   
+   export default function promiseMiddleware({ dispatch }) {
+     return next => action => {
+       //判断action是否为正常action
+       if (!isFSA(action))  {
+         //如果action是Promise
+         return isPromise(action)
+           ? action.then(dispatch)
+           : next(action);
+       }
+   
+       //如果action.payload为Promise 添加回调分别dispatch
+       return isPromise(action.payload)
+         ? action.payload.then(
+             result => dispatch({ ...action, payload: result }),
+             error => {
+               dispatch({ ...action, payload: error, error: true });
+               return Promise.reject(error);
+             }
+           )
+         : next(action);
+     };
+   }
+   ```
 
-### 5.5 Redux 与 路由
+3. redux-promise跟redux-thunk的区别
 
-#### 5.5.1 嵌套路由及路由匹配
+   在`redux-thunk`中，我们手动处理一个异步的`then().catch()`，在里面分别`dispatch`不同的`action`。
+
+   而在`redux-promise`中，这些工作由中间件去处理，我们只需要将异步任务在`payload`中执行。
+
+### 5.4 Redux 与 路由
+
+#### 5.4.1 嵌套路由及路由匹配
 
 `<Route>组件`：`path`属性指明路由匹配路径，若路由需要参数，加上`:参数名`，若需要可选参数，加上`(:参数名)`
 
-#### 5.5.2 路由切换方式
+#### 5.4.2 路由切换方式
 
 `hashChange`、`history.pushState`。
 
@@ -1247,15 +1303,14 @@ export default fetchMiddleware
 
 2、`history.pushState`：URL优雅、兼容性IE10+（？TODO）、需要额外的服务端配置解决任意路径刷新问题（？TODO）。
 
-#### QUES
+#### ❓ QUES
 
-介绍一下前后端路由
+1. 介绍一下前后端路由
 
-1.前端路由：改变URL，页面不刷新。本质上就是切换URL，切换组件。
+   - 前端路由：改变URL，页面不刷新。本质上就是切换URL，切换组件。
+   - 后端路由：客户端发送请求url，后端处理url与页面的映射关系，服务端渲染页面后返回给客户端。
 
-2.后端路由：客户端发送请求url，后端处理url与页面的映射关系，服务端渲染页面后返回给客户端。
-
-
+2. `React router`的原理及方式，路由方式的对比 
 
 ### 5.6 Redux 与组件
 
@@ -1263,21 +1318,37 @@ export default fetchMiddleware
 
 **容器型组件：**组件如何工作，即如何更新数据，不包含组件样式。
 
-**展示型组件：**组件如何渲染，即包含Virtual DOM修改或组件、组件样式等。
+**展示型组件：**组件如何渲染，即包含Virtual DOM修改或组合、组件样式等。
 
 ![image-20211103164032807](https://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/202111031640227.png)
 
-#### QUES:
+#### 5.4.3 Redux 中的组件
 
-1、概念解释
+Redux中3种布局组件：`Layouts`、`Views`、`Components`
 
-容器型组件、展示型组件。
+**1. Layouts**
 
-有状态组件、无状态组件。
+页面布局组件，描述页面结构，通常为无状态组件。
 
-类、方法
+**2.Views**
 
-纯组件、非纯组件。
+路由组件，`View`就是`Redux`中的容器组件。
+
+**3.Components**
+
+路由以下的组件，包含具体逻辑和交互，数据和`action`是由`Views`传下来的，意味着它是展示型组件。
+
+#### ❓ QUES:
+
+1. 概念解释：容器型组件、展示型组件；有状态组件、无状态组件；纯组件、非纯组件。
+   - 容器型组件：定义组件如何工作，即数据如何更新，不包含组件样式。
+   - 展示型组件：定义组件如何渲染，即包含Virtual DOM修改或组合、组件样式等。
+   - 有状态组件：组件中维护数据`state`
+   - 无状态组件：组件中没有自己的数据`state`，均依赖外界传进来的`props`进行渲染
+   - 纯组件`pureComponent`：通过`props`和`state`的浅对比来实现`shouldcomponentupdate`
+   - 非纯组件`Component`：不会进行新旧`props`和`state` 的对比。
+
+纯组件：它不依赖于任何的输入或 state 而只依赖于 props 和 Redux store 的 state。
 
 # 二、Question
 
