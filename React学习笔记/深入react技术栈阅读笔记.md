@@ -1289,9 +1289,142 @@ export default fetchMiddleware
 
 ### 5.4 Redux 与 路由
 
-#### 5.4.1 嵌套路由及路由匹配
+#### 5.4.1 React-router 的基本使用
+
+##### `<Routes>和<Route>`
+
+`<Route>组件`必须有`path、element`属性，注意element属性的属性值是**`<App/>`**，而不是`APP`
+
+```jsx
+<Routes>
+    <Route path="/" element={<App />} />
+    <Route path="/home" element={<Home />}></Route>
+    <Route path="/detail" element={<Detail />}></Route>
+</Routes>
+```
+
+##### `<Link>`
+
+路径跳转至`home`
+
+```jsx
+<Link to="home">Home</Link>
+```
+
+**相对链接**
+
+路径不以 `/` 开头，则继承最近的渲染路径，加深`URL`层次。若以 `/` 开头则不进行继承。
+
+什么意思呢？ 
+
+`Home`组件当前路径为：`http://localhost:3000/home`
+
+我在`Home`组件中使用`Link`跳转至`detail`组件。
+
+- 如果没有 `/` ，此时跳转路径为：`http://localhost:3000/home/detail/xxx`。
+- 如果有 `/` ，此时跳转路径为：`http://localhost:3000/detail/xxx`
+
+```jsx
+<Link to={`detail/${id}`}>
+    <h1 className="article-title">{title}</h1>
+</Link>
+```
+
+
+
+#### 5.4.2 嵌套路由及路由匹配
+
+##### 1. 嵌套路由
+
+嵌套路由中嵌套了`URL`：`"/"+"home"`、`"/"+"detail"`，当子路由匹配时，将嵌套共享布局的UI组件。
+
+```jsx
+<Routes>
+    <Route path="/" element={<App />}>
+        <Route path="home" element={<Home />} />
+        <Route path="detail" element={<Detail />} />
+    </Route>
+</Routes>
+```
+
+**`App`组件中使用`Outlet组件`供子路由组件切换**
+
+```jsx
+<div>
+    <h1>App</h1>
+    <nav>
+        <Link to="home">Home</Link>
+        <Link to="detail">Detail</Link>
+    </nav>
+    <Outlet></Outlet>
+</div>
+```
+
+##### 2. 无匹配路由
+
+如果所有路由都没匹配上，我们可以在路由配置中处理“不匹配”情况。
+
+```jsx
+<Route
+    path="*"
+    element={
+        <main>
+            <p>There's nothing here!</p>
+        </main>
+    }
+/>
+```
+
+##### 3. 带参路由
 
 `<Route>组件`：`path`属性指明路由匹配路径，若路由需要参数，加上`:参数名`，若需要可选参数，加上`(:参数名)`
+
+```jsx
+<Routes>
+    <Route path="/" element={<App />} />
+    <Route path="/home" element={Home}></Route>
+    <Route path="/detail" element={Detail}></Route>
+</Routes>
+```
+
+##### 4. 读取URL参数
+
+法1：在`path`内添加`:参数名`
+
+![image-20211105162154261](https://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/202111051622450.png)
+
+法2：
+
+如何获取路由参数？
+
+1、函数式组件
+
+使用`useParams`，获取参数对象，在调用对象`.`获取属性。
+
+```js
+import { useParams } from "react-router-dom";
+
+export default function Invoice() {
+  let params = useParams();
+  return <h2>Invoice: {params.invoiceId}</h2>;
+}
+```
+
+2、Class 组件 TODO ？
+
+#### 5.4.3 索引路由
+
+**索引路由：**
+
+- 父路由的子路由都不匹配，则匹配索引路由。
+- 索引路由为父组件的默认子路由，例如`Home`组件为默认显示路由。
+- 用户没有点击导航列表，呈现索引路由。
+
+![image-20211105224801722](https://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/202111052248812.png)
+
+如果这个时候没有传`detailId`，则匹配中索引路由，显示“请选中博客”
+
+#### 5.4.4 活动链接`NavLink`
 
 #### 5.4.2 路由切换方式
 
@@ -1309,8 +1442,9 @@ export default fetchMiddleware
 
    - 前端路由：改变URL，页面不刷新。本质上就是切换URL，切换组件。
    - 后端路由：客户端发送请求url，后端处理url与页面的映射关系，服务端渲染页面后返回给客户端。
-
 2. `React router`的原理及方式，路由方式的对比 
+3. `react-router`和`react-router-dom`分别提供哪些组件？
+4. `redux`和`react-redux`分别提供什么组件？
 
 ### 5.6 Redux 与组件
 
