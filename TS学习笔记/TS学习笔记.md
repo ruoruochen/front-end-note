@@ -127,14 +127,14 @@ var dir = 0 /* NORTH */;
   //操作
   value.foo.bar; // Error
   value.trim(); // Error
-  value(); // rror
+  value(); // Error
   ```
 
 ### 1.8 Tuple元组类型
 
 #### 1. 元组类型
 
-元组类型：长度和元素类型都确定的数组。
+元组类型：给定每个元素类型的数组。
 
 ```ts
 type StringNumberPair = [string, number];
@@ -209,7 +209,7 @@ obj.prop = "semlinker";
 
 ### 2.1 类型断言
 
-我们开发者比TS更了解某个实体的类型，此时使用**类型断言**给该实体指定类型，此时不会进行类型扩展
+我们开发者比TS更了解某个变量的类型，此时我们可以使用**类型断言**给变量指定类型，那么就不会进行类型扩展
 
 #### 1. 尖括号语法
 
@@ -564,6 +564,26 @@ function createUserId(name: string, id: number): string {
 IdGenerator = createUserId;
 ```
 
+#### 6.2.1 呼叫签名
+
+**Call Signatures 呼叫签名** 
+
+在`TS`的函数类型中不允许声明属性，此时我们可以使用呼叫签名来给函数增加属性
+
+```ts
+type GeneratorType = {
+  description: string
+  // 左参，右返回值
+  (chars: string, nums: number): string
+}
+function callFn(fn: GeneratorType) {
+  console.log(fn.description)
+  fn('123', 1)
+}
+```
+
+注：此时的函数类型表达式，参数和返回类型之使用 ：而非 =>
+
 ### 6.3 可选参数和默认参数
 
 ```ts
@@ -606,26 +626,6 @@ function makeDate(mOrTimeStamp: number, d?: number, y?: number): Date {
 }
 ```
 
-````temp
-**Call Signatures 呼叫签名** TODO ？？？
-
-在`TS`的函数类型表达式中不允许声明属性，此时我们可以使用 call signature 来给函数增加属性
-
-```ts
-type DescribableFunction = {
-  description: string
-  //左边为方法和接收参数 右边为返回值
-  (someArg: number): boolean
-}
-//接受一个参数
-function doSomething(fn: DescribableFunction) {
-  console.log(fn.description + ' returned ' + fn(6))
-}
-```
-
-注：此时的函数类型表达式，参数和返回类型之使用 ：而非 =>
-````
-
 ## 七、TS 接口
 
 **接口：**命名对象的形状（Shape)
@@ -644,9 +644,43 @@ function printCoord(pt: Point) {
 
 **类型别名和接口的异同点**
 
-相同：可以定义对象的形状
+相同：
 
-不同点：接口可进行声明合并，类型别名不行。
+1. 都可以定义对象的形状
+2. 都可以被实现`implement`、被继承`extends`
+
+不同点：
+
+1. 接口可进行声明合并，类型别名不行。
+
+```js
+interface User {
+  name: string
+  age: number
+}
+
+interface User {
+  sex: string
+}
+
+/*
+User 接口为 {
+  name: string
+  age: number
+  sex: string 
+}
+*/
+
+type Point {
+  x: number
+  y: number
+}
+
+// ERROR：标识符 Point重复
+type Point{
+  z:number
+}
+```
 
 ## 八、TS 类
 
@@ -679,8 +713,6 @@ class Greeter {
 
 let greeter = new Greeter("world");
 ```
-
-> - QUES：成员属性与静态属性，成员方法与静态方法的区别 TODO
 
 ### 8.2 成员访问修饰符
 
@@ -833,6 +865,35 @@ b.greet();
 
 `abstract`用于修饰抽象类和抽象方法![image-20211012212057078](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211012212057078.png)
 
+### ❓ QUES
+
+1. 私有字段是如何做到私有的？
+
+   通过WeekMap实现，需要环境支持ES2015即ES6。
+
+   实现方法：实现私有属性，只要是外部无法知道这个属性名，只有内部知道的属性名，就可以做到外部无法访问的特性。
+
+   数据存在WeakMap中
+
+   ```js
+   class Student {
+     #name: string
+     constructor(name: string) {
+       this.#name = name
+     }
+   }
+   
+   //转换成ES6后 (自己简化版)
+   var _Student_name;
+   class Student {
+       constructor(name) {
+           _Student_name.set(this, name);
+   }
+   _Student_name = new WeakMap();
+   ```
+
+   [JS私有属性](https://juejin.cn/post/6904849160004960264#heading-0)
+
 ## 九、泛型
 
 **泛型：**让一个函数接受不同类型参数的一种模板。
@@ -956,8 +1017,6 @@ function createArray<T = string>(length: number, value: T): Array<T> {
 }
 ```
 
-
-
 ## 十、TS 装饰器
 
 ### 10.1 装饰器简介
@@ -1065,7 +1124,7 @@ console.log(p.name)
 
 ### 10.4 方法装饰器
 
-**方法装饰器：**用于装饰类的方法，接受三个参数：被装饰类、方法名、描述符。
+**方法装饰器：**用于装饰类的方法，接受三个参数：被装饰类、方法名、描述符（.value为函数体）。
 
 **方法装饰器声明模板：**
 
@@ -1215,7 +1274,28 @@ type MessageOf<T> = T["message"];
 type MessageOf<T> = T extends {message:unknown} ? T["message"]:never;
 ```
 
-### 
+### 11.4 分布条件类型
+
+被检查类型（即extends前的类型参数）是**裸类型参数**的条件类型称**分布条件类型**。
+
+在实例化期间，分布条件类型会自动分布在联合类型上，即条件类型应用于联合类型的每个成员，结果是所有结果的联合。
+
+```typescript
+type t = Exclude<'a'|10,'a'|'b'|'c'>
+// type t = 10
+
+// 你以为的 Exclude
+type c = 'a' | 10 extends 'a' | 'b' | 'c' ? never : 'a' | 10
+
+// 实际上的 Exclude
+type c =
+  | ('a' extends 'a' | 'b' | 'c' ? never : 'a')
+  | (10 extends 'a' | 'b' | 'c' ? never : 10)
+```
+
+**什么是裸类型参数？**
+
+类型参数没有被包装到另一种类型中，例如：数组、元组、函数、或任意其他泛型类型。
 
 ## 十二、模板文字类型
 
@@ -1260,17 +1340,45 @@ const name = createCatName();
 
 `Partial<Type>`：将某个类型的属性全变为可选项。
 
+**实现**
+
+```ts
+type MyPartial<T> = {
+    [K in keyof T]?: T[K];
+};
+```
+
 ### Required< Type >
 
 `Required<Type>`：将某个类型的属性全变为必选项。
+
+**实现**
+
+通过 `-?` 移除了可选属性中的 `?`，使得属性从可选变为必选的。
+
+> 通过`- 或 +`增加/移除这些修饰符`?`，如果不添加前缀，默认为`+`
+
+```ts
+type MyRequired<T> = {
+  [K in keyof T]-?: T[K]
+}
+```
 
 ### Readonly< Type >
 
 `Readonly<Type>`：将某个类型所有属性变为只读属性
 
+**实现**
+
+```ts
+type MyReadonly<T> = {
+  readonly [K in keyof T]:T[K]
+}
+```
+
 ### Record< Keys,Type >
 
-`Record<Keys,Type>`：将 K 中所有的属性的值转化为 T 类型。
+`Record<Keys,Type>`：将keys的属性值类型转化为 T 类型。
 
 ```typescript
 type Record<K extends keyof any, T> = {
@@ -1301,13 +1409,27 @@ let b = cats.boris //let b: CatInfo
 
 `Pick <Type,Keys> `：从Type中取出一组属性Keys构造新的类型。
 
+```ts
+type MyPick<Type, Keys extends keyof Type> = {
+  [K in Keys]: Type[K]
+}
+```
+
 ### Omit< Type,Keys >
+
+记忆：`out` `move` `it` = 移除属性 
 
 `Omit<Type,Keys>`：从Type中删除Keys属性，构造类型。
 
+```ts
+type MyOmit<T, K extends keyof T> = {
+  [i in Exclude<keyof T,K>]:T[i]
+}
+```
+
 ### Exclude< Type,ExcludedUnion >
 
-`Exclude<Type,ExcludedUnion> `：获取Type类排除ExcludedUnion后的联合成员。
+`Exclude<Type,ExcludedUnion> `：获取Type联合类型中移除ExcludedUnion后的联合成员。
 
 ```typescript
 type T0 = Exclude<"a" | "b" | "c", "a">; // "b" | "c"
@@ -1315,21 +1437,44 @@ type T1 = Exclude<"a" | "b" | "c", "a" | "b">; // "c"
 type T2 = Exclude<string | number | (() => void), Function>; // string | number
 ```
 
+**实现**
+
+```ts
+// 从联合类型T中移除U
+type MyExclude<T, U> = T extends U?never:T
+```
+
 ### Extract< Type,Union >
 
 `Extract<Type,Union>`：获取Type可分配给Union的联合成员，即求同。
+
+```ts
+type MyExtract<T, U> = T extends U ? T : never
+```
 
 ### NonNullable< Type >
 
 `NonNullable<Type>`：排除Type中的null、undefined后，得到的类型。
 
+```ts
+type MyNonNullable<T> = T extends null | undefined ? never : T
+```
+
 ### Parameters< Type >
 
 `Parameters<T>`：获得函数的参数类型组成的元组类型。
 
+```ts
+type MyParameters<T extends (...args: any[]) => any> = T extends (...args:infer Args)=>any?Args:never
+```
+
 ### ConstructorParameters< Type >
 
 `ConstructorParameters<Type>`：获取构造函数参数类型的元组类型。
+
+```ts
+type ConstructorParameters<T extends new (...args: any) => any> = T extends new (...args: infer P) => any ? P : never;
+```
 
 ### ReturnType< Type >
 
@@ -1338,20 +1483,6 @@ type T2 = Exclude<string | number | (() => void), Function>; // string | number
 ### InstanceType< Type >
 
 `InstanceType<Type>`：获取构造函数类型的实例类型。
-
-### ThisParameterType< Type >
-
-`ThisParameterType<Type>`：获取函数的this参数的类型
-
-### OmitThisParameter< Type > TODO
-
-### ThisType< Type>
-
-`ThisType<T>`：指定上下文对象类型
-
-
-
-
 
 ````temp
 暂时无用 不想整理的东西
