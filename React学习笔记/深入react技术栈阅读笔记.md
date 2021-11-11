@@ -280,8 +280,6 @@ this.myTextInput
 
 木偶组件：组件外部传入具体的值，修改组件中的state，即组件像”木偶“一样被操控。
 
-
-
 **2. 介绍一下React生命周期**
 
 React生命周期，分为三个阶段：**挂载、渲染、卸载**。
@@ -312,7 +310,7 @@ React生命周期，分为三个阶段：**挂载、渲染、卸载**。
 
 接受更新后的`props`，通过判断新旧`props`，进行`setState`，在此方法中`setState`不会触发二次渲染。（因为在render渲染之前，setState合并）
 
-**`getDedrivedStateFromProps(nextProps,prevSTate)`**
+**`getDedrivedStateFromProps(nextProps,prevState)`**
 
 接受更新的`props`和先前的`state`，对两者进行判断，满足某些条件，返回一个对象更新`state`，否则返回`null`不更新。
 
@@ -326,11 +324,7 @@ React生命周期，分为三个阶段：**挂载、渲染、卸载**。
 
 
 
-**4. 为什么不能再`componentWillUpdate`中执行`setState` TODO**
-
-
-
-**5. React中获取组件DOM元素的方法**
+**4. React中获取组件DOM元素的方法**
 
 1. `ref`引用
 2. `findDOMNode`方法获取
@@ -1175,8 +1169,6 @@ function QueryLink({to,...props}){
 
    不需要服务器配置，因为浏览器向服务器发送请求时不会携带hash的内容，所以总是能拿到入口文件。
 
-### 
-
 ## 3 React源码
 
 ### 3.1 Virtual DOM结构
@@ -1185,19 +1177,167 @@ Virtual DOM 的结构：
 
 - 标签名`tagName`
 - 节点属性，包括样式、属性和事件等等。
-
 - 子节点
 - key值
 
-Virtual DOM 节点称为 ReactNode，分为三种类型`ReactElement`、`ReactFragment`、`ReactText`，而`ReactElement`又细分为`ReactComponentElement`和`ReactDOMElement`。
+### 3.2 React 生命周期
+
+组件的生命周期在不同状态下的执行顺序
+
+- 首次挂载，顺序执行`getDefaultProps`、`getInitialState`、`componentWillMount`、`render`、`componentDidMount`
+- 非首次挂载，顺序执行`getInitialState`、`componentWillMount`、`render`、`componentDidMount`
+- 组件更新，顺序执行`componentWillReceiveProps`、`shouldComponentUpdate`、`componentWillUpdate`、`render`、`componentDidUpdate`
+
+#### 3.2.1 刨根问底：React生命周期的顺序是如何管理的
+
+组件的生命周期主要通过 3 个阶段进行管理：`MOUNTING`、`RECEIVE_PROPS`、`UNMOUNTING`，它们负责通知组件当前所处的阶段，应该执行生命周期中的哪个步骤。
+
+而这是 3 个阶段对应 3 种方法：`mountComponent`、`updateComponent`、`unmountComponent`
+
+![image-20211111104202301](https://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/202111111042435.png)
+
+##### 1. 阶段一：`MOUNTING`
+
+对应的方法为`mountComponent`，负责管理生命周期中的`getInitialState`、`componentWillMount`、`render`、`componentDidMount`。
+
+而`getDefaultProps` 是通过构造函数进行管理的，`mountComponent`管不着。
+
+1. 利用`getInitialState`获取初始化`state`，初始化更新队列`_pendingStateQuene`和更新状态`_pendingReplaceState`。
+2. 若存在`componentWillMount`，执行。若在其中调用`setState`，并不会触发重新渲染`re-render`，而是进行`state`合并。（此时拿不到最新的`state`，因为调用`inst.state=xxx`是在`componentWillMount`之后调用的。）
+3. `render`渲染，此时可拿到更新后的`this.state`
+4. 若存在`componentDidMount`，执行。
+
+<img src="https://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/202111111056386.png" alt="image-20211111105646315" style="zoom:67%;" />
+
+`mountComponent`本质上是利用递归`render`的，所以我们可以理解父子组件生命周期调用的顺序：父组件`componentWillMount`、子组件`componentWillMount`、子组件`componentDidMount`、父组件`componentDidMount`
+
+##### 2. 阶段二：`RECEIVE_PROPS`
+
+`updateComponent`负责管理生命周期中的`componentWillReceiveProps`、`shouldComponentUpdate`、`componentWillUpdate`、`render`、`componentDidUpdate`
+
+1. 通过`updateComponent`更新组件，前后元素不一致，说明需要进行组件更新。
+2. 若存在`componentWillReceiveProps`，执行。在其中调用`setState`，不会触发`re-render`，而是会进行`state`合并。（访问不到最新的`state`）
+3. 调用`shouldComponentUpdate`，判断是否需要组件更新。
+4. 后面同.....
+
+![image-20211111111441906](https://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/202111111114982.png)
+
+**禁止在`shouldComponentUpdate`和`componentWillUpdate`中执行`setState`**
+
+因为会导致循环调用，直至耗光浏览器内存后崩溃。
+
+假设在其中调用了`setState`，这个时候更新队列`_pendingStateQuene!==null`，调用`updateComponent`方法进行组件更新，这时候就触发了循环调用。
+
+##### 3. UNMOUNTING
+
+`unmountComponent`负责管理生命周期中的`componentUnmount`
+
+1. 如果存在`ComponentWillUnmont`，执行，并重置所有相关参数、更新队列以及更新状态。
 
 ### 3.2 `setState`异步更新
 
-`setState`通过一个队列机制实现`state`更新。当执行`setState`时，会将需要更新的`state`合并后放入状态队列，而不会立刻更新`this.state`,队列机制可以高效地批量更新`state`。
+`setState`通过一个队列机制实现`state`更新。当执行`setState`时，会将需要更新的`state`合并后放入状态队列，而不会立刻更新`this.state`，队列机制可以高效地批量更新`state`。
 
-### 3.3 React Diff算法
+1. 执行`enqueneSetState`方法，执行`state`更新。
+2. `performUpdateIfNecessary`方法调用`receiveComponent`和`updateComponent`方法进行组件更新。
 
-### 3.4 React Patch
+#### 3.2.1 `setState`调用栈
+
+<img src="https://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/202111111154558.png" alt="image-20211111115457469" style="zoom:80%;" />
+
+**看代码说输出**
+
+```jsx
+import React, { Component } from 'react'
+class Example extends Component {
+  constructor() {
+    super()
+    this.state = {
+      val: 0,
+    }
+  }
+  componentDidMount() {
+    this.setState({ val: this.state.val + 1 })
+    console.log(this.state.val)
+    this.setState({ val: this.state.val + 1 })
+    console.log(this.state.val)
+    setTimeout(() => {
+      this.setState({ val: this.state.val + 1 })
+      console.log(this.state.val)
+      this.setState({ val: this.state.val + 1 })
+      console.log(this.state.val)
+    }, 0)
+  }
+  render() {
+    return null
+  }
+}
+```
+
+输出结果：0、0、2、3。
+
+**概念引入**
+
+1. **事务：**事务就是将需要执行的方法使用wrapper封装起来，再通过事务提供的`perform`方法执行。
+
+   ![image-20211111184111907](https://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/202111111841037.png)
+
+   而在`perform`之前，先执行所有`wrapper` 中的`initialize` 方法，执行完`perform` 之后(即执行`method`方法后)再执行所有的`close`方法。一组`initialize`及`close`方法称为一个`wrapper`。从图中可以看出，事务支持多个`wrapper`叠加。
+
+##### 1. 为什么第一、二处输出0？
+
+​		因为在组件渲染到`DOM`的过程中就执行了`batchedUpdate`方法，当在`componentDidMount`中调用`setState`时，就已经处于`batchedUpdates`执行的事务中。此时`isBatchingUpdates`标志位设置为`true`，这两次`setState`的结果被放进了`dirtyComponents`，因此没有拿到新的`state`，输出了`0`。
+
+##### 2. 为什么第三、四处输出2、3？
+
+`setTimeout`没有前置`batchedUpdate`调用，标志位此时为`false`，不批量更新，走`state`更新分支，所以拿到最新的`state`。
+
+> - 什么时候能拿到最新的state？不处于批量更新的状态，即标志位为`false`，这个时候会更新`pending state`
+
+### 3.3 React diff 算法
+
+React diff 算法有三大策略：
+
+1. 跨层级节点移动少，直接忽略。
+2. 相同类组件有相似树形结构，不同类组件有不同的树形结构。
+3. 同一层级子节点，通过唯一id进行区分。
+
+策略对应的 3 个 diff 算法：`tree diff`、`component diff `、`element diff`。
+
+#### 1. tree diff
+
+只对相同层级的DOM节点进行比较，节点不存在时删除节点和子节点，不会进行进一步比较。
+
+#### 2. component diff
+
+1. 同一类型组件，element diff 比较子节点。
+2. 不同类型组件，替换整个组件下的所有节点。
+
+#### 3. element diff
+
+首先有两个列表：新旧节点列表。遍历新节点，通过`key`找到它在旧节点列表中的位置，并将找到的位置与`lastindex`进行比较，若大于`lastIndex`，不需要移动；小于`lastindex`，则需要移动到`nextIndex`位置。
+
+`lastindex`存的是访问过的新节点在旧节点中最大的位置。
+
+如果新节点在旧列表中没找到，说明是新结点，则创建节点插入到`nextIndex`位置。
+
+最后会遍历一遍旧节点列表，如果有旧节点不存在于新列表，就删除该节点。
+
+### 3.4 React Patch 将差异映射到真实DOM
+
+计算出全部差异放入差异队列，一次性执行`Patch`方法去完成真实DOM的更新。
+
+`patch`方法：遍历差异队列，通过更新类型进行相应的操作：
+
+### ❓ QUES
+
+1. React生命周期的顺序是如何管理的
+
+2. 为什么禁止在`shouldComponentUpdate`和`componentWillUpdate`中执行`setState`
+
+3. `this.setState`的第二个参数是如何实现拿到最新的`state`的？
+
+   这个回调函数存入`_pendingCallbacks`队列中，在设置完状态之后执行。
 
 ## 4 Flux 架构模式
 
