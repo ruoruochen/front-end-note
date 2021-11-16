@@ -219,9 +219,6 @@ React生命周期，三个阶段：**挂载、渲染、卸载**。
 
 2、`in方法`：`属性名 in obj`，返回`true/false`
 
-> - QUES：React生命周期
-> - QUES：为什么不能再`componentWillUpdate`中执行`setState`? TODO 3.3节（应该与setState有关）
-
 ### 1.3 React 与 DOM
 
 #### 1.3.1 ReactDOM
@@ -381,7 +378,7 @@ React 并不会把事件处理函数直接绑定到真实DOM上，而是把所�
 
 > - QUES：介绍一下合成事件及其原理（实现机制 ）
 > - QUES：React 为什么要用合成事件
-> - QUES：React绑定this的办法 TODO
+> - QUES：React绑定this的办法
 
 #### 2.1.3 在React中使用原生事件
 
@@ -481,7 +478,7 @@ How（怎么进行）、How（如何高效/如何解决）
 
 
 
-**4. 如果页面卡顿，你觉得可能是什么原因造成的？有什么办法锁定原因并解决吗？TODO**
+**4. 如果页面卡顿，你觉得可能是什么原因造成的？有什么办法锁定原因并解决吗？WAIT**
 
 先会检查是否是网络请求太多，导致数据返回较慢，可以适当做一些缓存
 
@@ -546,8 +543,6 @@ const style = {
 **classnames库**
 
 ![image-20211018230521140](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211018230521140.png)
-
-> - QUES：Pub/Sub模式的实现原理 TODO
 
 ### 2.4 React 组件抽象
 
@@ -825,8 +820,7 @@ const HOC = (WrappedComponent) => {
 参考链接：[React Hoc](https://juejin.cn/post/6844904050236850184#heading-18)
 
 > - 介绍一下高阶组件
->- 前端设计组件的原则（JS考题中有部分 TODO
-> 
+>
 
 #### 2.4.3 组合式开发实践
 
@@ -844,9 +838,12 @@ const HOC = (WrappedComponent) => {
 
 1. 介绍一下高阶组件
 
-2. class组件是如何实现逻辑复用的？ TODO
+2. class组件是如何实现逻辑复用的？ 
 
-3. 前端设计组件的原则（JS考题中有部分）TODO
+   - 高阶组件
+   - render-props
+
+3. 前端设计组件的原则
 
    一般按照功能来进行组件的封装，原则
 
@@ -874,8 +871,6 @@ React 提供的方法：`PureComponent`。
 
 本质上就是内嵌了一个`shouldComponentUpdate`生命周期，使用`PureComponent`，不能再使用`shouldComponentUpdate`方法
 
-> - QUES：实现一个shallowEqual TODO
-
 #### 2.5.3 key
 
 如果每个子组件是一个数组/迭代器，必须要有一个唯一的`key prop`，否则会报警告。
@@ -887,6 +882,205 @@ React 提供的方法：`PureComponent`。
 > - QUES：为什么不能用index作为key
 >
 >   因为当中间插入学生时，Index与学生的唯一信息没有相匹配，相当于用了一个随机键。
+
+#### ❓ QUES:
+
+**1、实现一个`shallowEqual`方法**
+
+**API引入：`Object.is()`**
+
+- 作用：判断两个值是否为同一个值。可对基本数据类型进行精确比较，但对引用类型不行。
+
+- 参数：被比较的两个值
+
+- 返回值：`boolean`
+
+- 补充说明：
+
+  1. 满足以下条件之一则值相等：
+
+  - 都是`null`、都是`undefined`。
+  - 都是字符串且长度相同、字符顺序相同。
+  - 都是数字且
+    - 都是`+0` 、都是`-0` 、都是`NaN`
+    -  非0非NaN，相同值。
+  - 都是相同对象（引用相同）
+
+  2. `Object.is`实际上就是使用了`===`，只不过修复了两个不符合预期的情况：
+
+     ```
+     +0 === -0 // true，但我们期待它返回false
+     NaN === NaN // false，我们期待它返回true
+     ```
+
+```js
+// Object.is的polyfill
+function is(x, y) {
+  if (x === y) {
+    // 处理 +0 === -0 的情况
+    return x !== 0 || y !== 0 || 1 / x === 1 / y
+  } else {
+    // 处理 NaN === NaN 的情况
+    return x !== x && y !== y
+  }
+}
+
+function shadowEqual(objA, objB) {
+  // 使用is进行基本数据类型比较
+  if (is(objA, objB)) {
+    return true
+  }
+  // 如果比较的不是对象，则false
+  if (
+    typeof objA !== 'object' ||
+    typeof objB !== 'object' ||
+    objA === null ||
+    objB === null
+  ) {
+    return false
+  }
+
+  // 进行对象比较
+  const keysA = Object.keys(objA)
+  const keysB = Object.keys(objB)
+
+  // 如果keys长度不一致，直接false
+  if (keysA.length !== keysB.length) return false
+
+  // 遍历keysA，判断B中是否有A的key值，并判断值是否相等。
+  for (let i = 0; i < keysA.length; i++) {
+    if (!objB.hasOwnProperty(keysA[i]) || !is(objB[keysA[i]], objA[keysA[i]])) {
+      return false
+    }
+  }
+
+  // 均相等
+  return true
+}
+
+const obj1 = { name: 'Chenhuan' }
+const obj2 = { name: 'Chenhuan' }
+console.log(shadowEqual(obj1, obj2))
+```
+
+
+
+**2、`Object.is()`的`polyfill`版本**
+
+```js
+// Object.is的polyfill
+function is(x, y) {
+  if (x === y) {
+    // 处理 +0 === -0 的情况
+    return x !== 0 || y !== 0 || 1 / x === 1 / y
+  } else {
+    // 处理 NaN === NaN 的情况
+    return x !== x && y !== y
+  }
+}
+```
+
+
+
+**3、什么是`polyfill`？如何使用`polyfill`？**
+
+**`polyfill`：**抹平浏览器差异，即打补丁。
+
+**为什么需要`polyfill`？**
+
+`babel`只负责语法转换，将`ES6`转`ES5`，但并不做`polyfill`，但对浏览器本身不支持对象、方法并不会做处理，例如：并不会将`Object.assign`转换。
+
+**`polyfill`的三种方式**
+
+（1）缺啥补啥：`babel-plugin-transform-xxx`
+
+```
+yarn add babel-plugin-transform-object-assign
+
+# .babelrc
+{
+  "presets": ["latest"],
+  "plugins": ["transform-object-assign"]
+}
+```
+
+**优缺点：**最小化引入、保证性能；不易维护和管理、带来重复引用。
+
+（2）根据覆盖率自动打补丁。
+
+相关依赖有`@babel/preset-env`、 `@babel/plugin-transform-runtime` 、 `core-js`，`@babel/polyfill`
+
+1. `@babel/preset-env`按需编译、按需打补丁。
+
+   `@babel/preset-env` 会根据目标环境来进行编译和打补丁。具体来讲，是根据参数 `targets` 来确定目标环境，默认情况下它编译为 ES2015，可以根据项目需求进行配置：
+
+   ```js
+   # .babelrc
+   ...
+     presets: [
+       [
+         '@babel/preset-env',
+         {
+           // 支持chrome 58+ 及 IE 11+
+           targets: {
+             chrome: '58',
+             ie: '11',
+           }
+         },
+       ],
+     ]
+   
+   ```
+
+2. `core-js` JS 标准库
+
+   提供了从 ES3 ～ ES7+ 以及还处在提案阶段的 JavaScript 的实现。
+
+3. `@babel/plugin-transform-runtime & babel-runtime` 
+
+4. `babel-polyfill`
+
+   `core-js` 和 `regenerator-runtime` 补丁的实现库。
+
+   `@babel/polyfill` 通过定制 `polyfill` 和 `regenerator`，提供了一个 ES2015+ 环境 `polyfill`的库。因为它是由其他两个库实现的，直接引入其他两个库即可，所以已被**废弃**
+
+**使用方法：**分为两种打补丁方式：**应用的补丁**和**库的补丁**
+
+**应用的补丁 — 使用`@babel/preset-env` + `useBuiltIns`**
+
+`core-js` 包括了所有的 JavaScript 标准库，使用`@babel/preset-env` 的 `useBuiltIns` 参数来根据应用的兼容目标来自动获取补丁呢。
+
+`useBuiltIns` 告诉了`@babel/preset-env` 如何根据应用的兼容目标`targets`来处理 `polyfill`。
+
+1. 首先，在应用入口引入`core-js`:
+
+```
+import 'core-js'
+```
+
+2. 然后，配置 `useBuiltIns` 参数为 `entry`，并指定 `core-js` 版本，使用`targets`指定浏览器环境版本，避免不必要的补丁，减少打包输出体积。
+
+```
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "entry",
+        "corejs": 3,
+        "targets": {
+          "chrome": 58
+        }
+      }
+    ],
+    "@babel/preset-react"
+  ]
+}
+```
+
+**根据浏览器特性，动态打补丁`Polyfill.io`**
+
+服务器根据浏览器的 UA 不同，返回不一样的补丁。我们所需要做的就是在页面上引入这个文件。`polyfill` 这件事就自动以最优雅的方式解决了。
 
 ### 2.6 React-router
 
@@ -1123,7 +1317,22 @@ function QueryLink({to,...props}){
    - 前端路由：改变URL，页面不刷新。本质上就是切换URL，切换组件。
    - 后端路由：客户端发送请求url，后端处理url与页面的映射关系，服务端渲染页面后返回给客户端。
 
-2. `React router`的原理及方式，路由方式的对比 TODO
+2. `React router`的原理
+
+   `React router`的原理：监听Url变化，切换组件。
+
+   - **`history`模式的原理**
+
+     1. 改变路由：`pushState`、`replaceState`
+
+     2. 监听路由：`popState事件`，当`history`对象发生变化就会触发`popState事件`。`history.pushState` 可以使浏览器地址改变，但是无需刷新页面。DONE
+
+        **注意⚠️的是：用 `history.pushState()` 或者 `history.replaceState()` 不会触发 `popstate` 事件**。 `popstate` 事件只会在浏览器某些行为下触发, 比如点击后退、前进按钮或者调用 `history.back()、history.forward()、history.go()`方法。
+
+   - **`hash`模式的原理**
+
+     1. 改变路由：`window.location.hash`属性获取和设置`hash`值
+     2. 监听路由：`onhashChange事件`
 
 3. `react-router`和`react-router-dom`分别提供哪些组件？
 
@@ -1547,9 +1756,9 @@ export default connect(mapStateToProps,mapDispatchToProps)(Counter);
 
    至于我们担心的数据源对象过于庞大的问题，可以在5.6.8 节中看到Redux提供的工具函数`combineReducers`是如何化解的。
 
-3. 实现Redux createStore方法，原理
+3. 实现Redux createStore方法，原理TODO
 
-4. 实现connect方法，原理
+4. 实现connect方法，原理TODO
 
 ### 5.2 Redux middleware 中间件
 
