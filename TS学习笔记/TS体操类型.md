@@ -119,7 +119,7 @@ type MyOmit<T, K extends keyof T> = {
 }
 ```
 
-#### Readonly 2 TODO!
+#### Readonly 2 
 
 ![image-20211015160815675](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211015160815675.png)
 
@@ -136,6 +136,12 @@ type MyReadonly2<T, K extends keyof T = keyof T> = T & {
 ![image-20211016111331414](http://ruoruochen-img-bed.oss-cn-beijing.aliyuncs.com/img/image-20211016111331414.png)
 
 索引签名 + 条件类型 + infer推理
+
+思路：遍历对象，判断当前属性值是否为对象，如果是对象，递归为readonly
+
+// 1、如何遍历对象，通过k in keyof T
+
+// 2、如何判断属性值，通过infer类型推理
 
 ```typescript
 type DeepReadonly<T> = T extends {[propName:string]:infer R}?{readonly [i in keyof T]:DeepReadonly<T[i]> }:T;
