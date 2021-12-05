@@ -257,7 +257,7 @@
 
 #### 1.3.5 确认上传
 
-- 请求路径：upload/confirm
+- 请求路径：article/upload/confirm
 - 请求方法：post
 - 请求参数：
 
