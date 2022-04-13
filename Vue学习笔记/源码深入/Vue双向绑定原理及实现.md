@@ -538,3 +538,9 @@ function isElementNode(node) {
 
 1. 首先，我们看一下代码，walk 方法是在构造函数调用的方法，我认为这个方法跟这个 Class 属于关系紧密的关系，参考“封装”特性，我们应该把它放在 Class 内部。
 2. 其次，向 observe、defineReactive 这些方法，他们不仅仅在 Observer 类中使用，还会作为 API 暴露给开发者使用，所以放在外边是最合适的。
+
+## 参考链接
+
+[vue 的双向绑定原理及实现](https://www.cnblogs.com/canfoo/p/6891868.html)
+
+[0 到 1 掌握：Vue 核心之数据双向绑定](https://juejin.cn/post/6844903903822086151)
